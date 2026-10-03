@@ -1,0 +1,100 @@
+name: Fix design image matching
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Match design images to descriptions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("index.html")
+          s = path.read_text(encoding="utf-8")
+
+          desired = {
+              "Natural Calm": "Sunset Blocks",
+              "Sunset Blocks": "Ocean Blue",
+              "Ocean Blue": "Soft Pastels",
+              "Soft Pastels": "Star Blanket",
+              "Rainbow Granny": "Natural Calm",
+              "Star Blanket": "Rainbow Granny",
+          }
+
+          def swap_images(block, item_pattern, label_pattern):
+              items = list(re.finditer(item_pattern, block, flags=re.S))
+              if len(items) < 6:
+                  raise SystemExit(f"Expected 6 items, found {len(items)}")
+
+              records = []
+              for m in items:
+                  item = m.group(0)
+                  lm = re.search(label_pattern, item)
+                  sm = re.search(r'src="(data:image/jpeg;base64,[^"]+)"', item)
+                  if not lm or not sm:
+                      raise SystemExit("Could not read label/image from design item")
+                  records.append((lm.group(1), sm.group(1), item))
+
+              src_by_label = {label: src for label, src, _ in records}
+              for label, _, original in records:
+                  source_label = desired[label]
+                  new_src = src_by_label[source_label]
+                  updated = re.sub(
+                      r'src="data:image/jpeg;base64,[^"]+"',
+                      'src="' + new_src + '"',
+                      original,
+                      count=1
+                  )
+                  block = block.replace(original, updated, 1)
+              return block
+
+          # Inspiration cards
+          m = re.search(r'<div class="examples-grid">(.*?)</div>\s*<div class="examples-cta">', s, flags=re.S)
+          if not m:
+              raise SystemExit("Examples grid not found")
+          old = m.group(1)
+          new = swap_images(
+              old,
+              r'<article class="example-card">.*?</article>',
+              r'<h3>([^<]+)</h3>'
+          )
+          s = s[:m.start(1)] + new + s[m.end(1):]
+
+          # Main design collection cards
+          m = re.search(r'<div class="cards">(.*?)</div>\s*</section>\s*<section class="section" id="baby">', s, flags=re.S)
+          if not m:
+              raise SystemExit("Main design cards not found")
+          old = m.group(1)
+          new = swap_images(
+              old,
+              r'<article class="card">.*?</article>',
+              r'<h3>([^<]+)</h3>'
+          )
+          s = s[:m.start(1)] + new + s[m.end(1):]
+
+          # Quote-builder design choices
+          m = re.search(r'(<div class="quote-panel">)(.*?)(</div>\s*</div>\s*<div class="quote-option">)', s, flags=re.S)
+          if not m:
+              raise SystemExit("Quote design panel not found")
+          old = m.group(2)
+          new = swap_images(
+              old,
+              r'<button type="button" class="design-choice"[^>]*>.*?</button>',
+              r'<strong>([^<]+)</strong>'
+          )
+          s = s[:m.start(2)] + new + s[m.end(2):]
+
+          path.write_text(s, encoding="utf-8")
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Match design images to descriptions"
+          git push
