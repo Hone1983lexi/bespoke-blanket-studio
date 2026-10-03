@@ -9,10 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "latest",
     "next": "latest",
     "openai": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "stripe": "latest",
     "zod": "latest"
   },
   "devDependencies": {
