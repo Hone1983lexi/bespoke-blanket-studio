@@ -359,6 +359,26 @@ a{color:#8f573e}
 }
 </style>
 
+<style id="dropdown-and-warm-palette-overrides">
+/* Expanded crochet navigation — preserve the existing warm palette and avoid white UI surfaces */
+:root{--paper:#ead3c2;--cream:#e4c6b1}
+body{background:#ead3c2}
+.header{background:rgba(51,39,32,.97);border-bottom-color:#5b4438}
+.brand strong,.design-menu-trigger,.nav-simple{color:#f8eee7}
+.brand span{color:#d4b3a0}
+.design-menu-trigger span{color:#d3aa91}
+.design-dropdown{background:#ead3c2;border-color:#b98f77;box-shadow:0 18px 42px rgba(35,24,18,.32)}
+.design-dropdown-section-title{margin:14px 0 7px;padding-top:10px;border-top:1px solid #c9a991;color:#76513f;font-family:Georgia,serif;font-size:15px}
+.design-dropdown-section-title:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.design-dropdown-grid a{background:#dfc1ad;color:#4f382d}
+.design-dropdown-grid a:hover{background:#c99f84;color:#3f2d24}
+.design-dropdown-custom{border-top-color:#c9a991}
+.quote-toggle,.quote-summary{background:#dfc1ad!important}
+.quote-panel{background:#e7cdbc!important}
+.quote-panel button,.design-choice{background:#e0c4b2!important;color:#514943}
+.quote-panel button:hover,.quote-panel button.selected{background:#c99f84!important}
+</style>
+
 </head>
 <body>
 
@@ -372,6 +392,7 @@ a{color:#8f573e}
     <button type="button" class="design-menu-trigger">Designs <span>⌄</span></button>
     <div class="design-dropdown">
       <div class="design-dropdown-title">Choose a style</div>
+      <div class="design-dropdown-section-title">Designs</div>
       <div class="design-dropdown-grid">
         <a href="#bespoke" data-design="Natural Calm">Natural Calm</a>
         <a href="#bespoke" data-design="Sunset Blocks">Sunset Blocks</a>
@@ -389,6 +410,25 @@ a{color:#8f573e}
         <a href="#bespoke" data-design="Floral Garden">Floral Garden</a>
         <a href="#bespoke" data-design="Granny Stripe">Granny Stripe</a>
         <a href="#bespoke" data-design="Chunky Texture">Chunky Texture</a>
+        <a href="#bespoke" data-design="Floral Meadow">Floral Meadow</a>
+        <a href="#bespoke" data-design="Vintage Rose">Vintage Rose</a>
+        <a href="#bespoke" data-design="Botanical Garden">Botanical Garden</a>
+        <a href="#bespoke" data-design="Cottage Garden">Cottage Garden</a>
+        <a href="#bespoke" data-design="Autumn Harvest">Autumn Harvest</a>
+        <a href="#bespoke" data-design="Winter Snow">Winter Snow</a>
+        <a href="#bespoke" data-design="Spring Meadow">Spring Meadow</a>
+        <a href="#bespoke" data-design="Christmas Cheer">Christmas Cheer</a>
+      </div>
+      <div class="design-dropdown-section-title">Stitch Patterns</div>
+      <div class="design-dropdown-grid">
+        <a href="#bespoke" data-design="Moss Stitch" data-stitch="true">Moss Stitch</a>
+        <a href="#bespoke" data-design="Striped" data-stitch="true">Striped</a>
+        <a href="#bespoke" data-design="Granny Stripe" data-stitch="true">Granny Stripe</a>
+        <a href="#bespoke" data-design="Chevron / Ripple" data-stitch="true">Chevron / Ripple</a>
+        <a href="#bespoke" data-design="Floral Granny Squares" data-stitch="true">Floral Granny Squares</a>
+        <a href="#bespoke" data-design="Stitch Sampler" data-stitch="true">Stitch Sampler</a>
+        <a href="#bespoke" data-design="Filet / Motif Style" data-stitch="true">Filet / Motif Style</a>
+        <a href="#bespoke" data-design="Seasonal" data-stitch="true">Seasonal</a>
       </div>
       <a class="design-dropdown-custom" href="#bespoke" data-design="Custom design">Don't see your style? Create something completely custom →</a>
     </div>
@@ -743,11 +783,13 @@ document.querySelectorAll('.quote-panel button').forEach(button => {
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.design-dropdown [data-design]').forEach(function(link){
     link.addEventListener('click', function(){
-      var design = this.getAttribute('data-design');
+      var value = this.getAttribute('data-design');
+      var isStitch = this.getAttribute('data-stitch') === 'true';
+      var category = isStitch ? 'Stitch Pattern' : 'Design';
       var choices = document.querySelectorAll('.design-choice[data-choice]');
       var matched = false;
       choices.forEach(function(choice){
-        if(choice.getAttribute('data-choice') === 'Design: ' + design){
+        if(choice.getAttribute('data-choice') === category + ': ' + value){
           choice.click();
           matched = true;
         }
@@ -755,9 +797,12 @@ document.addEventListener('DOMContentLoaded', function(){
       if(!matched){
         var summary = document.getElementById('quoteChoices');
         if(summary){
-          var current = summary.textContent.replace(/^Nothing selected yet — choose as much or as little as you know.$/,'').trim();
-          var lines = current ? current.split(' · ').filter(function(x){return x.indexOf('Design:') !== 0;}) : [];
-          lines.unshift('Design: ' + design);
+          var empty = 'Nothing selected yet — choose as much or as little as you know.';
+          var current = summary.textContent.replace(empty,'').trim();
+          var lines = current ? current.split(' · ').filter(function(x){
+            return x.indexOf(category + ':') !== 0;
+          }) : [];
+          lines.unshift(category + ': ' + value);
           summary.textContent = lines.join(' · ');
         }
       }
