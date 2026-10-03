@@ -75,7 +75,7 @@ export default function PatternForm() {
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="rounded-3xl border border-[#cdb5a5] bg-[#f3e5db] p-6 shadow-sm sm:p-8">
+      <div className="rounded-3xl border border-[#cdb5a5] bg-[#e0c4b2] p-6 shadow-sm sm:p-8">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-stone-500">
           Bespoke Crochet
         </p>
@@ -106,9 +106,9 @@ export default function PatternForm() {
                   step="0.5"
                   value={value as string}
                   onChange={(e) => (setter as (value: string) => void)(e.target.value)}
-                  className="min-w-0 flex-1 rounded-l-xl border border-[#c7aa97] bg-[#f6ebe4] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+                  className="min-w-0 flex-1 rounded-l-xl border border-[#c7aa97] bg-[#ead8cc] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
                 />
-                <span className="flex items-center rounded-r-xl border border-l-0 border-[#c7aa97] bg-[#e6d3c6] px-3 text-xs text-stone-500">
+                <span className="flex items-center rounded-r-xl border border-l-0 border-[#c7aa97] bg-[#d8b9a5] px-3 text-xs text-stone-500">
                   {unit as string}
                 </span>
               </div>
