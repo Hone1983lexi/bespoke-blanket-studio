@@ -882,6 +882,22 @@ body{background:#ead3c2}
 </footer>
 
 
+<div class="visual-lightbox" id="visualLightbox" aria-hidden="true">
+  <div class="visual-lightbox-backdrop" data-close-lightbox></div>
+  <div class="visual-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="visualLightboxTitle">
+    <button type="button" class="visual-lightbox-close" aria-label="Close preview" data-close-lightbox>×</button>
+    <div class="visual-lightbox-media"><img id="visualLightboxImage" alt=""></div>
+    <div class="visual-lightbox-info">
+      <h3 id="visualLightboxTitle"></h3>
+      <p id="visualLightboxDescription"></p>
+      <div class="visual-lightbox-source" id="visualLightboxSource"></div>
+      <div class="visual-lightbox-actions">
+        <button type="button" id="visualLightboxUse">Choose this style</button>
+        <button type="button" class="secondary" data-close-lightbox>Close preview</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script id="site-interactions">
 (function(){
   "use strict";
