@@ -328,6 +328,37 @@ a{color:#8f573e}
   .nav > .btn { padding: 10px 13px !important; font-size: 12px !important; line-height: 1.1 !important; min-height: 48px !important; border-radius: 5px !important; }
 }
 </style>
+
+<style id="design-dropdown-styles">
+.design-menu{position:relative}
+.design-menu-trigger{border:0;background:none;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;padding:6px 0}
+.design-menu-trigger span{font-size:12px;margin-left:3px}
+.design-dropdown{position:absolute;top:calc(100% + 12px);right:-80px;width:430px;background:#ead3c2;border:1px solid #c9a991;border-radius:8px;box-shadow:0 16px 38px rgba(50,38,30,.18);padding:18px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s ease;z-index:30}
+.design-menu:hover .design-dropdown,.design-menu:focus-within .design-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.design-dropdown-title{font-family:Georgia,serif;font-size:20px;color:#4b3429;margin-bottom:12px}
+.design-dropdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px}
+.design-dropdown-grid a{display:block;padding:9px 10px;border-radius:5px;text-decoration:none;color:#5a4438;font-size:13px}
+.design-dropdown-grid a:hover{background:#d7b69f;color:#3f2d24}
+.design-dropdown-custom{display:block;margin-top:12px;padding-top:12px;border-top:1px solid #c9a991;color:#8f573e!important;font-size:13px;font-weight:600;text-decoration:none}
+.nav-simple{font-size:14px;text-decoration:none}
+.nav-simple:hover{color:var(--accent-dark)}
+.design-dropdown-link-selected{background:#d7b69f}
+#examples{display:none!important}
+@media(max-width:900px){
+  .nav{gap:16px}
+  .nav-simple{display:none}
+  .design-dropdown{right:-35px}
+}
+@media(max-width:600px){
+  .design-menu{display:block;flex:0 0 auto}
+  .design-menu-trigger{font-size:12px;padding:8px 4px}
+  .design-dropdown{position:fixed;top:78px;left:10px;right:10px;width:auto;max-height:70vh;overflow:auto;padding:15px}
+  .design-dropdown-grid{grid-template-columns:1fr 1fr}
+  .design-dropdown-grid a{font-size:13px;padding:10px 8px}
+  .nav > .btn{padding:10px 11px!important;font-size:11px!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -337,14 +368,35 @@ a{color:#8f573e}
       <strong>BESPOKE BLANKET STUDIO</strong>
       <span>Handmade crochet, designed around you</span>
     </a>
-    <div class="navlinks"><a href="#examples">Examples</a>
-      <a href="#designs">Designs</a>
-      <a href="#baby">Baby</a>
-      <a href="#bespoke">Bespoke</a>
-      <a href="#process">How It Works</a>
-      <a href="#about">About</a>
+    <div class="design-menu">
+    <button type="button" class="design-menu-trigger">Designs <span>⌄</span></button>
+    <div class="design-dropdown">
+      <div class="design-dropdown-title">Choose a style</div>
+      <div class="design-dropdown-grid">
+        <a href="#bespoke" data-design="Natural Calm">Natural Calm</a>
+        <a href="#bespoke" data-design="Sunset Blocks">Sunset Blocks</a>
+        <a href="#bespoke" data-design="Ocean Blue">Ocean Blue</a>
+        <a href="#bespoke" data-design="Soft Pastels">Soft Pastels</a>
+        <a href="#bespoke" data-design="Rainbow Granny">Rainbow Granny</a>
+        <a href="#bespoke" data-design="Star Blanket">Star Blanket</a>
+        <a href="#bespoke" data-design="Woodland">Woodland</a>
+        <a href="#bespoke" data-design="Wildflower">Wildflower</a>
+        <a href="#bespoke" data-design="Heritage">Heritage</a>
+        <a href="#bespoke" data-design="Monochrome">Monochrome</a>
+        <a href="#bespoke" data-design="Modern Geometric">Modern Geometric</a>
+        <a href="#bespoke" data-design="Coastal Sand">Coastal Sand</a>
+        <a href="#bespoke" data-design="Checkerboard">Checkerboard</a>
+        <a href="#bespoke" data-design="Floral Garden">Floral Garden</a>
+        <a href="#bespoke" data-design="Granny Stripe">Granny Stripe</a>
+        <a href="#bespoke" data-design="Chunky Texture">Chunky Texture</a>
+      </div>
+      <a class="design-dropdown-custom" href="#bespoke" data-design="Custom design">Don't see your style? Create something completely custom →</a>
     </div>
-    <a class="btn" href="#bespoke">Enquire Now</a>
+  </div>
+  <a class="nav-simple" href="#baby">Baby</a>
+  <a class="nav-simple" href="#process">How It Works</a>
+  <a class="nav-simple" href="#about">About</a>
+  <a class="btn" href="#bespoke">Enquire Now</a>
   </nav>
 </header>
 
@@ -682,6 +734,36 @@ document.querySelectorAll('.quote-panel button').forEach(button => {
     const request = document.getElementById('quoteRequest');
     const subject = 'Bespoke Blanket Quote — ' + values.map(([k,v]) => k + ': ' + v).join(', ');
     request.href = 'mailto:bespokeblanketstudio@bespokeblanketstudio.co.uk?subject=' + encodeURIComponent(subject);
+  });
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.design-dropdown [data-design]').forEach(function(link){
+    link.addEventListener('click', function(){
+      var design = this.getAttribute('data-design');
+      var choices = document.querySelectorAll('.design-choice[data-choice]');
+      var matched = false;
+      choices.forEach(function(choice){
+        if(choice.getAttribute('data-choice') === 'Design: ' + design){
+          choice.click();
+          matched = true;
+        }
+      });
+      if(!matched){
+        var summary = document.getElementById('quoteChoices');
+        if(summary){
+          var current = summary.textContent.replace(/^Nothing selected yet — choose as much or as little as you know.$/,'').trim();
+          var lines = current ? current.split(' · ').filter(function(x){return x.indexOf('Design:') !== 0;}) : [];
+          lines.unshift('Design: ' + design);
+          summary.textContent = lines.join(' · ');
+        }
+      }
+      var target = document.getElementById('bespoke');
+      if(target) setTimeout(function(){target.scrollIntoView({behavior:'smooth',block:'start'});},50);
+    });
   });
 });
 </script>
