@@ -17,9 +17,11 @@ async function updateClerkSubscription(
   await client.users.updateUserMetadata(userId, {
     publicMetadata: {
       subscriptionStatus: status,
+      subscriptionUpdatedAt: new Date().toISOString(),
+    },
+    privateMetadata: {
       ...(subscriptionId ? { stripeSubscriptionId: subscriptionId } : {}),
       ...(customerId ? { stripeCustomerId: customerId } : {}),
-      subscriptionUpdatedAt: new Date().toISOString(),
     },
   });
 }
