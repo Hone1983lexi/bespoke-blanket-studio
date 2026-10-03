@@ -5,6 +5,9 @@ on:
     paths:
       - .design-image-fix-trigger
 
+permissions:
+  contents: write
+
 jobs:
   fix:
     runs-on: ubuntu-latest
