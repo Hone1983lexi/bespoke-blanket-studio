@@ -1105,6 +1105,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   document.querySelectorAll(".stitch-example").forEach(function(link){
+    link.setAttribute("data-preview-only","true");
     var value=link.getAttribute("data-design");
     var item=stitchVisuals[value];
     if(!item)return;
