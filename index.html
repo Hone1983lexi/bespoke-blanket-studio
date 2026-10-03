@@ -334,7 +334,7 @@ a{color:#8f573e}
 .design-menu-trigger{border:0;background:none;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;padding:6px 0}
 .design-menu-trigger span{font-size:12px;margin-left:3px}
 .design-dropdown{position:absolute;top:calc(100% + 12px);right:-80px;width:430px;background:#ead3c2;border:1px solid #c9a991;border-radius:8px;box-shadow:0 16px 38px rgba(50,38,30,.18);padding:18px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s ease;z-index:30}
-.design-menu:hover .design-dropdown,.design-menu:focus-within .design-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.design-menu:hover .design-dropdown,.design-menu:focus-within .design-dropdown,.design-menu.dropdown-pinned .design-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
 .design-dropdown-title{font-family:Georgia,serif;font-size:20px;color:#4b3429;margin-bottom:12px}
 .design-dropdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px}
 .design-dropdown-grid a{display:block;padding:9px 10px;border-radius:5px;text-decoration:none;color:#5a4438;font-size:13px}
@@ -1068,6 +1068,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function openPreview(item){
     current=item;
+    var menu=document.querySelector(".design-menu");
+    if(menu) menu.classList.add("dropdown-pinned");
     img.src=item.src;
     img.alt=item.value+" crochet preview";
     title.textContent=item.value;
@@ -1084,9 +1086,21 @@ document.addEventListener('DOMContentLoaded', function(){
     lightbox.setAttribute("aria-hidden","true");
     document.body.style.overflow="";
     img.removeAttribute("src");
+    var menu=document.querySelector(".design-menu");
+    if(menu){
+      menu.classList.add("dropdown-pinned");
+      var trigger=menu.querySelector(".design-menu-trigger");
+      if(trigger){
+        setTimeout(function(){
+          try{ trigger.focus({preventScroll:true}); }catch(e){ trigger.focus(); }
+        },0);
+      }
+    }
   }
   function chooseCurrent(){
     var wanted=current.category+": "+current.value;
+    var menu=document.querySelector(".design-menu");
+    if(menu) menu.classList.remove("dropdown-pinned");
     var matched=document.querySelector('.design-choice[data-choice="'+CSS.escape(wanted)+'"]');
     if(matched){matched.click();}
     else{
