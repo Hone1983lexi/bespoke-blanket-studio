@@ -75,7 +75,7 @@ export default function PatternForm() {
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="rounded-3xl border border-[#cdb5a5] bg-[#f3e5db] p-6 shadow-sm sm:p-8">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-stone-500">
           Bespoke Crochet
         </p>
@@ -106,9 +106,9 @@ export default function PatternForm() {
                   step="0.5"
                   value={value as string}
                   onChange={(e) => (setter as (value: string) => void)(e.target.value)}
-                  className="min-w-0 flex-1 rounded-l-xl border border-stone-300 px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+                  className="min-w-0 flex-1 rounded-l-xl border border-[#c7aa97] bg-[#f6ebe4] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
                 />
-                <span className="flex items-center rounded-r-xl border border-l-0 border-stone-300 bg-stone-50 px-3 text-xs text-stone-500">
+                <span className="flex items-center rounded-r-xl border border-l-0 border-[#c7aa97] bg-[#e6d3c6] px-3 text-xs text-stone-500">
                   {unit as string}
                 </span>
               </div>
@@ -123,7 +123,7 @@ export default function PatternForm() {
               id="selected-stitch"
               value={selectedStitch}
               onChange={(e) => setSelectedStitch(e.target.value as Stitch)}
-              className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+              className="w-full rounded-xl border border-[#c7aa97] bg-[#f6ebe4] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
             >
               <option>Single Crochet</option>
               <option>Half Double Crochet</option>
@@ -132,7 +132,7 @@ export default function PatternForm() {
           </label>
         </div>
 
-        <section className="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-5 sm:p-6">
+        <section className="mt-8 rounded-2xl border border-[#cdb5a5] bg-[#ead8cc] p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
             Pattern Blueprint
           </p>
@@ -151,7 +151,7 @@ export default function PatternForm() {
         </section>
 
         {error && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mt-6 rounded-xl border border-[#d9aaa0] bg-[#f5dfda] p-4 text-sm text-red-700">
             {error}
           </div>
         )}
@@ -168,8 +168,8 @@ export default function PatternForm() {
         </div>
 
         {pattern && (
-          <section className="mt-8 rounded-2xl border border-stone-200 bg-white">
-            <div className="border-b border-stone-200 p-5 sm:p-6">
+          <section className="mt-8 rounded-2xl border border-[#cdb5a5] bg-[#f6ebe4]">
+            <div className="border-b border-[#cdb5a5] p-5 sm:p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
                 Generated Pattern
               </p>
@@ -179,7 +179,7 @@ export default function PatternForm() {
               </p>
             </div>
 
-            <div className="divide-y divide-stone-200">
+            <div className="divide-y divide-[#cdb5a5]">
               {pattern.rows.map((row) => (
                 <article key={row.rowNumber} className="p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-4">
@@ -207,7 +207,7 @@ function BlueprintCard({
   suffix?: string;
 }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-5">
+    <div className="rounded-xl border border-[#cdb5a5] bg-[#f6ebe4] p-5">
       <p className="text-sm text-stone-500">{label}</p>
       <p className="mt-2 text-2xl font-semibold text-stone-900">{value}</p>
       {suffix && <p className="mt-1 text-xs text-stone-500">{suffix}</p>}
