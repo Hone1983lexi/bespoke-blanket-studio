@@ -200,6 +200,25 @@ export default function PatternForm() {
               <option>Half Double Crochet</option>
               <option>Double Crochet</option>
             </select>
+
+            <div className="mt-4 overflow-hidden rounded-2xl border border-[#d2c0ad] bg-[#fbf6ef]">
+              <div className="grid gap-0 sm:grid-cols-[180px_1fr]">
+                <div className="flex flex-col justify-center border-b border-[#d2c0ad] p-4 sm:border-b-0 sm:border-r">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">
+                    Stitch Preview
+                  </p>
+                  <p className="mt-2 text-base font-semibold text-[#302b27]">
+                    {selectedStitch}
+                  </p>
+                  <p className="mt-1 text-sm leading-5 text-[#66594f]">
+                    {stitchDescription(selectedStitch)}
+                  </p>
+                </div>
+                <div className="min-h-[150px] p-3 sm:p-4">
+                  <StitchPreview stitch={selectedStitch} />
+                </div>
+              </div>
+            </div>
           </label>
         </div>
 
@@ -309,6 +328,101 @@ export default function PatternForm() {
           </section>
         )}
       </div>
+    </div>
+  );
+}
+
+function stitchDescription(stitch: Stitch) {
+  switch (stitch) {
+    case "Half Double Crochet":
+      return "A soft, medium-height fabric with a little more drape.";
+    case "Double Crochet":
+      return "A taller, open stitch that creates a lighter, more flowing fabric.";
+    default:
+      return "A neat, dense stitch with a firm, even texture.";
+  }
+}
+
+function StitchPreview({ stitch }: { stitch: Stitch }) {
+  const rows = 5;
+  const cols = 10;
+
+  return (
+    <div className="h-full min-h-[122px] rounded-xl border border-[#dfd0c0] bg-[#f2e6d8] p-2">
+      <svg
+        viewBox="0 0 320 130"
+        className="h-full min-h-[118px] w-full"
+        role="img"
+        aria-label={`${stitch} crochet stitch preview`}
+      >
+        <rect x="0" y="0" width="320" height="130" rx="12" fill="#ead9c7" />
+        {Array.from({ length: rows }).map((_, row) =>
+          Array.from({ length: cols }).map((__, col) => {
+            const x = 20 + col * 31;
+            const y = 22 + row * 22;
+            const offset = row % 2 === 0 ? 0 : 15.5;
+            const px = x + offset;
+
+            if (stitch === "Double Crochet") {
+              return (
+                <g key={`dc-${row}-${col}`}>
+                  <path
+                    d={`M ${px} ${y + 12} Q ${px} ${y - 3} ${px + 11} ${y + 1} Q ${px + 16} ${y + 7} ${px + 11} ${y + 13}`}
+                    fill="none"
+                    stroke="#9a7557"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={`M ${px + 11} ${y + 1} L ${px + 11} ${y + 18}`}
+                    stroke="#76533d"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                </g>
+              );
+            }
+
+            if (stitch === "Half Double Crochet") {
+              return (
+                <g key={`hdc-${row}-${col}`}>
+                  <path
+                    d={`M ${px} ${y + 11} Q ${px + 8} ${y - 2} ${px + 16} ${y + 10} Q ${px + 8} ${y + 18} ${px} ${y + 11}`}
+                    fill="none"
+                    stroke="#9a7557"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d={`M ${px + 8} ${y + 4} L ${px + 8} ${y + 17}`}
+                    stroke="#76533d"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
+                </g>
+              );
+            }
+
+            return (
+              <g key={`sc-${row}-${col}`}>
+                <path
+                  d={`M ${px} ${y + 10} Q ${px + 7} ${y - 1} ${px + 14} ${y + 10} Q ${px + 7} ${y + 18} ${px} ${y + 10}`}
+                  fill="none"
+                  stroke="#9a7557"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d={`M ${px + 7} ${y + 4} L ${px + 7} ${y + 16}`}
+                  stroke="#76533d"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+              </g>
+            );
+          }),
+        )}
+      </svg>
     </div>
   );
 }
