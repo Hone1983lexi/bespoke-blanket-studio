@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  background: #f4efe9;
-  color: #302b27;
+  background: #e8ddd0;
+  color: #332b25;
 }
 
 html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #f4efe9;
+  background: #e8ddd0;
 }
 
 body {
-  color: #302b27;
+  color: #332b25;
 }
