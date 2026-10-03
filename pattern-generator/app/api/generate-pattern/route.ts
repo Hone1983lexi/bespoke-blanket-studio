@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     ].join("\n");
 
     const response = await openai.responses.parse({
-      model: process.env.OPENAI_MODEL || "gpt-5.6",
+      model: process.env.OPENAI_MODEL || "gpt-6-luna",
       instructions: systemPrompt,
       input: [
         `Starting Chain: ${startingChain}`,
