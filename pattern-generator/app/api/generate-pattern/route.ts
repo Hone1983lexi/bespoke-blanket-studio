@@ -39,7 +39,7 @@ async function hasActiveProSubscription(userId: string) {
     return false;
   }
 
-  const subscriptionId = user.publicMetadata.stripeSubscriptionId;
+  const subscriptionId = user.privateMetadata.stripeSubscriptionId;
   if (typeof subscriptionId !== "string") {
     return false;
   }
