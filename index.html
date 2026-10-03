@@ -944,6 +944,9 @@ document.querySelectorAll('.quote-panel button').forEach(button => {
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.design-dropdown [data-design]').forEach(function(link){
     link.addEventListener('click', function(){
+      /* Preview clicks are handled by the lifelike-preview script.
+         Do not also run the older selection/scroll handler. */
+      if (this.getAttribute('data-preview-only') === 'true') return;
       var value = this.getAttribute('data-design');
       var isStitch = this.getAttribute('data-stitch') === 'true';
       var category = isStitch ? 'Stitch Pattern' : 'Design';
@@ -1116,6 +1119,7 @@ document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll(".design-dropdown-grid a").forEach(function(link,index){
     var value=link.getAttribute("data-design");
     var src=designVisuals[index];
+    link.setAttribute("data-preview-only","true");
     var before=""; 
     link.style.setProperty("--design-photo","url('"+src+"')");
     link.addEventListener("click",function(e){
