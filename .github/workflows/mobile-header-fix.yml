@@ -1,0 +1,42 @@
+name: Fix mobile header
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: !contains(github.event.head_commit.message, 'Fix mobile header')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch mobile header
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+          old = '''@media(max-width:560px){\n  .brand strong{font-size:23px}\n  .hero{min-height:560px}'''
+          new = '''@media(max-width:560px){\n  .nav{padding:9px 14px;gap:10px;min-height:78px}\n  .brand strong{font-size:18px;line-height:1.08;letter-spacing:.045em}\n  .brand span{font-size:8px;letter-spacing:.08em;margin-top:3px}\n  .nav > .btn{padding:10px 13px;font-size:12px;line-height:1.1;border-radius:5px;min-height:48px}\n  .hero{min-height:560px}'''
+          if old in s:
+              s = s.replace(old, new, 1)
+          marker = '</head>'
+          extra = '''<style>\n@media (max-width: 600px) {\n  .nav { padding: 9px 14px !important; min-height: 78px !important; gap: 10px !important; }\n  .brand strong { font-size: 18px !important; line-height: 1.08 !important; letter-spacing: .045em !important; }\n  .brand span { font-size: 8px !important; letter-spacing: .08em !important; margin-top: 3px !important; }\n  .nav > .btn { padding: 10px 13px !important; font-size: 12px !important; line-height: 1.1 !important; min-height: 48px !important; border-radius: 5px !important; }\n}\n</style>\n'''
+          if 'min-height: 78px !important' not in s:
+              s = s.replace(marker, extra + marker, 1)
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+          else
+            git commit -m "Fix mobile header"
+            git push
+          fi
