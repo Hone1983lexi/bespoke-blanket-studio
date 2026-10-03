@@ -882,134 +882,83 @@ body{background:#ead3c2}
 </footer>
 
 
-<script>
-document.querySelectorAll('.quote-toggle').forEach(toggle => {
-  toggle.addEventListener('click', () => {
-    const option = toggle.closest('.quote-option');
-    const open = option.classList.toggle('open');
-    toggle.querySelector('.toggle-plus').textContent = open ? '−' : '+';
-  });
-});
+<script id="site-interactions">
+(function(){
+  "use strict";
 
-const choices = {};
-let feedbackTimer;
+  /* ---------- Quote builder ---------- */
+  var choices={};
+  var feedbackTimer;
 
-document.querySelectorAll('.quote-panel button').forEach(button => {
-  button.addEventListener('click', () => {
-    const choice = button.dataset.choice;
-    const category = choice.split(':')[0];
-    const value = choice.split(':').slice(1).join(':').trim();
-    choices[category] = value;
-
-    const panel = button.closest('.quote-panel');
-    panel.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
-    button.classList.add('selected');
-
-    const option = button.closest('.quote-option');
-    option.classList.add('has-selection');
-
-    // Show the selected value directly in the accordion header.
-    const status = option.querySelector('.toggle-status');
-    if (status) status.textContent = value;
-
-    const summary = document.getElementById('quoteChoices');
-    const values = Object.entries(choices);
-    summary.textContent = values.length
-      ? values.map(([key, value]) => key + ': ' + value).join('  •  ')
-      : 'Nothing selected yet — choose as much or as little as you know.';
-
-    // Give immediate, visible confirmation before closing the panel.
-    const feedback = document.getElementById('choiceFeedback');
-    feedback.textContent = value + ' added ✓';
-    feedback.classList.add('show');
-    clearTimeout(feedbackTimer);
-    feedbackTimer = setTimeout(() => feedback.classList.remove('show'), 1600);
-
-    // Close the option after a short moment so the user sees what was selected.
-    setTimeout(() => {
-      option.classList.remove('open');
-      const plus = option.querySelector('.toggle-plus');
-      if (plus) plus.textContent = '+';
-    }, 250);
-
-    const request = document.getElementById('quoteRequest');
-    const subject = 'Bespoke Blanket Quote — ' + values.map(([k,v]) => k + ': ' + v).join(', ');
-    request.href = 'mailto:bespokeblanketstudio@bespokeblanketstudio.co.uk?subject=' + encodeURIComponent(subject);
-  });
-});
-</script>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  /* Custom design link is a real navigation action, not a photo preview. */
-  var customLink=document.querySelector('.design-dropdown-custom');
-  if(customLink){
-    customLink.addEventListener('click', function(){
-      var menu=document.querySelector('.design-menu');
-      if(menu) menu.classList.remove('dropdown-pinned');
-      var customChoice=document.querySelector('.design-choice[data-choice="Colours: Something completely custom"]');
-      if(customChoice) customChoice.click();
-      var target=document.getElementById('bespoke');
-      if(target) setTimeout(function(){target.scrollIntoView({behavior:'smooth',block:'start'});},50);
+  document.querySelectorAll(".quote-toggle").forEach(function(toggle){
+    toggle.addEventListener("click",function(){
+      var option=toggle.closest(".quote-option");
+      var open=option.classList.toggle("open");
+      var plus=toggle.querySelector(".toggle-plus");
+      if(plus) plus.textContent=open?"−":"+";
     });
+  });
+
+  document.querySelectorAll(".quote-panel button[data-choice]").forEach(function(button){
+    button.addEventListener("click",function(){
+      var choice=button.dataset.choice;
+      if(!choice) return;
+      var split=choice.split(":");
+      var category=split.shift();
+      var value=split.join(":").trim();
+      choices[category]=value;
+
+      var panel=button.closest(".quote-panel");
+      if(panel) panel.querySelectorAll("button").forEach(function(b){b.classList.remove("selected");});
+      button.classList.add("selected");
+
+      var option=button.closest(".quote-option");
+      if(option){
+        option.classList.add("has-selection");
+        var status=option.querySelector(".toggle-status");
+        if(status) status.textContent=value;
+      }
+
+      updateQuoteSummary();
+      var feedback=document.getElementById("choiceFeedback");
+      if(feedback){
+        feedback.textContent=value+" added ✓";
+        feedback.classList.add("show");
+        clearTimeout(feedbackTimer);
+        feedbackTimer=setTimeout(function(){feedback.classList.remove("show");},1600);
+      }
+
+      setTimeout(function(){
+        if(!option) return;
+        option.classList.remove("open");
+        var plus=option.querySelector(".toggle-plus");
+        if(plus) plus.textContent="+";
+      },250);
+    });
+  });
+
+  function updateQuoteSummary(){
+    var summary=document.getElementById("quoteChoices");
+    if(summary){
+      var values=Object.entries(choices);
+      summary.textContent=values.length
+        ? values.map(function(pair){return pair[0]+": "+pair[1];}).join("  •  ")
+        : "Nothing selected yet — choose as much or as little as you know.";
+    }
+    var request=document.getElementById("quoteRequest");
+    if(request){
+      var values=Object.entries(choices);
+      var subject="Bespoke Blanket Quote — "+values.map(function(pair){return pair[0]+": "+pair[1];}).join(", ");
+      request.href="mailto:bespokeblanketstudio@bespokeblanketstudio.co.uk?subject="+encodeURIComponent(subject);
+    }
   }
 
-  document.querySelectorAll('.design-dropdown [data-design]').forEach(function(link){
-    link.addEventListener('click', function(){
-      /* Preview clicks are handled by the lifelike-preview script.
-         Do not also run the older selection/scroll handler. */
-      if (this.getAttribute('data-preview-only') === 'true') return;
-      var value = this.getAttribute('data-design');
-      var isStitch = this.getAttribute('data-stitch') === 'true';
-      var category = isStitch ? 'Stitch Pattern' : 'Design';
-      var choices = document.querySelectorAll('.design-choice[data-choice]');
-      var matched = false;
-      choices.forEach(function(choice){
-        if(choice.getAttribute('data-choice') === category + ': ' + value){
-          choice.click();
-          matched = true;
-        }
-      });
-      if(!matched){
-        var summary = document.getElementById('quoteChoices');
-        if(summary){
-          var empty = 'Nothing selected yet — choose as much or as little as you know.';
-          var current = summary.textContent.replace(empty,'').trim();
-          var lines = current ? current.split(' · ').filter(function(x){
-            return x.indexOf(category + ':') !== 0;
-          }) : [];
-          lines.unshift(category + ': ' + value);
-          summary.textContent = lines.join(' · ');
-        }
-      }
-      var target = document.getElementById('bespoke');
-      if(target) setTimeout(function(){target.scrollIntoView({behavior:'smooth',block:'start'});},50);
-    });
-  });
-});
-</script>
+  function recordChoice(category,value){
+    choices[category]=value;
+    updateQuoteSummary();
+  }
 
-
-<div class="visual-lightbox" id="visualLightbox" aria-hidden="true">
-  <div class="visual-lightbox-backdrop" data-close-lightbox></div>
-  <div class="visual-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="visualLightboxTitle">
-    <button type="button" class="visual-lightbox-close" aria-label="Close preview" data-close-lightbox>×</button>
-    <div class="visual-lightbox-media"><img id="visualLightboxImage" alt=""></div>
-    <div class="visual-lightbox-info">
-      <h3 id="visualLightboxTitle"></h3>
-      <p id="visualLightboxDescription"></p>
-      <div class="visual-lightbox-source" id="visualLightboxSource"></div>
-      <div class="visual-lightbox-actions">
-        <button type="button" id="visualLightboxUse">Choose this style</button>
-        <button type="button" class="secondary" data-close-lightbox>Close preview</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script id="lifelike-preview-behaviour">
-(function(){
+  /* ---------- Crochet photography ---------- */
   var stitchVisuals={
     "Moss Stitch":{
       src:"https://upload.wikimedia.org/wikipedia/commons/4/49/Crochet_Moss_Stitch.jpg",
@@ -1018,10 +967,10 @@ document.addEventListener('DOMContentLoaded', function(){
       sourceUrl:"https://commons.wikimedia.org/wiki/File:Crochet_Moss_Stitch.jpg"
     },
     "Striped":{
-      src:"/crochet_assets/sunset.jpg",
-      description:"A real crocheted blanket photograph showing clear horizontal colour bands.",
-      source:"Bespoke Blanket Studio photo",
-      sourceUrl:""
+      src:"https://images.pexels.com/photos/6773786/pexels-photo-6773786.jpeg?cs=srgb&dl=pexels-rachel-claire-6773786.jpg&fm=jpg",
+      description:"A real photographed blanket showing clear horizontal colour bands and textile texture.",
+      source:"Pexels · Rachel Claire · Free to use",
+      sourceUrl:"https://www.pexels.com/photo/close-up-of-a-stripped-blanket-lying-neatly-on-a-cushion-6773786/"
     },
     "Granny Stripe":{
       src:"/crochet_assets/rainbow.jpg",
@@ -1030,22 +979,22 @@ document.addEventListener('DOMContentLoaded', function(){
       sourceUrl:""
     },
     "Chevron / Ripple":{
-      src:"https://upload.wikimedia.org/wikipedia/commons/6/6b/Cielo_Stitch_pattern.jpg",
-      description:"A real photographed crochet chevron/lace stitch sample with repeating directional movement.",
-      source:"Wikimedia Commons · Lisa Dusseault · CC BY 2.0",
-      sourceUrl:"https://commons.wikimedia.org/wiki/File:Cielo_Stitch_pattern.jpg"
+      src:"https://images.pexels.com/photos/5709767/pexels-photo-5709767.jpeg?cs=srgb&dl=pexels-arina-krasnikova-5709767.jpg&fm=jpg",
+      description:"A real photographed crochet blanket with a clearly visible zigzag/chevron movement.",
+      source:"Pexels · Arina Krasnikova · Free to use",
+      sourceUrl:"https://www.pexels.com/photo/yarn-and-a-book-on-top-of-a-crochet-blanket-5709767/"
     },
     "Floral Granny Squares":{
-      src:"https://upload.wikimedia.org/wikipedia/commons/d/d2/Baby_blanket_from_flower_loom_motifs_complete_view.jpg",
-      description:"A real photographed blanket made from joined floral crochet motifs, giving a clear view of flower-centred squares.",
-      source:"Wikimedia Commons · Teachalakazi · CC BY-SA 3.0",
-      sourceUrl:"https://commons.wikimedia.org/wiki/File:Baby_blanket_from_flower_loom_motifs_complete_view.jpg"
+      src:"https://images.pexels.com/photos/5806996/pexels-photo-5806996.jpeg?cs=srgb&dl=pexels-kseniachernaya-5806996.jpg&fm=jpg",
+      description:"A real close-up photograph of a floral granny-square crochet blanket with clearly defined flower centres.",
+      source:"Pexels · Ksenia Chernaya · Free to use",
+      sourceUrl:"https://www.pexels.com/photo/close-up-shot-of-a-knitted-textile-5806996/"
     },
     "Stitch Sampler":{
-      src:"/crochet_assets/neutral.jpg",
-      description:"A real crocheted blanket photograph used as a tactile reference for a mixed-stitch sampler style.",
-      source:"Bespoke Blanket Studio photo",
-      sourceUrl:""
+      src:"https://images.pexels.com/photos/35285968/pexels-photo-35285968.jpeg?cs=srgb&dl=pexels-magda-ehlers-pexels-35285968.jpg&fm=jpg",
+      description:"A real photographic collection of crochet blankets showing several different textures and stitch treatments.",
+      source:"Pexels · Magda Ehlers · Free to use",
+      sourceUrl:"https://www.pexels.com/photo/colorful-vintage-crochet-blankets-in-stack-35285968/"
     },
     "Filet / Motif Style":{
       src:"https://upload.wikimedia.org/wikipedia/commons/d/de/Filet_crochet_work.jpg",
@@ -1060,6 +1009,7 @@ document.addEventListener('DOMContentLoaded', function(){
       sourceUrl:""
     }
   };
+
   var designVisuals=[
     "/crochet_assets/neutral.jpg","/crochet_assets/sunset.jpg","/crochet_assets/ocean.jpg",
     "/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg","/crochet_assets/star.jpg",
@@ -1070,6 +1020,7 @@ document.addEventListener('DOMContentLoaded', function(){
     "/crochet_assets/memory.jpg","/crochet_assets/pastel.jpg","/crochet_assets/sunset.jpg",
     "/crochet_assets/ocean.jpg","/crochet_assets/pastel.jpg","/crochet_assets/star.jpg"
   ];
+
   var lightbox=document.getElementById("visualLightbox");
   var img=document.getElementById("visualLightboxImage");
   var title=document.getElementById("visualLightboxTitle");
@@ -1077,12 +1028,21 @@ document.addEventListener('DOMContentLoaded', function(){
   var source=document.getElementById("visualLightboxSource");
   var use=document.getElementById("visualLightboxUse");
   var current={category:"",value:""};
-  if(!lightbox)return;
 
-  function openPreview(item){
-    current=item;
+  function pinMenu(){
     var menu=document.querySelector(".design-menu");
     if(menu) menu.classList.add("dropdown-pinned");
+  }
+
+  function unpinMenu(){
+    var menu=document.querySelector(".design-menu");
+    if(menu) menu.classList.remove("dropdown-pinned");
+  }
+
+  function openPreview(item){
+    if(!lightbox) return;
+    current=item;
+    pinMenu();
     img.src=item.src;
     img.alt=item.value+" crochet preview";
     title.textContent=item.value;
@@ -1094,64 +1054,68 @@ document.addEventListener('DOMContentLoaded', function(){
     lightbox.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
   }
+
   function closePreview(){
+    if(!lightbox) return;
     lightbox.classList.remove("open");
     lightbox.setAttribute("aria-hidden","true");
     document.body.style.overflow="";
     img.removeAttribute("src");
-    var menu=document.querySelector(".design-menu");
-    if(menu){
-      menu.classList.add("dropdown-pinned");
-      var trigger=menu.querySelector(".design-menu-trigger");
-      if(trigger){
-        setTimeout(function(){
-          try{ trigger.focus({preventScroll:true}); }catch(e){ trigger.focus(); }
-        },0);
-      }
+    pinMenu();
+    var trigger=document.querySelector(".design-menu-trigger");
+    if(trigger){
+      setTimeout(function(){
+        try{trigger.focus({preventScroll:true});}catch(e){trigger.focus();}
+      },0);
     }
-  }
-  function chooseCurrent(){
-    var wanted=current.category+": "+current.value;
-    var menu=document.querySelector(".design-menu");
-    if(menu) menu.classList.remove("dropdown-pinned");
-    var matched=document.querySelector('.design-choice[data-choice="'+CSS.escape(wanted)+'"]');
-    if(matched){matched.click();}
-    else{
-      var summary=document.getElementById("quoteChoices");
-      if(summary){
-        var empty="Nothing selected yet — choose as much or as little as you know.";
-        var existing=summary.textContent===empty?[]:summary.textContent.split("  •  ").filter(Boolean);
-        existing=existing.filter(function(x){return x.indexOf(current.category+":")!==0;});
-        existing.unshift(wanted);
-        summary.textContent=existing.join("  •  ");
-      }
-    }
-    closePreview();
-    var target=document.getElementById("bespoke");
-    if(target)setTimeout(function(){target.scrollIntoView({behavior:"smooth",block:"start"});},60);
   }
 
+  function chooseCurrent(){
+    if(!current.value) return;
+    var wanted=current.category+": "+current.value;
+    unpinMenu();
+
+    /* If an exact quote-builder choice exists, use it.
+       Otherwise record the preview choice directly in the quote summary. */
+    var exact=document.querySelector('.design-choice[data-choice="'+CSS.escape(wanted)+'"]');
+    if(exact){
+      exact.click();
+    }else{
+      recordChoice(current.category,current.value);
+      var target=document.getElementById("bespoke");
+      if(target) setTimeout(function(){target.scrollIntoView({behavior:"smooth",block:"start"});},60);
+    }
+    closePreview();
+  }
+
+  /* Stitch thumbnails + preview */
   document.querySelectorAll(".stitch-example").forEach(function(link){
-    link.setAttribute("data-preview-only","true");
     var value=link.getAttribute("data-design");
     var item=stitchVisuals[value];
-    if(!item)return;
+    if(!item) return;
+    link.setAttribute("data-preview-only","true");
     var swatch=link.querySelector(".stitch-swatch");
-    if(swatch)swatch.style.backgroundImage="url('"+item.src+"')";
+    if(swatch) swatch.style.backgroundImage="url('"+item.src+"')";
     link.addEventListener("click",function(e){
       e.preventDefault();
-      openPreview({category:"Stitch Pattern",value:value,src:item.src,description:item.description,source:item.source,sourceUrl:item.sourceUrl});
+      e.stopPropagation();
+      openPreview({
+        category:"Stitch Pattern",value:value,src:item.src,
+        description:item.description,source:item.source,sourceUrl:item.sourceUrl
+      });
     });
   });
 
+  /* Design thumbnails + preview */
   document.querySelectorAll(".design-dropdown-grid a").forEach(function(link,index){
     var value=link.getAttribute("data-design");
     var src=designVisuals[index];
+    if(!value||!src) return;
     link.setAttribute("data-preview-only","true");
-    var before=""; 
     link.style.setProperty("--design-photo","url('"+src+"')");
     link.addEventListener("click",function(e){
       e.preventDefault();
+      e.stopPropagation();
       openPreview({
         category:"Design",value:value,src:src,
         description:"Real crochet photography preview for the "+value+" design style.",
@@ -1160,13 +1124,46 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
+  /* Custom design link: close menu and select custom quote option. */
+  var customLink=document.querySelector(".design-dropdown-custom");
+  if(customLink){
+    customLink.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      unpinMenu();
+      var custom=document.querySelector('.design-choice[data-choice="Colours: Something completely custom"]');
+      if(custom) custom.click();
+      var target=document.getElementById("bespoke");
+      if(target) setTimeout(function(){target.scrollIntoView({behavior:"smooth",block:"start"});},60);
+    });
+  }
+
+  /* Lightbox controls */
   document.querySelectorAll("[data-close-lightbox]").forEach(function(el){
-    el.addEventListener("click",closePreview);
+    el.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      closePreview();
+    });
   });
-  use.addEventListener("click",chooseCurrent);
+  if(use) use.addEventListener("click",function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    chooseCurrent();
+  });
   document.addEventListener("keydown",function(e){
-    if(e.key==="Escape" && lightbox.classList.contains("open"))closePreview();
+    if(e.key==="Escape" && lightbox && lightbox.classList.contains("open")) closePreview();
   });
+
+  /* If the menu is opened manually, clear the pinned state only when the user
+     explicitly clicks the trigger to toggle it closed. */
+  var trigger=document.querySelector(".design-menu-trigger");
+  if(trigger){
+    trigger.addEventListener("click",function(){
+      var menu=document.querySelector(".design-menu");
+      if(menu && menu.classList.contains("dropdown-pinned")) menu.classList.remove("dropdown-pinned");
+    });
+  }
 })();
 </script>
 </body>
