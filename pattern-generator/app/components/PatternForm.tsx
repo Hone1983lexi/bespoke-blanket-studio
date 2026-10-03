@@ -1,8 +1,10 @@
 "use client";
 
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
 
 type Stitch = "Single Crochet" | "Half Double Crochet" | "Double Crochet";
+type CheckoutMode = "payment" | "subscription";
 
 type GeneratedPattern = {
   title: string;
@@ -17,6 +19,7 @@ type GeneratedPattern = {
 };
 
 export default function PatternForm() {
+  const { isLoaded, isSignedIn, user } = useUser();
   const [stitchGauge, setStitchGauge] = useState("");
   const [rowGauge, setRowGauge] = useState("");
   const [width, setWidth] = useState("");
@@ -25,6 +28,8 @@ export default function PatternForm() {
   const [pattern, setPattern] = useState<GeneratedPattern | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+
+  const isPro = user?.publicMetadata?.subscriptionStatus === "active";
 
   const blueprint = useMemo(() => {
     const gauge = Number(stitchGauge);
@@ -41,8 +46,48 @@ export default function PatternForm() {
     };
   }, [stitchGauge, rowGauge, width, length]);
 
-  async function generatePattern() {
+  async function startCheckout(mode: CheckoutMode) {
     if (!blueprint) return;
+
+    setIsGenerating(true);
+    setError("");
+    setPattern(null);
+
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode,
+          startingChain: blueprint.startingChain,
+          totalRows: blueprint.totalRows,
+          selectedStitch,
+          stitchGauge: Number(stitchGauge),
+          rowGauge: Number(rowGauge),
+          width: Number(width),
+          length: Number(length),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to start secure checkout.");
+      }
+
+      if (!data.url) {
+        throw new Error("Stripe checkout URL was not returned.");
+      }
+
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setIsGenerating(false);
+    }
+  }
+
+  async function generateWithPro() {
+    if (!blueprint || !isPro) return;
 
     setIsGenerating(true);
     setError("");
@@ -62,7 +107,7 @@ export default function PatternForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Unable to generate pattern.");
+        throw new Error(data.error || "Unable to generate your pattern.");
       }
 
       setPattern(data.pattern);
@@ -76,15 +121,41 @@ export default function PatternForm() {
   return (
     <div className="mx-auto w-full max-w-4xl">
       <div className="rounded-3xl border border-[#cdb5a5] bg-[#e0c4b2] p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-stone-500">
-          Bespoke Crochet
-        </p>
-        <h1 className="mt-2 font-serif text-3xl text-stone-900 sm:text-4xl">
-          Pattern Generator
-        </h1>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-[0.2em] text-stone-500">
+              Bespoke Crochet
+            </p>
+            <h1 className="mt-2 font-serif text-3xl text-stone-900 sm:text-4xl">
+              Pattern Generator
+            </h1>
+          </div>
+          {isLoaded && (
+            <div className="flex items-center gap-3">
+              {isSignedIn ? (
+                <>
+                  <span className="hidden text-right text-xs text-stone-600 sm:block">
+                    {isPro ? "Pro Membership active" : "Signed in"}
+                  </span>
+                  <UserButton />
+                </>
+              ) : (
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="rounded-xl border border-[#b99580] bg-[#f6ebe4] px-4 py-2 text-sm font-medium text-stone-800"
+                  >
+                    Sign in
+                  </button>
+                </SignInButton>
+              )}
+            </div>
+          )}
+        </div>
+
         <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
-          Enter your gauge and finished size. The deterministic Pattern Blueprint
-          is calculated first, then the validated row-by-row pattern is generated.
+          Enter your gauge and finished size. Your blueprint is calculated first,
+          then your paid or Pro generation is validated before AI generation runs.
         </p>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
@@ -156,16 +227,61 @@ export default function PatternForm() {
           </div>
         )}
 
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            disabled={!blueprint || isGenerating}
-            onClick={generatePattern}
-            className="rounded-xl bg-stone-900 px-6 py-3 font-medium text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {isGenerating ? "Generating Pattern..." : "Generate Crochet Pattern →"}
-          </button>
-        </div>
+        <section className="mt-6 rounded-2xl border border-[#cdb5a5] bg-[#ead8cc] p-5 sm:p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <button
+              type="button"
+              disabled={!blueprint || isGenerating}
+              onClick={() => void startCheckout("payment")}
+              className="rounded-xl border border-[#9f7b66] bg-[#f6ebe4] px-5 py-4 text-left font-semibold text-stone-900 shadow-sm transition hover:bg-[#f1e0d5] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <span className="block">Unlock This Pattern Only (£2.99)</span>
+              <span className="mt-1 block text-xs font-normal text-stone-600">
+                One custom pattern · no membership required
+              </span>
+            </button>
+
+            {isSignedIn ? (
+              <button
+                type="button"
+                disabled={!blueprint || isGenerating}
+                onClick={() =>
+                  isPro ? void generateWithPro() : void startCheckout("subscription")
+                }
+                className="rounded-xl bg-[#6f4938] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#59392d] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <span className="block">
+                  {isPro
+                    ? "Generate with Pro Membership"
+                    : "Join Pro Membership (£7.99/mo)"}
+                </span>
+                <span className="mt-1 block text-xs font-normal text-white/80">
+                  {isPro
+                    ? "Unlimited generations included"
+                    : "Unlimited generations · secure recurring billing"}
+                </span>
+              </button>
+            ) : (
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  disabled={!blueprint || isGenerating}
+                  className="rounded-xl bg-[#6f4938] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#59392d] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <span className="block">Join Pro Membership (£7.99/mo)</span>
+                  <span className="mt-1 block text-xs font-normal text-white/80">
+                    Sign in to start your Pro membership
+                  </span>
+                </button>
+              </SignInButton>
+            )}
+          </div>
+
+          <p className="mt-4 text-center text-xs text-stone-600">
+            Secure payments are handled by Stripe. Pro Membership is managed through
+            your authenticated account.
+          </p>
+        </section>
 
         {pattern && (
           <section className="mt-8 rounded-2xl border border-[#cdb5a5] bg-[#f6ebe4]">
