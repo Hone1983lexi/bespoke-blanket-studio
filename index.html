@@ -70,7 +70,10 @@ h2{font-family:Georgia,serif;font-weight:400;font-size:clamp(34px,5vw,52px);marg
   .cards{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .brand strong{font-size:23px}
+  .nav{padding:9px 14px;gap:10px;min-height:78px}
+  .brand strong{font-size:18px;line-height:1.08;letter-spacing:.045em}
+  .brand span{font-size:8px;letter-spacing:.08em;margin-top:3px}
+  .nav > .btn{padding:10px 13px;font-size:12px;line-height:1.1;border-radius:5px;min-height:48px}
   .hero{min-height:560px}
   .hero-inner{padding:55px 18px 38px}
   .hero h1{font-size:42px;line-height:1.02;max-width:520px;margin:12px 0 16px}
@@ -317,6 +320,14 @@ body{background:#d2b29a !important;color:#35271f}
 a{color:#8f573e}
 </style>
 
+<style>
+@media (max-width: 600px) {
+  .nav { padding: 9px 14px !important; min-height: 78px !important; gap: 10px !important; }
+  .brand strong { font-size: 18px !important; line-height: 1.08 !important; letter-spacing: .045em !important; }
+  .brand span { font-size: 8px !important; letter-spacing: .08em !important; margin-top: 3px !important; }
+  .nav > .btn { padding: 10px 13px !important; font-size: 12px !important; line-height: 1.1 !important; min-height: 48px !important; border-radius: 5px !important; }
+}
+</style>
 </head>
 <body>
 
