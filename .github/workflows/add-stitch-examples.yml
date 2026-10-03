@@ -1,0 +1,108 @@
+name: Add stitch pattern examples
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  add-stitch-examples:
+    if: ${{ !contains(github.event.head_commit.message, 'Add visual stitch pattern examples') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add visual stitch examples and improve header contrast
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          old='''<div class="design-dropdown-section-title">Stitch Patterns</div>
+                <div class="design-dropdown-grid">
+                  <a href="#bespoke" data-design="Moss Stitch" data-stitch="true">Moss Stitch</a>
+                  <a href="#bespoke" data-design="Striped" data-stitch="true">Striped</a>
+                  <a href="#bespoke" data-design="Granny Stripe" data-stitch="true">Granny Stripe</a>
+                  <a href="#bespoke" data-design="Chevron / Ripple" data-stitch="true">Chevron / Ripple</a>
+                  <a href="#bespoke" data-design="Floral Granny Squares" data-stitch="true">Floral Granny Squares</a>
+                  <a href="#bespoke" data-design="Stitch Sampler" data-stitch="true">Stitch Sampler</a>
+                  <a href="#bespoke" data-design="Filet / Motif Style" data-stitch="true">Filet / Motif Style</a>
+                  <a href="#bespoke" data-design="Seasonal" data-stitch="true">Seasonal</a>
+                </div>'''
+
+          new='''<div class="design-dropdown-section-title">Stitch Patterns</div>
+                <div class="stitch-example-grid">
+                  <a class="stitch-example" href="#bespoke" data-design="Moss Stitch" data-stitch="true">
+                    <span class="stitch-swatch moss" aria-hidden="true"></span><span><strong>Moss Stitch</strong><small>Textured, neat and reversible</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Striped" data-stitch="true">
+                    <span class="stitch-swatch striped" aria-hidden="true"></span><span><strong>Striped</strong><small>Clean horizontal colour bands</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Granny Stripe" data-stitch="true">
+                    <span class="stitch-swatch granny-stripe" aria-hidden="true"></span><span><strong>Granny Stripe</strong><small>Classic clustered crochet rows</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Chevron / Ripple" data-stitch="true">
+                    <span class="stitch-swatch chevron" aria-hidden="true"></span><span><strong>Chevron / Ripple</strong><small>Repeating peaks and valleys</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Floral Granny Squares" data-stitch="true">
+                    <span class="stitch-swatch floral" aria-hidden="true"></span><span><strong>Floral Granny Squares</strong><small>Flower centres in square motifs</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Stitch Sampler" data-stitch="true">
+                    <span class="stitch-swatch sampler" aria-hidden="true"></span><span><strong>Stitch Sampler</strong><small>A mix of textures and patterns</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Filet / Motif Style" data-stitch="true">
+                    <span class="stitch-swatch filet" aria-hidden="true"></span><span><strong>Filet / Motif Style</strong><small>Openwork and decorative motifs</small></span>
+                  </a>
+                  <a class="stitch-example" href="#bespoke" data-design="Seasonal" data-stitch="true">
+                    <span class="stitch-swatch seasonal" aria-hidden="true"></span><span><strong>Seasonal</strong><small>Patterns inspired by the time of year</small></span>
+                  </a>
+                </div>'''
+
+          if old not in s:
+              raise SystemExit("Stitch pattern block not found; no changes made.")
+          s=s.replace(old,new,1)
+
+          css='''<style id="stitch-example-styles">
+          .stitch-example-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 8px}
+          .stitch-example{display:flex;align-items:center;gap:9px;padding:7px;border-radius:6px;text-decoration:none;background:#604638!important;color:#fff1e8!important;border:1px solid transparent}
+          .stitch-example:hover{background:#8f654f!important;border-color:#b98f77}
+          .stitch-example strong{display:block;font-size:12px;line-height:1.15;color:#fff7f0}
+          .stitch-example small{display:block;margin-top:3px;font-size:9px;line-height:1.2;color:#e7c5b0}
+          .stitch-swatch{display:block;flex:0 0 54px;width:54px;height:42px;border-radius:5px;border:1px solid #b98f77;overflow:hidden;background-color:#d3a98f}
+          .stitch-swatch.moss{background-color:#c58d72;background-image:radial-gradient(circle at 25% 25%,#f1d3bf 0 2px,transparent 2.5px),radial-gradient(circle at 75% 75%,#f1d3bf 0 2px,transparent 2.5px);background-size:12px 12px}
+          .stitch-swatch.striped{background:repeating-linear-gradient(0deg,#c98f72 0 7px,#ead0bd 7px 14px,#9e6955 14px 21px)}
+          .stitch-swatch.granny-stripe{background:repeating-linear-gradient(0deg,#b97d64 0 5px,#e5c2ad 5px 10px,#c58f73 10px 15px,#f0d6c3 15px 20px)}
+          .stitch-swatch.chevron{background-color:#d5a38a;background-image:linear-gradient(135deg,transparent 38%,#f0d1bd 39% 46%,transparent 47%),linear-gradient(45deg,transparent 38%,#8f5c4a 39% 46%,transparent 47%);background-size:22px 22px}
+          .stitch-swatch.floral{background-color:#d9b39d;background-image:radial-gradient(circle at 50% 50%,#e9d0b9 0 4px,transparent 4.5px),radial-gradient(circle at 50% 25%,#a96555 0 4px,transparent 4.5px),radial-gradient(circle at 75% 50%,#a96555 0 4px,transparent 4.5px),radial-gradient(circle at 50% 75%,#a96555 0 4px,transparent 4.5px),radial-gradient(circle at 25% 50%,#a96555 0 4px,transparent 4.5px);background-size:27px 27px}
+          .stitch-swatch.sampler{background:repeating-linear-gradient(0deg,#b97d64 0 5px,#e4c1ac 5px 10px,#9c6754 10px 15px,#d5a38a 15px 20px)}
+          .stitch-swatch.filet{background-color:#e0c0aa;background-image:linear-gradient(45deg,transparent 42%,#a66e59 43% 49%,transparent 50%),linear-gradient(-45deg,transparent 42%,#a66e59 43% 49%,transparent 50%);background-size:16px 16px}
+          .stitch-swatch.seasonal{background:linear-gradient(135deg,#9b6654 0 25%,#d6a184 25% 50%,#ead0bc 50% 75%,#b47a61 75%)}
+          @media(max-width:600px){.stitch-example-grid{grid-template-columns:1fr}.stitch-example{padding:8px}.stitch-swatch{flex-basis:58px;width:58px;height:44px}}
+          </style>
+          '''
+          s=s.replace("</head>",css+"\n</head>",1)
+
+          contrast='''<style id="mobile-header-contrast">
+          .header{background:#4b3429!important;border-bottom-color:#76513f!important}
+          .brand strong,.design-menu-trigger,.nav-simple{color:#fff4ec!important}
+          .brand span,.design-menu-trigger span{color:#e0c1ad!important}
+          .header .btn{color:#fff8f2!important}
+          .design-dropdown{background:#4b3429!important;border-color:#8f654f!important;box-shadow:0 18px 42px rgba(35,24,18,.45)!important}
+          .design-dropdown-title{color:#fff4ec!important}
+          </style>
+          '''
+          s=s.replace("</head>",contrast+"\n</head>",1)
+
+          p.write_text(s,encoding="utf-8")
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "Hone1983lexi"
+          git config user.email "honedanny25@hotmail.com"
+          git add index.html
+          git commit -m "Add visual stitch pattern examples"
+          git push
