@@ -120,13 +120,13 @@ export default function PatternForm() {
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <div className="rounded-3xl border border-[#cdb5a5] bg-[#e0c4b2] p-6 shadow-sm sm:p-8">
+      <div className="rounded-3xl border border-[#ddd2c8] bg-[#fffaf5] p-6 shadow-sm sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-stone-500">
+            <p className="text-sm font-medium uppercase tracking-[0.2em] text-[#756b63]">
               Bespoke Crochet
             </p>
-            <h1 className="mt-2 font-serif text-3xl text-stone-900 sm:text-4xl">
+            <h1 className="mt-2 font-serif text-3xl text-[#302b27] sm:text-4xl">
               Pattern Generator
             </h1>
           </div>
@@ -134,7 +134,7 @@ export default function PatternForm() {
             <div className="flex items-center gap-3">
               {isSignedIn ? (
                 <>
-                  <span className="hidden text-right text-xs text-stone-600 sm:block">
+                  <span className="hidden text-right text-xs text-[#655c55] sm:block">
                     {isPro ? "Pro Membership active" : "Signed in"}
                   </span>
                   <UserButton />
@@ -143,7 +143,7 @@ export default function PatternForm() {
                 <SignInButton mode="modal">
                   <button
                     type="button"
-                    className="rounded-xl border border-[#b99580] bg-[#f6ebe4] px-4 py-2 text-sm font-medium text-stone-800"
+                    className="rounded-xl border border-[#cfc2b7] bg-[#fffaf5] px-4 py-2 text-sm font-medium text-[#3f3731]"
                   >
                     Sign in
                   </button>
@@ -153,7 +153,7 @@ export default function PatternForm() {
           )}
         </div>
 
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#655c55]">
           Enter your gauge and finished size. Your blueprint is calculated first,
           then your paid or Pro generation is validated before AI generation runs.
         </p>
@@ -166,7 +166,7 @@ export default function PatternForm() {
             ["desired-length", "Desired Length", length, setLength, "inches"],
           ].map(([id, label, value, setter, unit]) => (
             <label key={id as string} htmlFor={id as string} className="block">
-              <span className="mb-2 block text-sm font-medium text-stone-800">
+              <span className="mb-2 block text-sm font-medium text-[#3f3731]">
                 {label as string}
               </span>
               <div className="flex">
@@ -177,9 +177,9 @@ export default function PatternForm() {
                   step="0.5"
                   value={value as string}
                   onChange={(e) => (setter as (value: string) => void)(e.target.value)}
-                  className="min-w-0 flex-1 rounded-l-xl border border-[#c7aa97] bg-[#ead8cc] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+                  className="min-w-0 flex-1 rounded-l-xl border border-[#d7cbc1] bg-[#fffdf9] px-4 py-3 outline-none focus:border-[#8a7564] focus:ring-2 focus:ring-[#e5ddd5]"
                 />
-                <span className="flex items-center rounded-r-xl border border-l-0 border-[#c7aa97] bg-[#d8b9a5] px-3 text-xs text-stone-500">
+                <span className="flex items-center rounded-r-xl border border-l-0 border-[#d7cbc1] bg-[#eee6de] px-3 text-xs text-[#756b63]">
                   {unit as string}
                 </span>
               </div>
@@ -187,14 +187,14 @@ export default function PatternForm() {
           ))}
 
           <label htmlFor="selected-stitch" className="block sm:col-span-2">
-            <span className="mb-2 block text-sm font-medium text-stone-800">
+            <span className="mb-2 block text-sm font-medium text-[#3f3731]">
               Selected Stitch
             </span>
             <select
               id="selected-stitch"
               value={selectedStitch}
               onChange={(e) => setSelectedStitch(e.target.value as Stitch)}
-              className="w-full rounded-xl border border-[#c7aa97] bg-[#f6ebe4] px-4 py-3 outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200"
+              className="w-full rounded-xl border border-[#c7aa97] bg-[#fffaf5] px-4 py-3 outline-none focus:border-[#8a7564] focus:ring-2 focus:ring-[#e5ddd5]"
             >
               <option>Single Crochet</option>
               <option>Half Double Crochet</option>
@@ -203,13 +203,13 @@ export default function PatternForm() {
           </label>
         </div>
 
-        <section className="mt-8 rounded-2xl border border-[#cdb5a5] bg-[#ead8cc] p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+        <section className="mt-8 rounded-2xl border border-[#ddd2c8] bg-[#f7f2ed] p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#756b63]">
             Pattern Blueprint
           </p>
 
           {!blueprint ? (
-            <p className="mt-3 text-sm text-stone-600">
+            <p className="mt-3 text-sm text-[#655c55]">
               Enter all four measurements to calculate the blueprint.
             </p>
           ) : (
@@ -222,21 +222,21 @@ export default function PatternForm() {
         </section>
 
         {error && (
-          <div className="mt-6 rounded-xl border border-[#d9aaa0] bg-[#f5dfda] p-4 text-sm text-red-700">
+          <div className="mt-6 rounded-xl border border-[#e0b9b0] bg-[#f9e9e5] p-4 text-sm text-[#9a4f45]">
             {error}
           </div>
         )}
 
-        <section className="mt-6 rounded-2xl border border-[#cdb5a5] bg-[#ead8cc] p-5 sm:p-6">
+        <section className="mt-6 rounded-2xl border border-[#ddd2c8] bg-[#f7f2ed] p-5 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <button
               type="button"
               disabled={!blueprint || isGenerating}
               onClick={() => void startCheckout("payment")}
-              className="rounded-xl border border-[#9f7b66] bg-[#f6ebe4] px-5 py-4 text-left font-semibold text-stone-900 shadow-sm transition hover:bg-[#f1e0d5] disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-[#c5b5a8] bg-[#fffaf5] px-5 py-4 text-left font-semibold text-[#302b27] shadow-sm transition hover:bg-[#f1ebe5] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <span className="block">Unlock This Pattern Only (£2.99)</span>
-              <span className="mt-1 block text-xs font-normal text-stone-600">
+              <span className="mt-1 block text-xs font-normal text-[#655c55]">
                 One custom pattern · no membership required
               </span>
             </button>
@@ -248,14 +248,14 @@ export default function PatternForm() {
                 onClick={() =>
                   isPro ? void generateWithPro() : void startCheckout("subscription")
                 }
-                className="rounded-xl bg-[#6f4938] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#59392d] disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-xl bg-[#705b4b] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#5d4a3d] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span className="block">
                   {isPro
                     ? "Generate with Pro Membership"
                     : "Join Pro Membership (£7.99/mo)"}
                 </span>
-                <span className="mt-1 block text-xs font-normal text-white/80">
+                <span className="mt-1 block text-xs font-normal text-white/85">
                   {isPro
                     ? "Unlimited generations included"
                     : "Unlimited generations · secure recurring billing"}
@@ -266,10 +266,10 @@ export default function PatternForm() {
                 <button
                   type="button"
                   disabled={!blueprint || isGenerating}
-                  className="rounded-xl bg-[#6f4938] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#59392d] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-xl bg-[#705b4b] px-5 py-4 text-left font-semibold text-white shadow-sm transition hover:bg-[#5d4a3d] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <span className="block">Join Pro Membership (£7.99/mo)</span>
-                  <span className="mt-1 block text-xs font-normal text-white/80">
+                  <span className="mt-1 block text-xs font-normal text-white/85">
                     Sign in to start your Pro membership
                   </span>
                 </button>
@@ -277,30 +277,30 @@ export default function PatternForm() {
             )}
           </div>
 
-          <p className="mt-4 text-center text-xs text-stone-600">
+          <p className="mt-4 text-center text-xs text-[#655c55]">
             Secure payments are handled by Stripe. Pro Membership is managed through
             your authenticated account.
           </p>
         </section>
 
         {pattern && (
-          <section className="mt-8 rounded-2xl border border-[#cdb5a5] bg-[#f6ebe4]">
-            <div className="border-b border-[#cdb5a5] p-5 sm:p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+          <section className="mt-8 rounded-2xl border border-[#ddd2c8] bg-[#fffaf5]">
+            <div className="border-b border-[#ddd2c8] p-5 sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#756b63]">
                 Generated Pattern
               </p>
-              <h2 className="mt-2 font-serif text-2xl text-stone-900">{pattern.title}</h2>
-              <p className="mt-2 text-sm text-stone-600">
+              <h2 className="mt-2 font-serif text-2xl text-[#302b27]">{pattern.title}</h2>
+              <p className="mt-2 text-sm text-[#655c55]">
                 {pattern.stitch} · {pattern.startingChain} sts · {pattern.totalRows} rows
               </p>
             </div>
 
-            <div className="divide-y divide-[#cdb5a5]">
+            <div className="divide-y divide-[#ddd2c8]">
               {pattern.rows.map((row) => (
                 <article key={row.rowNumber} className="p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-4">
-                    <h3 className="font-semibold text-stone-900">Row {row.rowNumber}</h3>
-                    <span className="text-xs text-stone-500">{row.stitchCount} sts</span>
+                    <h3 className="font-semibold text-[#302b27]">Row {row.rowNumber}</h3>
+                    <span className="text-xs text-[#756b63]">{row.stitchCount} sts</span>
                   </div>
                   <p className="mt-2 text-sm leading-6 text-stone-700">{row.instruction}</p>
                 </article>
@@ -323,10 +323,10 @@ function BlueprintCard({
   suffix?: string;
 }) {
   return (
-    <div className="rounded-xl border border-[#cdb5a5] bg-[#f6ebe4] p-5">
-      <p className="text-sm text-stone-500">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-stone-900">{value}</p>
-      {suffix && <p className="mt-1 text-xs text-stone-500">{suffix}</p>}
+    <div className="rounded-xl border border-[#ddd2c8] bg-[#fffaf5] p-5">
+      <p className="text-sm text-[#756b63]">{label}</p>
+      <p className="mt-2 text-2xl font-semibold text-[#302b27]">{value}</p>
+      {suffix && <p className="mt-1 text-xs text-[#756b63]">{suffix}</p>}
     </div>
   );
 }
