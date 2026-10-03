@@ -480,6 +480,66 @@ body{background:#ead3c2}
 .stitch-swatch.filet{background-image:url('/crochet_assets/stitches/filet.svg')!important}
 .stitch-swatch.seasonal{background-image:url('/crochet_assets/stitches/seasonal.svg')!important}
 </style>
+
+<style id="lifelike-preview-modal">
+/* Lifelike crochet photography + tap/click-to-expand */
+.stitch-swatch{
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  cursor:zoom-in!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.design-dropdown-grid a::before{
+  cursor:zoom-in!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.visual-lightbox{
+  position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(34,24,18,.82);backdrop-filter:blur(5px);
+}
+.visual-lightbox.open{display:flex}
+.visual-lightbox-backdrop{position:absolute;inset:0}
+.visual-lightbox-dialog{
+  position:relative;z-index:1;width:min(94vw,860px);max-height:92vh;overflow:auto;
+  background:#ead3c2;border:1px solid #a8755d;border-radius:12px;
+  box-shadow:0 24px 70px rgba(0,0,0,.38);padding:16px;
+}
+.visual-lightbox-close{
+  position:absolute;right:12px;top:10px;width:40px;height:40px;border:0;border-radius:50%;
+  background:#4b3429;color:#fff;font-size:25px;line-height:1;cursor:pointer;z-index:2;
+}
+.visual-lightbox-media{
+  background:#3d2d25;border-radius:8px;overflow:hidden;min-height:220px;
+  display:flex;align-items:center;justify-content:center;
+}
+.visual-lightbox-media img{
+  display:block;width:100%;max-height:68vh;object-fit:contain;
+}
+.visual-lightbox-info{padding:15px 5px 3px}
+.visual-lightbox-info h3{
+  margin:0 42px 6px 0;font:400 28px/1.15 Georgia,serif;color:#3e3028;
+}
+.visual-lightbox-info p{margin:0 0 12px;color:#62554d;line-height:1.55;font-size:14px}
+.visual-lightbox-source{font-size:11px;color:#786a61;margin-bottom:14px}
+.visual-lightbox-source a{color:#8e614d}
+.visual-lightbox-actions{display:flex;gap:9px;flex-wrap:wrap}
+.visual-lightbox-actions button{
+  border:1px solid #a8755d;border-radius:6px;padding:11px 15px;background:#a8755d;
+  color:#fff;cursor:pointer;font-size:13px;
+}
+.visual-lightbox-actions button.secondary{
+  background:transparent;color:#7f513d;
+}
+@media(max-width:600px){
+  .visual-lightbox{padding:10px}
+  .visual-lightbox-dialog{width:100%;max-height:94vh;padding:10px;border-radius:10px}
+  .visual-lightbox-media{min-height:180px}
+  .visual-lightbox-media img{max-height:58vh}
+  .visual-lightbox-info h3{font-size:24px}
+}
+</style>
 </head>
 <body>
 
@@ -914,5 +974,168 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
+<div class="visual-lightbox" id="visualLightbox" aria-hidden="true">
+  <div class="visual-lightbox-backdrop" data-close-lightbox></div>
+  <div class="visual-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="visualLightboxTitle">
+    <button type="button" class="visual-lightbox-close" aria-label="Close preview" data-close-lightbox>×</button>
+    <div class="visual-lightbox-media"><img id="visualLightboxImage" alt=""></div>
+    <div class="visual-lightbox-info">
+      <h3 id="visualLightboxTitle"></h3>
+      <p id="visualLightboxDescription"></p>
+      <div class="visual-lightbox-source" id="visualLightboxSource"></div>
+      <div class="visual-lightbox-actions">
+        <button type="button" id="visualLightboxUse">Choose this style</button>
+        <button type="button" class="secondary" data-close-lightbox>Close preview</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="lifelike-preview-behaviour">
+(function(){
+  var stitchVisuals={
+    "Moss Stitch":{
+      src:"https://upload.wikimedia.org/wikipedia/commons/4/49/Crochet_Moss_Stitch.jpg",
+      description:"A real close-up photograph of moss stitch, showing the compact alternating single-crochet and chain texture.",
+      source:"Wikimedia Commons · Stilfehler · CC BY-SA 4.0",
+      sourceUrl:"https://commons.wikimedia.org/wiki/File:Crochet_Moss_Stitch.jpg"
+    },
+    "Striped":{
+      src:"/crochet_assets/sunset.jpg",
+      description:"A real crocheted blanket photograph showing clear horizontal colour bands.",
+      source:"Bespoke Blanket Studio photo",
+      sourceUrl:""
+    },
+    "Granny Stripe":{
+      src:"/crochet_assets/rainbow.jpg",
+      description:"A real crochet blanket photograph using repeated clustered rows and strong colour changes.",
+      source:"Bespoke Blanket Studio photo",
+      sourceUrl:""
+    },
+    "Chevron / Ripple":{
+      src:"https://upload.wikimedia.org/wikipedia/commons/6/6b/Cielo_Stitch_pattern.jpg",
+      description:"A real photographed crochet chevron/lace stitch sample with repeating directional movement.",
+      source:"Wikimedia Commons · Lisa Dusseault · CC BY 2.0",
+      sourceUrl:"https://commons.wikimedia.org/wiki/File:Cielo_Stitch_pattern.jpg"
+    },
+    "Floral Granny Squares":{
+      src:"https://upload.wikimedia.org/wikipedia/commons/d/d2/Baby_blanket_from_flower_loom_motifs_complete_view.jpg",
+      description:"A real photographed blanket made from joined floral crochet motifs, giving a clear view of flower-centred squares.",
+      source:"Wikimedia Commons · Teachalakazi · CC BY-SA 3.0",
+      sourceUrl:"https://commons.wikimedia.org/wiki/File:Baby_blanket_from_flower_loom_motifs_complete_view.jpg"
+    },
+    "Stitch Sampler":{
+      src:"/crochet_assets/neutral.jpg",
+      description:"A real crocheted blanket photograph used as a tactile reference for a mixed-stitch sampler style.",
+      source:"Bespoke Blanket Studio photo",
+      sourceUrl:""
+    },
+    "Filet / Motif Style":{
+      src:"https://upload.wikimedia.org/wikipedia/commons/d/de/Filet_crochet_work.jpg",
+      description:"A real close-up photograph of finished filet crochet with openwork and decorative motifs.",
+      source:"Wikimedia Commons · Geschiedenisnerd · CC0",
+      sourceUrl:"https://commons.wikimedia.org/wiki/File:Filet_crochet_work.jpg"
+    },
+    "Seasonal":{
+      src:"/crochet_assets/star.jpg",
+      description:"A real crocheted blanket photograph used as a seasonal, decorative reference.",
+      source:"Bespoke Blanket Studio photo",
+      sourceUrl:""
+    }
+  };
+  var designVisuals=[
+    "/crochet_assets/neutral.jpg","/crochet_assets/sunset.jpg","/crochet_assets/ocean.jpg",
+    "/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg","/crochet_assets/star.jpg",
+    "/crochet_assets/neutral.jpg","/crochet_assets/pastel.jpg","/crochet_assets/memory.jpg",
+    "/crochet_assets/neutral.jpg","/crochet_assets/star.jpg","/crochet_assets/ocean.jpg",
+    "/crochet_assets/memory.jpg","/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg",
+    "/crochet_assets/neutral.jpg","/crochet_assets/pastel.jpg","/crochet_assets/pastel.jpg",
+    "/crochet_assets/memory.jpg","/crochet_assets/pastel.jpg","/crochet_assets/sunset.jpg",
+    "/crochet_assets/ocean.jpg","/crochet_assets/pastel.jpg","/crochet_assets/star.jpg"
+  ];
+  var lightbox=document.getElementById("visualLightbox");
+  var img=document.getElementById("visualLightboxImage");
+  var title=document.getElementById("visualLightboxTitle");
+  var desc=document.getElementById("visualLightboxDescription");
+  var source=document.getElementById("visualLightboxSource");
+  var use=document.getElementById("visualLightboxUse");
+  var current={category:"",value:""};
+  if(!lightbox)return;
+
+  function openPreview(item){
+    current=item;
+    img.src=item.src;
+    img.alt=item.value+" crochet preview";
+    title.textContent=item.value;
+    desc.textContent=item.description||"Real crochet photography preview.";
+    source.innerHTML=item.sourceUrl
+      ? item.source+" · <a href='"+item.sourceUrl+"' target='_blank' rel='noopener noreferrer'>view image licence/source</a>"
+      : item.source;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+  }
+  function closePreview(){
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden","true");
+    document.body.style.overflow="";
+    img.removeAttribute("src");
+  }
+  function chooseCurrent(){
+    var wanted=current.category+": "+current.value;
+    var matched=document.querySelector('.design-choice[data-choice="'+CSS.escape(wanted)+'"]');
+    if(matched){matched.click();}
+    else{
+      var summary=document.getElementById("quoteChoices");
+      if(summary){
+        var empty="Nothing selected yet — choose as much or as little as you know.";
+        var existing=summary.textContent===empty?[]:summary.textContent.split("  •  ").filter(Boolean);
+        existing=existing.filter(function(x){return x.indexOf(current.category+":")!==0;});
+        existing.unshift(wanted);
+        summary.textContent=existing.join("  •  ");
+      }
+    }
+    closePreview();
+    var target=document.getElementById("bespoke");
+    if(target)setTimeout(function(){target.scrollIntoView({behavior:"smooth",block:"start"});},60);
+  }
+
+  document.querySelectorAll(".stitch-example").forEach(function(link){
+    var value=link.getAttribute("data-design");
+    var item=stitchVisuals[value];
+    if(!item)return;
+    var swatch=link.querySelector(".stitch-swatch");
+    if(swatch)swatch.style.backgroundImage="url('"+item.src+"')";
+    link.addEventListener("click",function(e){
+      e.preventDefault();
+      openPreview({category:"Stitch Pattern",value:value,src:item.src,description:item.description,source:item.source,sourceUrl:item.sourceUrl});
+    });
+  });
+
+  document.querySelectorAll(".design-dropdown-grid a").forEach(function(link,index){
+    var value=link.getAttribute("data-design");
+    var src=designVisuals[index];
+    var before=""; 
+    link.style.setProperty("--design-photo","url('"+src+"')");
+    link.addEventListener("click",function(e){
+      e.preventDefault();
+      openPreview({
+        category:"Design",value:value,src:src,
+        description:"Real crochet photography preview for the "+value+" design style.",
+        source:"Bespoke Blanket Studio photo",sourceUrl:""
+      });
+    });
+  });
+
+  document.querySelectorAll("[data-close-lightbox]").forEach(function(el){
+    el.addEventListener("click",closePreview);
+  });
+  use.addEventListener("click",chooseCurrent);
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape" && lightbox.classList.contains("open"))closePreview();
+  });
+})();
+</script>
 </body>
 </html>
