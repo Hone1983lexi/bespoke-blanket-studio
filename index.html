@@ -942,6 +942,19 @@ document.querySelectorAll('.quote-panel button').forEach(button => {
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+  /* Custom design link is a real navigation action, not a photo preview. */
+  var customLink=document.querySelector('.design-dropdown-custom');
+  if(customLink){
+    customLink.addEventListener('click', function(){
+      var menu=document.querySelector('.design-menu');
+      if(menu) menu.classList.remove('dropdown-pinned');
+      var customChoice=document.querySelector('.design-choice[data-choice="Colours: Something completely custom"]');
+      if(customChoice) customChoice.click();
+      var target=document.getElementById('bespoke');
+      if(target) setTimeout(function(){target.scrollIntoView({behavior:'smooth',block:'start'});},50);
+    });
+  }
+
   document.querySelectorAll('.design-dropdown [data-design]').forEach(function(link){
     link.addEventListener('click', function(){
       /* Preview clicks are handled by the lifelike-preview script.
