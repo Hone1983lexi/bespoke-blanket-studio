@@ -672,15 +672,19 @@ function PatternPreviewWall({
                       (locked ? "blur-[2px] opacity-45" : "opacity-100")
                     }
                   >
-                    <span
-                      className={
-                        selectedStitch === "Single Crochet"
-                          ? "h-[2px] w-2 rounded-full bg-[#72513d]"
-                          : selectedStitch === "Half Double Crochet"
-                            ? "h-2 w-2 rounded-full border-2 border-[#72513d]"
-                            : "h-3 w-[2px] rounded-full bg-[#72513d]"
-                      }
-                    />
+                    {selectedStitch === "Single Crochet" ? (
+                      <span className="relative h-[70%] w-[72%] rounded-[35%] border border-[#9a7559] bg-[#ead1b9] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
+                        <span className="absolute left-[12%] right-[12%] top-1/2 h-px -translate-y-1/2 bg-[#9a7559]/70" />
+                      </span>
+                    ) : selectedStitch === "Half Double Crochet" ? (
+                      <span className="relative h-[74%] w-[62%] rounded-[45%] border-2 border-[#8b684e] bg-[#e5c8ab] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
+                        <span className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 bg-[#9a7559]/60" />
+                      </span>
+                    ) : (
+                      <span className="relative h-[82%] w-[38%] rounded-full border border-[#825d45] bg-[#dfb995] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
+                        <span className="absolute left-1/2 top-[10%] h-[80%] w-px -translate-x-1/2 bg-[#8b684e]/70" />
+                      </span>
+                    )}
                   </span>
                 );
               })}
