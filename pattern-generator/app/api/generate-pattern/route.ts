@@ -188,7 +188,8 @@ async function verifyPaidCheckoutGrant(
   startingChain: number,
   totalRows: number,
   selectedStitch: string,
-  patternStyle: string
+  patternStyle: string,
+  terminology: string
 ) {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   const metadata = session.metadata ?? {};
@@ -253,6 +254,7 @@ async function verifyPaidCheckoutGrant(
     metadata.totalRows !== String(totalRows) ||
     metadata.selectedStitch !== selectedStitch ||
     metadata.patternStyle !== patternStyle ||
+    metadata.terminology !== terminology ||
     metadata.blueprintType !== "crochet-pattern"
   ) {
     return false;
