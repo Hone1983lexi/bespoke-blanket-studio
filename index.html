@@ -684,6 +684,51 @@ body{background:#ead3c2}
   .size-choice small{font-size:12px!important}
 }
 </style>
+<style id="dropdown-content-cleanup">
+.design-dropdown .palette-grid a{
+  position:relative;
+  min-height:74px;
+  display:flex!important;
+  align-items:flex-end;
+  padding:9px!important;
+  overflow:hidden;
+  background-size:cover!important;
+  background-position:center!important;
+  isolation:isolate;
+}
+.design-dropdown .palette-grid a::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(35,24,18,.03),rgba(35,24,18,.68));
+  z-index:-1;
+}
+.design-dropdown .palette-grid a{
+  color:#fff8f2!important;
+  text-shadow:0 1px 3px rgba(0,0,0,.45);
+}
+@media(max-width:600px){
+  .design-dropdown{
+    max-height:calc(100vh - 92px)!important;
+    border-radius:10px!important;
+  }
+  .design-dropdown .palette-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+  .design-dropdown .palette-grid a{
+    min-height:70px!important;
+    font-size:12px!important;
+  }
+  .stitch-example-grid{
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+  }
+  .stitch-example{
+    min-height:66px;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -697,44 +742,29 @@ body{background:#ead3c2}
     <button type="button" class="design-menu-trigger">Designs <span>⌄</span></button>
     <div class="design-dropdown">
       <div class="design-dropdown-title">Choose a style</div>
+
       <div class="design-dropdown-section-title">Colour Palettes</div>
-      <div class="design-dropdown-grid">
+      <div class="design-dropdown-grid palette-grid">
         <a href="#bespoke" data-design="Natural Calm">Natural Calm</a>
         <a href="#bespoke" data-design="Sunset Blocks">Sunset Blocks</a>
         <a href="#bespoke" data-design="Ocean Blue">Ocean Blue</a>
         <a href="#bespoke" data-design="Soft Pastels">Soft Pastels</a>
         <a href="#bespoke" data-design="Rainbow Granny">Rainbow Granny</a>
         <a href="#bespoke" data-design="Star Blanket">Star Blanket</a>
-        <a href="#bespoke" data-design="Woodland">Woodland</a>
-        <a href="#bespoke" data-design="Wildflower">Wildflower</a>
-        <a href="#bespoke" data-design="Heritage">Heritage</a>
-        <a href="#bespoke" data-design="Monochrome">Monochrome</a>
-        <a href="#bespoke" data-design="Modern Geometric">Modern Geometric</a>
-        <a href="#bespoke" data-design="Coastal Sand">Coastal Sand</a>
-        <a href="#bespoke" data-design="Checkerboard">Checkerboard</a>
-        <a href="#bespoke" data-design="Floral Garden">Floral Garden</a>
-        <a href="#bespoke" data-design="Granny Stripe">Granny Stripe</a>
-        <a href="#bespoke" data-design="Chunky Texture">Chunky Texture</a>
-        <a href="#bespoke" data-design="Floral Meadow">Floral Meadow</a>
-        <a href="#bespoke" data-design="Vintage Rose">Vintage Rose</a>
-        <a href="#bespoke" data-design="Botanical Garden">Botanical Garden</a>
-        <a href="#bespoke" data-design="Cottage Garden">Cottage Garden</a>
-        <a href="#bespoke" data-design="Autumn Harvest">Autumn Harvest</a>
-        <a href="#bespoke" data-design="Winter Snow">Winter Snow</a>
-        <a href="#bespoke" data-design="Spring Meadow">Spring Meadow</a>
-        <a href="#bespoke" data-design="Christmas Cheer">Christmas Cheer</a>
       </div>
+
       <div class="design-dropdown-section-title">Pattern Styles</div>
       <div class="stitch-example-grid">
-        <a class="stitch-example" href="#bespoke" data-design="Moss Stitch" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/neutral.jpg" alt="Moss stitch blanket inspiration"><span><strong>Moss Stitch</strong><small>Textured, neat and beautifully understated</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Striped" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/ocean.jpg" alt="Striped crochet blanket inspiration"><span><strong>Striped</strong><small>Clean colour bands with a relaxed rhythm</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Granny Stripe" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/rainbow.jpg" alt="Granny stripe blanket inspiration"><span><strong>Granny Stripe</strong><small>Classic clustered rows with plenty of colour</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Chevron / Ripple" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/pastel.jpg" alt="Chevron ripple blanket inspiration"><span><strong>Chevron / Ripple</strong><small>Flowing peaks and valleys across the blanket</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Floral Granny Squares" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/memory.jpg" alt="Floral granny square blanket inspiration"><span><strong>Floral Granny Squares</strong><small>Decorative flower motifs joined into a blanket</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Stitch Sampler" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/baby-classic.jpg" alt="Crochet stitch sampler blanket inspiration"><span><strong>Stitch Sampler</strong><small>A collection of textures and patterns</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Filet / Motif Style" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/star.jpg" alt="Decorative crochet motif blanket inspiration"><span><strong>Filet / Motif Style</strong><small>Openwork or decorative motifs</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Seasonal" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/baby-star.jpg" alt="Seasonal crochet blanket inspiration"><span><strong>Seasonal</strong><small>Designs inspired by celebrations and the seasons</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Moss Stitch" data-stitch="true"><img class="stitch-swatch-photo" alt="Moss Stitch crochet preview"><span><strong>Moss Stitch</strong><small>Textured, neat and beautifully understated</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Striped" data-stitch="true"><img class="stitch-swatch-photo" alt="Striped crochet preview"><span><strong>Striped</strong><small>Clean colour bands with a relaxed rhythm</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Granny Stripe" data-stitch="true"><img class="stitch-swatch-photo" alt="Granny Stripe crochet preview"><span><strong>Granny Stripe</strong><small>Classic clustered rows with plenty of colour</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Chevron / Ripple" data-stitch="true"><img class="stitch-swatch-photo" alt="Chevron Ripple crochet preview"><span><strong>Chevron / Ripple</strong><small>Flowing peaks and valleys across the blanket</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Floral Granny Squares" data-stitch="true"><img class="stitch-swatch-photo" alt="Floral Granny Squares crochet preview"><span><strong>Floral Granny Squares</strong><small>Decorative flower motifs joined into a blanket</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Stitch Sampler" data-stitch="true"><img class="stitch-swatch-photo" alt="Stitch Sampler crochet preview"><span><strong>Stitch Sampler</strong><small>A collection of textures and patterns</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Filet / Motif Style" data-stitch="true"><img class="stitch-swatch-photo" alt="Filet Motif crochet preview"><span><strong>Filet / Motif Style</strong><small>Openwork and decorative motifs</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Seasonal" data-stitch="true"><img class="stitch-swatch-photo" alt="Seasonal crochet preview"><span><strong>Seasonal</strong><small>Decorative designs inspired by the seasons</small></span></a>
       </div>
+
       <a class="design-dropdown-custom" href="#bespoke" data-design="Custom design">Don't see your style? Create something completely custom →</a>
     </div>
   </div>
@@ -1189,13 +1219,7 @@ body{background:#ead3c2}
 
   var designVisuals=[
     "/crochet_assets/neutral.jpg","/crochet_assets/sunset.jpg","/crochet_assets/ocean.jpg",
-    "/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg","/crochet_assets/star.jpg",
-    "/crochet_assets/neutral.jpg","/crochet_assets/pastel.jpg","/crochet_assets/memory.jpg",
-    "/crochet_assets/neutral.jpg","/crochet_assets/star.jpg","/crochet_assets/ocean.jpg",
-    "/crochet_assets/memory.jpg","/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg",
-    "/crochet_assets/neutral.jpg","/crochet_assets/pastel.jpg","/crochet_assets/pastel.jpg",
-    "/crochet_assets/memory.jpg","/crochet_assets/pastel.jpg","/crochet_assets/sunset.jpg",
-    "/crochet_assets/ocean.jpg","/crochet_assets/pastel.jpg","/crochet_assets/star.jpg"
+    "/crochet_assets/pastel.jpg","/crochet_assets/rainbow.jpg","/crochet_assets/star.jpg"
   ];
 
   var lightbox=document.getElementById("visualLightbox");
@@ -1271,8 +1295,11 @@ body{background:#ead3c2}
     var item=stitchVisuals[value];
     if(!item) return;
     link.setAttribute("data-preview-only","true");
-    var swatch=link.querySelector(".stitch-swatch");
-    if(swatch) swatch.style.backgroundImage="url('"+item.src+"')";
+    var swatch=link.querySelector(".stitch-swatch-photo");
+    if(swatch){
+      swatch.src=item.src;
+      swatch.alt=value+" crochet preview";
+    }
     link.addEventListener("click",function(e){
       e.preventDefault();
       e.stopPropagation();
