@@ -3,13 +3,13 @@ import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
+import { STITCH_LIBRARY } from "../../lib/stitch-library";
 
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const STITCHES = ["Single Crochet", "Half Double Crochet", "Double Crochet"] as const;
-const PATTERN_STYLES = ["Plain", "Striped", "Moss Stitch", "Granny Stripe", "Chevron / Ripple", "Stitch Sampler"] as const;
+const STITCHES = STITCH_LIBRARY.map((recipe) => recipe.name);
 const TERMINOLOGIES = ["UK", "US"] as const;
 type CheckoutMode = "payment" | "subscription";
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
       !width ||
       !length ||
       !STITCHES.includes(selectedStitch) ||
-      !PATTERN_STYLES.includes(patternStyle) ||
+      !STITCHES.includes(patternStyle) ||
       !TERMINOLOGIES.includes(terminology)
     ) {
       return NextResponse.json({ error: "Invalid pattern measurements." }, { status: 400 });
