@@ -128,7 +128,7 @@ export async function POST(request: Request) {
         ...metadata,
         plan: mode === "subscription" ? "pro" : "one-off",
       },
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancelled`,
       ...(mode === "subscription"
         ? { payment_method_collection: "always" as const }
