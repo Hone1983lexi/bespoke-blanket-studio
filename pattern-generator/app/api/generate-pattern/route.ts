@@ -60,8 +60,29 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
     const colourName = c(r);
     if (style === "Moss / Linen") {
       const dc = terminology === "UK" ? "dc" : "sc";
-      if (r===1) push(r, "With "+colourName+", ch "+chain+". 1 "+dc+" in 2nd ch from hook, *ch 1, skip 1 ch, 1 "+dc+" in next ch; repeat across. Turn.", Math.ceil(chain/2), Math.ceil(chain/2)+" "+dc+" + chain-1 spaces");
-      else push(r, (r%2===1 ? "Change to "+colourName+". " : "")+"Ch 1 and turn. 1 "+dc+" in each ch-1 space across, working 1 dc in the final edge stitch. Turn.", Math.ceil(chain/2), Math.ceil(chain/2)+" "+dc+" + chain-1 spaces");
+      const miss = terminology === "UK" ? "miss" : "skip";
+      const stitchCount = Math.floor((chain - 1) / 2);
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 3rd ch from hook (the 2 missed chains count as 1 " + dc + " and 1 ch). " +
+            "Repeat " + (stitchCount - 1) + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn.",
+          stitchCount,
+          stitchCount + " " + dc + " + " + (stitchCount - 1) + " ch-1 spaces",
+        );
+      } else {
+        const change = r % 2 === 1 ? "Change to " + colourName + ". " : "";
+        push(
+          r,
+          change +
+            "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. " +
+            "Repeat " + (stitchCount - 2) + " times: ch 1, " + miss + " 1 " + dc + ", 1 " + dc + " in the next ch-1 space. " +
+            "Turn.",
+          stitchCount,
+          stitchCount + " " + dc + " stitches worked into " + (stitchCount - 1) + " ch-1 spaces",
+        );
+      }
       continue;
     }
     if (style === "Lemon Peel") {
