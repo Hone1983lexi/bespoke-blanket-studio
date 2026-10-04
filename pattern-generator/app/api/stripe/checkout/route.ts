@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { STITCH_LIBRARY } from "../../lib/stitch-library";
+import { STITCH_LIBRARY } from "../../../lib/stitch-library";
 
 export const runtime = "nodejs";
 
