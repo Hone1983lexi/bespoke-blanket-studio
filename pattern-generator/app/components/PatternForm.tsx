@@ -2,40 +2,13 @@
 
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
+import { STITCH_CATEGORIES, STITCH_LIBRARY, type StitchRecipe } from "../lib/stitch-library";
 
-type Stitch = "Single Crochet" | "Half Double Crochet" | "Double Crochet";
-type PatternStyle =
-  | "Plain"
-  | "Moss Stitch"
-  | "Striped"
-  | "Granny Stripe"
-  | "Chevron / Ripple"
-  | "Stitch Sampler";
+type Stitch = StitchRecipe["name"];
+type PatternStyle = Stitch;
 type CheckoutMode = "payment" | "subscription";
 
-const STITCH_OPTIONS: Array<{ name: Stitch; description: string }> = [
-  {
-    name: "Single Crochet",
-    description: "Dense, neat and structured with a firm everyday fabric.",
-  },
-  {
-    name: "Half Double Crochet",
-    description: "Soft medium-height texture with a little more drape.",
-  },
-  {
-    name: "Double Crochet",
-    description: "Taller and more open for a lighter, flowing fabric.",
-  },
-];
-
-const STYLE_OPTIONS: Array<{ name: PatternStyle; description: string }> = [
-  { name: "Plain", description: "Clean, even rows that let your colours lead." },
-  { name: "Moss Stitch", description: "Classic linen/moss texture using single crochet and chain-1 spaces." },
-  { name: "Striped", description: "Bold horizontal colour bands across the blanket." },
-  { name: "Granny Stripe", description: "Traditional 3-double-crochet clusters worked into spaces." },
-  { name: "Chevron / Ripple", description: "A true repeating ripple with matched increases and decreases." },
-  { name: "Stitch Sampler", description: "Alternating rows of single, half-double and double crochet." },
-];
+const STITCH_OPTIONS = STITCH_LIBRARY;
 
 const PALETTES = [
   { name: "Warm Neutral", colors: ["#ead8c8", "#c7a98a", "#9b7659", "#6d5547"] },
@@ -75,7 +48,7 @@ export default function PatternForm() {
   const [rowGauge, setRowGauge] = useState("");
   const [width, setWidth] = useState("");
   const [length, setLength] = useState("");
-  const [selectedStitch, setSelectedStitch] = useState<Stitch>("Single Crochet");
+  const [selectedStitch, setSelectedStitch] = useState<Stitch>("Plain");
   const [terminology, setTerminology] = useState<"UK" | "US">("UK");
   const [selectedStyle, setSelectedStyle] = useState<PatternStyle>("Plain");
   const [selectedPalette, setSelectedPalette] = useState("Warm Neutral");
@@ -379,31 +352,62 @@ export default function PatternForm() {
           ))}
 
           <section className="sm:col-span-2">
-            <div className="rounded-2xl border border-[#cdbca9] bg-[#fbf6ef] p-4 sm:p-5">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ead8c8] text-sm font-bold text-[#72513d]">?</div>
-                <div>
-                  <p className="text-sm font-semibold text-[#302b27]">Not sure what gauge means?</p>
-                  <p className="mt-1 text-sm leading-6 text-[#66594f]">Gauge is simply how tightly or loosely you crochet. Make a small tension swatch, measure 4 inches (10 cm), and count the stitches and rows inside that area. Those two numbers tell the generator how many stitches and rows your blanket needs.</p>
-                </div>
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <span className="mb-2 block text-sm font-medium text-[#46392f]">Stitch Pattern</span>
+                <p className="text-xs text-[#78695d]">Choose a real stitch construction. Every option below has its own foundation rule, turning chain and pattern recipe.</p>
               </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border border-[#d2c0ad] bg-[#f7eee4] p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#78695d]">Stitch gauge</p>
-                  <p className="mt-2 text-lg tracking-[0.22em] text-[#72513d]">○ ○ ○ ○ ○ ○ ○ ○</p>
-                  <p className="mt-1 text-xs text-[#78695d]">Count across 4 in / 10 cm → controls width</p>
-                </div>
-                <div className="rounded-xl border border-[#d2c0ad] bg-[#f7eee4] p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#78695d]">Row gauge</p>
-                  <div className="mt-2 space-y-0.5 text-lg leading-4 text-[#72513d]"><div>────────</div><div>────────</div><div>────────</div><div>────────</div></div>
-                  <p className="mt-1 text-xs text-[#78695d]">Count rows in 4 in / 10 cm → controls length</p>
-                </div>
+              <span className="rounded-full border border-[#d2c0ad] bg-[#eee2d6] px-3 py-1 text-[11px] font-semibold text-[#72513d]">{selectedStitch}</span>
+            </div>
+            <div className="mt-4 space-y-5">
+              {STITCH_CATEGORIES.map((category) => {
+                const options = STITCH_OPTIONS.filter((option) => option.category === category);
+                if (!options.length) return null;
+                return (
+                  <div key={category}>
+                    <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#78695d]">{category}</h3>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {options.map((option) => (
+                        <button key={option.id} type="button" onClick={() => { setSelectedStitch(option.name); setSelectedStyle(option.name); }} aria-pressed={selectedStitch === option.name}
+                          className={"overflow-hidden rounded-2xl border text-left transition-all " + (selectedStitch === option.name ? "border-[#9b6d52] bg-[#f2e2d5] ring-2 ring-[#d9bca5]" : "border-[#d2c0ad] bg-[#fbf6ef] hover:border-[#b99b84]")}>
+                          <div className="h-24 border-b border-[#d2c0ad] bg-[#ead8c8]">
+                            <PatternStylePreview style={option.name} colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors} />
+                          </div>
+                          <div className="p-3">
+                            <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
+                            <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
+                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{terminology === "UK" ? option.uk : option.us} · chain multiple {option.foundation.multiple} + {option.foundation.add}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="sm:col-span-2">
+            <div className="rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-4">
+              <p className="text-sm font-semibold text-[#302b27]">Pattern terminology</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {(["UK","US"] as const).map((option) => (
+                  <button key={option} type="button" onClick={() => setTerminology(option)} className={"rounded-xl border px-4 py-3 text-sm font-semibold " + (terminology === option ? "border-[#9b6d52] bg-[#f2e2d5]" : "border-[#d2c0ad] bg-[#f7eee4]")}>{option === "UK" ? "UK crochet terms" : "US crochet terms"}</button>
+                ))}
               </div>
-              <p className="mt-3 text-xs leading-5 text-[#78695d]">Example: 16 stitches and 12 rows per 4 in / 10 cm means your 120 cm blanket is calculated from that personal gauge, rather than a generic estimate.</p>
+              <p className="mt-3 text-xs leading-5 text-[#78695d]">UK: dc = US sc · htr = US hdc · tr = US dc. The selected stitch shows its correct terminology above.</p>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-[#cdbca9] bg-[#eee2d6] px-4 py-3">
-              <p className="text-xs leading-5 text-[#66594f]"><strong className="text-[#46392f]">How to measure:</strong> crochet a tension square larger than 10 × 10 cm, lay it flat without stretching, then count the centre 10 cm.</p>
+          </section>
+
+          <section className="sm:col-span-2">
+            <div className="rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-4">
+              <p className="text-sm font-semibold text-[#302b27]">Colour palette</p>
+              <p className="mt-1 text-xs text-[#78695d]">Choose the colours used by the generated pattern.</p>
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+                {PALETTES.map((palette) => <button key={palette.name} type="button" onClick={() => setSelectedPalette(palette.name)} className={"rounded-xl border p-2 " + (selectedPalette === palette.name ? "border-[#9b6d52] bg-[#f7eee4]" : "border-transparent hover:border-[#d2c0ad]")}><span className="flex h-9 overflow-hidden rounded-lg border border-[#d2c0ad]">{palette.colors.map((color) => <span key={color} className="flex-1" style={{backgroundColor:color}} />)}</span><span className="mt-1 block truncate text-[10px] text-[#66594f]">{palette.name}</span></button>)}
+              </div>
             </div>
+          </section>
             <div className="mt-6 flex items-end justify-between gap-3">
               <div>
                 <span className="mb-2 block text-sm font-medium text-[#46392f]">
