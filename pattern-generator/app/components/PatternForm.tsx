@@ -259,6 +259,10 @@ export default function PatternForm() {
           patternStyle: selectedStyle,
           terminology,
           palette: selectedPalette,
+          stitchGauge: Number(stitchGauge),
+          rowGauge: Number(rowGauge),
+          width: Number(width),
+          length: Number(length),
         }),
       });
 
