@@ -177,7 +177,7 @@ export function buildRows(
       const laterTr = v * 2 + 2;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. Work (1 ${tr}, ch 1, 1 ${tr}) in the 5th ch from hook to make the first V-stitch. Then repeat ${v - 1} times: ${miss} 2 chains after the V-stitch, then work (1 ${tr}, ch 1, 1 ${tr}) in the next chain to make the next V-stitch. After the final V-stitch, ${miss} 1 chain, then work 1 ${tr} in the final chain. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work (1 ${tr}, ch 1, 1 ${tr}) in the 5th ch from hook to make the first V-stitch. After each V-stitch, ${miss} 2 chains, then work (1 ${tr}, ch 1, 1 ${tr}) in the next chain to make the next V-stitch. Repeat until you have made ${v} V-stitches in total. After the final V-stitch, ${miss} 1 chain, then work 1 ${tr} in the final chain. Turn your work.`,
           row1Tr, `${v} V-stitches + 1 edge ${tr} = ${row1Tr} ${tr} stitches + ${v} ch-1 spaces`);
       } else {
         push(rows, r,
