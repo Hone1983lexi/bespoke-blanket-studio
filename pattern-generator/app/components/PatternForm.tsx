@@ -645,7 +645,7 @@ function PatternPreviewWall({
                 Visual pattern
               </p>
               <p className="mt-1 text-sm text-[#66594f]">
-                Your {selectedStitch.toLowerCase()} pattern building row by row
+                A tactile preview of your {selectedStitch.toLowerCase()} crochet fabric
               </p>
             </div>
             <span className="rounded-full border border-[#d2c0ad] bg-[#eee2d6] px-3 py-1 text-xs font-medium text-[#72513d]">
@@ -653,48 +653,81 @@ function PatternPreviewWall({
             </span>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded-xl border border-[#cdb9a5] bg-[#ead9c7] p-2">
+          <div className="mt-4 overflow-hidden rounded-2xl border border-[#cdb9a5] bg-[#d9bea0] p-2">
             <div
-              className="grid gap-[2px] rounded-lg bg-[#dbc3ad] p-2"
-              style={{
-                gridTemplateColumns: "repeat(20, minmax(0, 1fr))",
-              }}
-              aria-label={"Visual preview of your " + selectedStitch.toLowerCase() + " blanket pattern"}
+              className="relative overflow-hidden rounded-xl border border-[#c7a98a] bg-[#e7ceb2] p-3 shadow-[inset_0_2px_8px_rgba(114,81,61,0.12)]"
+              aria-label={"Visual crochet fabric preview of your " + selectedStitch.toLowerCase() + " blanket pattern"}
             >
-              {Array.from({ length: 240 }, (_, index) => {
-                const visualRow = Math.floor(index / 20) + 1;
-                const locked = visualRow > 3;
-                return (
-                  <span
-                    key={index}
-                    className={
-                      "relative flex aspect-[1.7] items-center justify-center rounded-[2px] bg-[#f7eee4] transition-all duration-300 " +
-                      (locked ? "blur-[2px] opacity-45" : "opacity-100")
-                    }
-                  >
-                    {selectedStitch === "Single Crochet" ? (
-                      <span className="relative h-[70%] w-[72%] rounded-[35%] border border-[#9a7559] bg-[#ead1b9] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
-                        <span className="absolute left-[12%] right-[12%] top-1/2 h-px -translate-y-1/2 bg-[#9a7559]/70" />
-                      </span>
-                    ) : selectedStitch === "Half Double Crochet" ? (
-                      <span className="relative h-[74%] w-[62%] rounded-[45%] border-2 border-[#8b684e] bg-[#e5c8ab] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-                        <span className="absolute left-1/2 top-[14%] h-[72%] w-px -translate-x-1/2 bg-[#9a7559]/60" />
-                      </span>
-                    ) : (
-                      <span className="relative h-[82%] w-[38%] rounded-full border border-[#825d45] bg-[#dfb995] shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-                        <span className="absolute left-1/2 top-[10%] h-[80%] w-px -translate-x-1/2 bg-[#8b684e]/70" />
-                      </span>
-                    )}
-                  </span>
-                );
-              })}
+              <div className="space-y-[3px]">
+                {Array.from({ length: 12 }, (_, rowIndex) => {
+                  const previewRow = rowIndex + 1;
+                  const locked = previewRow > 3;
+
+                  return (
+                    <div
+                      key={previewRow}
+                      className={
+                        "relative flex h-5 items-center justify-center gap-[3px] overflow-hidden rounded-sm px-1 transition-all duration-500 " +
+                        (locked ? "blur-[3px] opacity-35" : "opacity-100")
+                      }
+                    >
+                      {Array.from({ length: 28 }, (_, stitchIndex) => {
+                        const offset =
+                          selectedStitch === "Double Crochet"
+                            ? (rowIndex % 2 === 0 ? stitchIndex % 2 : (stitchIndex + 1) % 2)
+                            : rowIndex % 2;
+
+                        if (selectedStitch === "Double Crochet") {
+                          return (
+                            <span
+                              key={stitchIndex}
+                              className="relative h-5 w-3 shrink-0"
+                            >
+                              <span className="absolute left-1/2 top-0 h-4 w-[3px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
+                              <span className="absolute left-1/2 top-[6px] h-[3px] w-3 -translate-x-1/2 rounded-full bg-[#9a7559]" />
+                            </span>
+                          );
+                        }
+
+                        if (selectedStitch === "Half Double Crochet") {
+                          return (
+                            <span
+                              key={stitchIndex}
+                              className="relative h-4 w-[10px] shrink-0"
+                            >
+                              <span className="absolute inset-x-0 top-1/2 h-[7px] -translate-y-1/2 rounded-[45%] border-2 border-[#8f6b51] bg-[#e1c29f]" />
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <span
+                            key={stitchIndex}
+                            className="relative h-4 w-[11px] shrink-0"
+                          >
+                            <span
+                              className={
+                                "absolute left-1/2 top-1/2 h-[7px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
+                                (offset ? "rotate-[3deg]" : "-rotate-[3deg]")
+                              }
+                            />
+                            <span className="absolute left-[2px] right-[2px] top-1/2 h-px bg-[#9a7559]/60" />
+                          </span>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#c9aa8a]/45" />
             </div>
 
             <div className="mt-3 flex items-center justify-between text-[11px] font-medium text-[#78695d]">
               <span>Rows 1–3 visible</span>
               <span>{Math.max(0, blueprint.totalRows - 3)} rows protected</span>
             </div>
-          </div>
+          </div>          </div>
         </div>
       </div>
 
