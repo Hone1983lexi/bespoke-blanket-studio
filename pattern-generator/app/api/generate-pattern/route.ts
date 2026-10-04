@@ -92,133 +92,84 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       continue;
     }
     if (style === "Lemon Peel") {
-      const sc = terminology === "UK" ? "dc" : "sc";
-      const dc = terminology === "UK" ? "tr" : "dc";
-      const change = (r > 1 && r % 2 === 1) ? "Change to " + colourName + ". " : "";
-
+      const short = terminology === "UK" ? "dc" : "sc";
+      const tall = terminology === "UK" ? "tr" : "dc";
+      const change = r > 1 && r % 2 === 1 ? "Change to " + colourName + ". " : "";
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". 1 " + sc + " in 2nd ch from hook, 1 " + dc +
-            " in next ch; repeat this alternating sequence across to the end. Turn your work.",
-          stitches,
-          stitches + " stitches (alternating " + sc + " and " + dc + ")",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". Work 1 " + short + " in 2nd ch from hook, 1 " + tall +
+          " in next ch; repeat this 2-stitch sequence across to the final chain. Turn your work.",
+          stitches, stitches + " stitches: alternating " + short + " and " + tall + ".");
       } else {
-        push(
-          r,
-          change + "Ch 1 (does not count as a stitch). 1 " + sc + " in the first stitch, 1 " + dc +
-            " in the next stitch; repeat across, working the " + sc + " into each previous " + dc +
-            " and the " + dc + " into each previous " + sc + ". Turn your work.",
-          stitches,
-          stitches + " stitches",
-        );
+        push(r, change + "Ch 1 (does not count as a stitch). Work 1 " + tall + " in the first " + short +
+          " below, then 1 " + short + " in the next " + tall + " below; repeat this alternating sequence across. Turn your work.",
+          stitches, stitches + " stitches.");
       }
       continue;
     }
 
     if (style === "Granny Stripe") {
-      const edge = terminology === "UK" ? "dc" : "sc";
       const tr = terminology === "UK" ? "tr" : "dc";
+      const dc = terminology === "UK" ? "dc" : "sc";
       const change = r > 1 && r % 2 === 1 ? "Change to " + colourName + ". " : "";
-
+      const clusters = Math.max(1, Math.floor((stitches - 4) / 3));
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". 1 " + edge + " in 2nd ch from hook and in each ch across. Turn your work.",
-          stitches,
-          stitches + " stitches",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook and in each ch across. Turn your work.",
+          stitches, stitches + " " + dc + " stitches.");
       } else if (r === 2) {
-        push(
-          r,
-          "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
-            " in the first stitch; *miss 2 stitches, work 3 " + tr + " in the next stitch; repeat from * until 3 stitches remain, miss 2 stitches, work 2 " +
-            tr + " in the last stitch. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
+          " in the stitch at the base of the ch-3. Repeat " + clusters + " times: miss 2 stitches, work 3 " + tr +
+          " in the next stitch. Miss 2 stitches, work 2 " + tr + " in the last stitch. Turn your work.",
+          stitches, stitches + " stitches.");
       } else if (r % 2 === 1) {
-        push(
-          r,
-          change + "Ch 3 (counts as 1 " + tr + "). Miss the next stitch; work 3 " + tr +
-            " in each space between clusters across. At the end, work 1 " + tr +
-            " in the top of the previous turning chain. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, change + "Ch 3 (counts as 1 " + tr + "). Work 3 " + tr +
+          " in the first space between clusters. Repeat the 3-" + tr +
+          " cluster in every remaining space between clusters. Finish with 1 " + tr +
+          " in the top of the previous turning chain. Turn your work.",
+          stitches, stitches + " stitches.");
       } else {
-        push(
-          r,
-          change + "Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
-            " in the first space between the edge stitches, then 3 " + tr +
-            " in each space between clusters across. Finish with 1 " + tr +
-            " in the top of the previous turning chain. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, change + "Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
+          " in the first space, then 3 " + tr + " in every space between clusters across. Work 2 " +
+          tr + " in the final edge space. Turn your work.", stitches, stitches + " stitches.");
       }
       continue;
     }
 
     if (style === "Block Stitch") {
-      const base = terminology === "UK" ? "htr" : "hdc";
+      const htr = terminology === "UK" ? "htr" : "hdc";
       const tr = terminology === "UK" ? "tr" : "dc";
-      const change = r > 1 && r % 2 === 0 ? "Change to " + colourName + ". " : "";
-
+      const row1Count = Math.floor(chain / 2);
+      const blocks = Math.max(1, row1Count - 1);
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". 1 " + base + " in 2nd ch from hook; *ch 1, miss 1 ch, 1 " +
-            base + " in next ch; repeat from * across. Turn your work.",
-          stitches,
-          stitches + " stitches and " + Math.max(0, stitches - 1) + " ch-1 spaces",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". 1 " + htr +
+          " in 2nd ch from hook. Repeat: ch 1, miss 1 chain, 1 " + htr + " in next chain, across to the end. Turn your work.",
+          row1Count, row1Count + " " + htr + " stitches and " + (row1Count - 1) + " ch-1 spaces.");
       } else if (r % 2 === 0) {
-        push(
-          r,
-          change + "Ch 3 (counts as 1 " + tr + "). Work 3 " + tr +
-            " in each ch-1 space across, then 1 " + tr + " in the final edge stitch. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Work 3 " + tr +
+          " in each ch-1 space across. Finish with 1 " + tr + " in the final edge stitch. Turn your work.",
+          blocks * 3 + 1, (blocks * 3 + 1) + " stitches.");
       } else {
-        push(
-          r,
-          "Ch 1 (does not count as a stitch). Work 1 " + base +
-            " in the first stitch; *ch 1, work 1 " + base +
-            " in the space between the next cluster groups; repeat across to the final stitch, then work 1 " +
-            base + " in the final stitch. Turn your work.",
-          stitches,
-          stitches + " stitches and ch-1 spaces",
-        );
+        push(r, "Change to " + colourName + ". Ch 1 (does not count as a stitch). Work 1 " + htr +
+          " in the first stitch. Repeat: ch 1, 1 " + htr +
+          " in the space between the groups of three trebles, across. Finish with ch 1 and 1 " + htr +
+          " in the last stitch. Turn your work.", row1Count, row1Count + " " + htr + " stitches.");
       }
       continue;
     }
 
     if (style === "V-Stitch") {
-      const stitchName = terminology === "UK" ? "tr" : "dc";
-      const change = r > 1 && r % 2 === 1 ? "Change to " + colourName + ". " : "";
-
+      const tr = terminology === "UK" ? "tr" : "dc";
+      const vCount = Math.floor((chain - 4) / 3);
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". Miss 3 ch (the turning chain), then work (1 " + stitchName +
-            ", ch 1, 1 " + stitchName + ") in the next ch; *miss 2 ch, work (1 " + stitchName +
-            ", ch 1, 1 " + stitchName + ") in the next ch; repeat across. Finish with 1 " + stitchName +
-            " at the edge as needed for the stated foundation multiple. Turn your work.",
-          stitches,
-          stitches + " working stitches across the row",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". Work 1 " + tr +
+          " in the 5th ch from hook, ch 1, 1 " + tr + " in the same chain to make the first V-stitch. Repeat " +
+          Math.max(0, vCount - 1) + " times: miss 2 chains, then work (1 " + tr + ", ch 1, 1 " + tr +
+          ") in the next chain. Miss 1 chain and work 1 " + tr + " in the final chain. Turn your work.",
+          vCount * 2 + 1, vCount + " V-stitches + 1 edge " + tr + " = " + (vCount * 2 + 1) + " working stitches.");
       } else {
-        push(
-          r,
-          change + "Ch 2 (does not count as a stitch). Work (1 " + stitchName + ", ch 1, 1 " + stitchName +
-            ") in each V-stitch chain-1 space across. Finish with 1 " + stitchName +
-            " in the top of the previous turning chain. Turn your work.",
-          stitches,
-          stitches + " working stitches across the row",
-        );
+        push(r, "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Work (1 " + tr +
+          ", ch 1, 1 " + tr + ") in the ch-1 space of every V-stitch across. Finish with 1 " + tr +
+          " in the top of the previous turning chain. Turn your work.",
+          vCount * 2 + 2, vCount + " V-stitches + 2 edge " + tr + " stitches.");
       }
       continue;
     }
@@ -227,79 +178,50 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       const dc = terminology === "UK" ? "dc" : "sc";
       const tr = terminology === "UK" ? "tr" : "dc";
       const miss = terminology === "UK" ? "miss" : "skip";
-      const shellCount = Math.floor((stitches - 1) / 6);
-
+      const shells = Math.floor((stitches - 1) / 6);
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook. " +
-            "Repeat " + shellCount + " times: " + miss + " 2 ch, 5 " + tr +
-            " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn your work.",
-          stitches,
-          shellCount + " shells + " + (shellCount + 1) + " " + dc + " anchors = " + stitches + " stitches",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook. Repeat " + shells +
+          " times: " + miss + " 2 chains, 5 " + tr + " in the next chain, " + miss + " 2 chains, 1 " + dc +
+          " in the next chain. Turn your work.", stitches, stitches + " stitches.");
       } else if (r % 2 === 0) {
-        const change = r > 2 ? "Change to " + colourName + ". " : "";
-        push(
-          r,
-          change +
-            "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. " +
-            "Repeat " + Math.max(0, shellCount - 1) + " times: " + miss + " 2 stitches, 1 " + dc +
-            " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-            ". Then " + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
-            miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn your work.",
-          stitches,
-          "Shell repeat balanced to " + stitches + " stitches",
-        );
+        push(r, "Change to " + colourName + ". Ch 1 (does not count as a stitch). Work 3 " + tr +
+          " in the first " + dc + ". Repeat " + shells + " times: " + miss + " 2 " + tr +
+          " stitches, 1 " + dc + " in the middle " + tr + " of the next shell, " + miss +
+          " 2 " + tr + " stitches, 5 " + tr + " in the next " + dc + ". Turn your work.",
+          stitches + 2, (stitches + 2) + " stitches on the shell row.");
       } else {
-        const change = r > 1 ? "Change to " + colourName + ". " : "";
-        push(
-          r,
-          change +
-            "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. " +
-            "Repeat " + shellCount + " times: " + miss + " 2 stitches, 5 " + tr +
-            " in the next " + dc + ", " + miss + " 2 stitches, 1 " + dc +
-            " in the next " + tr + ". On the final repeat, work the last " + dc +
-            " into the top of the turning chain-3. Turn your work.",
-          stitches,
-          "Shell repeat balanced to " + stitches + " stitches",
-        );
+        push(r, "Change to " + colourName + ". Ch 1 (does not count as a stitch). Work 1 " + dc +
+          " in the first stitch. Repeat " + shells + " times: 5 " + tr + " in the next " + dc +
+          ", " + miss + " 2 " + tr + " stitches, 1 " + dc + " in the middle " + tr +
+          " of the next shell, " + miss + " 2 " + tr + " stitches. Finish with 1 " + dc +
+          " in the final stitch. Turn your work.", stitches, stitches + " stitches.");
       }
       continue;
     }
 
     if (style === "Waffle Stitch") {
-      const base = terminology === "UK" ? "tr" : "dc";
-      const front = terminology === "UK" ? "front post treble (fptr)" : "front post double crochet (fpdc)";
-      const back = terminology === "UK" ? "back post treble (bptr)" : "back post double crochet (bpdc)";
-      const change = r > 1 && r % 2 === 0 ? "Change to " + colourName + ". " : "";
-
+      const tr = terminology === "UK" ? "tr" : "dc";
+      const fp = terminology === "UK" ? "front post treble (fptr)" : "front post double crochet (fpdc)";
+      const count = chain - 2;
+      const repeats = Math.max(1, Math.floor((count - 2) / 3));
       if (r === 1) {
-        push(
-          r,
-          "With " + colourName + ", ch " + chain + ". Work 1 " + base + " in 4th ch from hook and in each ch across. Turn your work.",
-          stitches,
-          stitches + " stitches",
-        );
+        push(r, "With " + colourName + ", ch " + chain + ". Work 1 " + tr +
+          " in the 4th ch from hook (the first 3 chains count as 1 " + tr + "), then 1 " + tr +
+          " in each chain across. Turn your work.", count, count + " " + tr + " stitches.");
       } else if (r % 2 === 0) {
-        push(
-          r,
-          change + "Ch 2 (counts as 1 " + base + "). Work 1 " + front + " around the next stitch, then 1 " + base +
-            " in each of the next 2 stitches; repeat this 3-stitch repeat across. Finish with the edge stitch at the turning chain. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Repeat " + repeats +
+          " times: work 1 " + fp + " around the next 2 stitches, then 1 " + tr +
+          " in the next stitch. Finish with 1 " + tr + " in the top of the previous turning chain. Turn your work.",
+          count, count + " stitches.");
       } else {
-        push(
-          r,
-          "Ch 2 (counts as 1 " + base + "). Work 1 " + base + " in the next stitch, then 1 " + front +
-            " around each of the next 2 stitches; repeat across. Finish with the edge stitches as required. Turn your work.",
-          stitches,
-          stitches + " stitches including the turning chain",
-        );
+        push(r, "Ch 3 (counts as 1 " + tr + "). Work 1 " + tr + " in the next stitch. Repeat " + repeats +
+          " times: work 1 " + fp + " around each of the next 2 stitches, then 1 " + tr +
+          " in the next stitch. Finish with 1 " + tr + " in the top of the previous turning chain. Turn your work.",
+          count, count + " stitches.");
       }
       continue;
     }
+
     if (style === "Plain") {
       if (r === 1) {
         push(
