@@ -645,7 +645,7 @@ function PatternPreviewWall({
                 Visual pattern
               </p>
               <p className="mt-1 text-sm text-[#66594f]">
-                A tactile preview of your {selectedStitch.toLowerCase()} crochet fabric
+                A tactile preview of your {selectedStitch.toLowerCase()} fabric
               </p>
             </div>
             <span className="rounded-full border border-[#d2c0ad] bg-[#eee2d6] px-3 py-1 text-xs font-medium text-[#72513d]">
@@ -681,10 +681,10 @@ function PatternPreviewWall({
                           return (
                             <span
                               key={stitchIndex}
-                              className="relative h-5 w-3 shrink-0"
+                              className="relative h-8 w-4 shrink-0"
                             >
-                              <span className="absolute left-1/2 top-0 h-4 w-[3px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
-                              <span className="absolute left-1/2 top-[6px] h-[3px] w-3 -translate-x-1/2 rounded-full bg-[#9a7559]" />
+                              <span className="absolute left-1/2 top-0 h-7 w-[4px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
+                              <span className="absolute left-1/2 top-[10px] h-[4px] w-4 -translate-x-1/2 rounded-full bg-[#9a7559]" />
                             </span>
                           );
                         }
@@ -693,9 +693,9 @@ function PatternPreviewWall({
                           return (
                             <span
                               key={stitchIndex}
-                              className="relative h-4 w-[10px] shrink-0"
+                              className="relative h-7 w-12 shrink-0"
                             >
-                              <span className="absolute inset-x-0 top-1/2 h-[7px] -translate-y-1/2 rounded-[45%] border-2 border-[#8f6b51] bg-[#e1c29f]" />
+                              <span className="absolute inset-x-0 top-1/2 h-5 -translate-y-1/2 rounded-[45%] border-2 border-[#8f6b51] bg-[#e1c29f]" />
                             </span>
                           );
                         }
@@ -703,15 +703,15 @@ function PatternPreviewWall({
                         return (
                           <span
                             key={stitchIndex}
-                            className="relative h-4 w-[11px] shrink-0"
+                            className="relative h-7 w-12 shrink-0"
                           >
                             <span
                               className={
-                                "absolute left-1/2 top-1/2 h-[7px] w-[10px] -translate-x-1/2 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
+                                "absolute left-1/2 top-1/2 h-5 w-11 -translate-x-1/2 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
                                 (offset ? "rotate-[3deg]" : "-rotate-[3deg]")
                               }
                             />
-                            <span className="absolute left-[2px] right-[2px] top-1/2 h-px bg-[#9a7559]/60" />
+                            <span className="absolute left-[3px] right-[3px] top-1/2 h-[2px] bg-[#9a7559]/60" />
                           </span>
                         );
                       })}
