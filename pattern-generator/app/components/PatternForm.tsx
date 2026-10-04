@@ -821,7 +821,7 @@ function PatternPreviewWall({
                     Row {rowNumber}
                   </h3>
                   <span className="text-xs text-[#78695d]">
-                    {blueprint.startingChain} stitches
+                    {blueprint.workingStitches} stitches
                   </span>
                 </div>
                 <p className="mt-2 select-none text-sm leading-6 text-[#46392f]">
