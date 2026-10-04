@@ -23,7 +23,7 @@ export type StitchRecipe = {
 
 export const STITCH_LIBRARY: StitchRecipe[] = [
   { id:"plain", name:"Plain", category:"Classic & Beginner", description:"Simple even rows for a clean, dependable blanket fabric.", difficulty:"Beginner", uk:"dc", us:"sc", foundation:{multiple:1,add:1}, turningChain:"1", preview:"plain", implemented:true },
-  { id:"moss", name:"Moss / Linen", category:"Classic & Beginner", description:"A woven-looking fabric made with stitches and chain-1 spaces.", difficulty:"Beginner", uk:"dc", us:"sc", foundation:{multiple:2,add:1}, turningChain:"1", preview:"moss", implemented:true },
+  { id:"moss", name:"Moss / Linen", category:"Classic & Beginner", description:"A woven-looking fabric made with single crochet and chain-1 spaces.", difficulty:"Beginner", uk:"dc", us:"sc", foundation:{multiple:2,add:1}, turningChain:"1", preview:"moss", implemented:true },
   { id:"lemon-peel", name:"Lemon Peel", category:"Classic & Beginner", description:"Alternating short and tall stitches create a subtle pebbled texture.", difficulty:"Beginner", uk:"dc/tr", us:"sc/dc", foundation:{multiple:2,add:1}, turningChain:"1", preview:"plain", implemented:true },
   { id:"granny-stripe", name:"Granny Stripe", category:"Classic & Beginner", description:"Classic three-stitch clusters worked into spaces for a traditional blanket look.", difficulty:"Beginner", uk:"tr", us:"dc", foundation:{multiple:3,add:2}, turningChain:"3", preview:"granny", implemented:true },
   { id:"block", name:"Block Stitch", category:"Classic & Beginner", description:"Colourful blocks formed from clusters and single stitches.", difficulty:"Beginner", uk:"tr/dc", us:"dc/sc", foundation:{multiple:3,add:2}, turningChain:"3", preview:"block", implemented:true },
