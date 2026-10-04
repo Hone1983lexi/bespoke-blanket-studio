@@ -122,6 +122,7 @@ export default function PatternForm() {
       if (response.ok) {
         setPattern(data.pattern);
         setCheckoutMessage("");
+        setIsGenerating(false);
         window.history.replaceState({}, "", window.location.pathname);
         return;
       }
@@ -140,10 +141,7 @@ export default function PatternForm() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setCheckoutMessage("");
-    } finally {
-      if (attempt >= 8) {
-        setIsGenerating(false);
-      }
+      setIsGenerating(false);
     }
   }
 
