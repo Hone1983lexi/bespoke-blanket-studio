@@ -231,7 +231,7 @@ export function buildRows(
   return rows;
 }
 
-export type PreviewRow = { rowNumber: number; label: string; text: string };
+export type PreviewRow = { rowNumber: number; label: string; text: string; stitchCount: number; countLabel: string };
 
 export function buildPreviewRows(
   chain: number,
@@ -243,6 +243,8 @@ export function buildPreviewRows(
     rowNumber: row.rowNumber,
     label: "Row " + row.rowNumber,
     text: row.instruction + " (" + row.countLabel + ").",
+    stitchCount: row.stitchCount,
+    countLabel: row.countLabel,
   }));
 }
 

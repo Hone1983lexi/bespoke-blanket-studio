@@ -3,6 +3,7 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 import { STITCH_CATEGORIES, STITCH_LIBRARY, type StitchRecipe } from "../lib/stitch-library";
+import { blueprintFor, buildPreviewRows as enginePreviewRows } from "../lib/stitch-engine";
 
 type Stitch = StitchRecipe["name"];
 type PatternStyle = Stitch;
@@ -40,6 +41,8 @@ type PreviewRow = {
   rowNumber: number;
   label: string;
   text: string;
+  stitchCount: number;
+  countLabel: string;
 };
 
 export default function PatternForm() {
@@ -767,7 +770,7 @@ function PatternPreviewWall({
           <PreviewRowCard
             key={row.rowNumber}
             title={"Row " + row.rowNumber}
-            meta={blueprint.workingStitches + " stitches"}
+            meta={row.countLabel}
             text={row.text}
           />
         ))}
@@ -1012,67 +1015,8 @@ function PreviewRowCard({
   );
 }
 
-function buildPreviewRows(startingChain:number, workingStitches:number, stitch:Stitch, style:PatternStyle, terminology:"UK"|"US"):PreviewRow[] {
-  const uk=terminology==="UK";
-  const dc=uk?"dc":"sc";
-  const tr=uk?"tr":"dc";
-  const miss=uk?"miss":"skip";
-
-  if(style==="Moss / Linen"){
-    const n=Math.floor((startingChain-1)/2);
-    const r1="Ch "+startingChain+". 1 "+dc+" in 3rd ch from hook. Repeat "+Math.max(0,n-1)+" times: ch 1, "+miss+" 1 ch, 1 "+dc+" in next ch. Turn your work. ("+n+" "+dc+" stitches, "+Math.max(0,n-1)+" ch-1 spaces).";
-    const r2="Ch 2 (counts as 1 "+dc+"). 1 "+dc+" in the next ch-1 space. Repeat "+Math.max(0,n-2)+" times: ch 1, "+miss+" 1 "+dc+", 1 "+dc+" in the next ch-1 space. Turn your work. ("+n+" "+dc+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r2}];
-  }
-  if(style==="Plain"){
-    const r1="Ch "+startingChain+". 1 "+dc+" in 2nd ch from hook and in each ch across. Turn your work. ("+(startingChain-1)+" stitches).";
-    const r2="Ch 1 (does not count as a stitch). 1 "+dc+" in each stitch across. Turn your work. ("+(startingChain-1)+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r2}];
-  }
-  if(style==="Lemon Peel"){
-    const r1="Ch "+startingChain+". 1 "+dc+" in 2nd ch from hook, 1 "+tr+" in next ch; repeat this alternating sequence across to the final chain. Turn your work. ("+(startingChain-1)+" stitches).";
-    const r2="Ch 1 (does not count as a stitch). Work 1 "+tr+" in the first "+dc+" below, then 1 "+dc+" in the next "+tr+" below; repeat the alternating sequence across. Turn your work. ("+(startingChain-1)+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r2}];
-  }
-  if(style==="Granny Stripe"){
-    const n=Math.max(1,Math.floor((workingStitches-4)/3));
-    const r1="Ch "+startingChain+". 1 "+dc+" in 2nd ch from hook and in each ch across. Turn your work. ("+workingStitches+" stitches).";
-    const r2="Ch 3 (counts as 1 "+tr+"). 1 "+tr+" in the stitch at the base of the ch-3. Repeat "+n+" times: "+miss+" 2 stitches, 3 "+tr+" in the next stitch. "+miss+" 2 stitches, 2 "+tr+" in the last stitch. Turn your work. ("+workingStitches+" stitches).";
-    const r3="Ch 3 (counts as 1 "+tr+"). Work 3 "+tr+" in the first space between clusters. Repeat the 3-"+tr+" cluster in every remaining space between clusters. Finish with 1 "+tr+" in the top of the previous turning chain. Turn your work. ("+workingStitches+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r3}];
-  }
-  if(style==="Block Stitch"){
-    const htr=uk?"htr":"hdc";
-    const row1=Math.floor(startingChain/2);
-    const blocks=Math.max(1,row1-1);
-    const r1="Ch "+startingChain+". 1 "+htr+" in 2nd ch from hook. Repeat: ch 1, "+miss+" 1 chain, 1 "+htr+" in next chain, across to the end. Turn your work. ("+row1+" "+htr+" stitches and "+(row1-1)+" ch-1 spaces).";
-    const r2="Ch 3 (counts as 1 "+tr+"). Work 3 "+tr+" in each ch-1 space across. Finish with 1 "+tr+" in the final edge stitch. Turn your work. ("+(blocks*3+1)+" stitches).";
-    const r3="Ch 1 (does not count as a stitch). Work 1 "+htr+" in the first stitch. Repeat: ch 1, 1 "+htr+" in the space between the groups of three trebles, across. Finish with ch 1 and 1 "+htr+" in the last stitch. Turn your work. ("+row1+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r3}];
-  }
-  if(style==="V-Stitch"){
-    const v=Math.floor((startingChain-4)/3);
-    const r1="Ch "+startingChain+". Work 1 "+tr+" in the 5th ch from hook, ch 1, 1 "+tr+" in the same chain. Repeat "+Math.max(0,v-1)+" times: "+miss+" 2 chains, then (1 "+tr+", ch 1, 1 "+tr+") in the next chain. "+miss+" 1 chain and work 1 "+tr+" in the final chain. Turn your work. ("+(v*2+1)+" working stitches).";
-    const r2="Ch 3 (counts as 1 "+tr+"). Work (1 "+tr+", ch 1, 1 "+tr+") in the ch-1 space of every V-stitch across. Finish with 1 "+tr+" in the top of the previous turning chain. Turn your work. ("+(v*2+2)+" working stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r2}];
-  }
-  if(style==="Shell Stitch"){
-    const shells=Math.floor((workingStitches-1)/6);
-    const r1="Ch "+startingChain+". 1 "+dc+" in 2nd ch from hook. Repeat "+shells+" times: "+miss+" 2 chains, 5 "+tr+" in next chain, "+miss+" 2 chains, 1 "+dc+" in next chain. Turn your work. ("+workingStitches+" stitches).";
-    const r2="Ch 1 (does not count as a stitch). Work 3 "+tr+" in the first "+dc+". Repeat "+shells+" times: "+miss+" 2 "+tr+" stitches, 1 "+dc+" in the middle "+tr+" of the next shell, "+miss+" 2 "+tr+" stitches, 5 "+tr+" in the next "+dc+". Turn your work. ("+(workingStitches+2)+" stitches).";
-    const r3="Ch 1 (does not count as a stitch). Work 1 "+dc+" in the first stitch. Repeat "+shells+" times: 5 "+tr+" in the next "+dc+", "+miss+" 2 "+tr+" stitches, 1 "+dc+" in the middle "+tr+" of the next shell, "+miss+" 2 "+tr+" stitches. Finish with 1 "+dc+" in the final stitch. Turn your work. ("+workingStitches+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r3}];
-  }
-  if(style==="Waffle Stitch"){
-    const count=startingChain-2;
-    const repeats=Math.max(1,Math.floor((count-2)/3));
-    const fp=uk?"front post treble (fptr)":"front post double crochet (fpdc)";
-    const r1="Ch "+startingChain+". Work 1 "+tr+" in the 4th ch from hook (the first 3 chains count as 1 "+tr+"), then 1 "+tr+" in each chain across. Turn your work. ("+count+" stitches).";
-    const r2="Ch 3 (counts as 1 "+tr+"). Repeat "+repeats+" times: work 1 "+fp+" around the next 2 stitches, then 1 "+tr+" in the next stitch. Finish with 1 "+tr+" in the top of the previous turning chain. Turn your work. ("+count+" stitches).";
-    const r3="Ch 3 (counts as 1 "+tr+"). Work 1 "+tr+" in the next stitch. Repeat "+repeats+" times: work 1 "+fp+" around each of the next 2 stitches, then 1 "+tr+" in the next stitch. Finish with 1 "+tr+" in the top of the previous turning chain. Turn your work. ("+count+" stitches).";
-    return [{rowNumber:1,label:"Row 1",text:r1},{rowNumber:2,label:"Row 2",text:r2},{rowNumber:3,label:"Row 3",text:r3}];
-  }
-  return [1,2,3].map((rowNumber)=>({rowNumber,label:"Row "+rowNumber,text:"Ch "+startingChain+". Work the "+style+" repeat exactly as described in the pattern. Turn your work."}));
+function buildPreviewRows(startingChain:number, _workingStitches:number, stitch:Stitch, style:PatternStyle, terminology:"UK"|"US"):PreviewRow[] {
+  return enginePreviewRows(startingChain, style, terminology);
 }
 function lockedRowText(stitch: Stitch, stitchCount: number) {
   const recipe=STITCH_OPTIONS.find((item)=>item.name===stitch) ?? STITCH_OPTIONS[0];
@@ -1164,21 +1108,7 @@ function StitchPreview({ stitch }: { stitch: Stitch }) {
 }
 
 function calculateBlueprint(width: number, length: number, stitchGauge: number, rowGauge: number, style: PatternStyle, _stitch: Stitch) {
-  const recipe = STITCH_OPTIONS.find((item) => item.name === style) ?? STITCH_OPTIONS[0];
-  const target = Math.max(4, Math.round(width * stitchGauge / 4));
-  const totalRows = Math.max(1, Math.round(length * rowGauge / 4));
-  const chain = Math.ceil(Math.max(1, target - recipe.foundation.add) / recipe.foundation.multiple) * recipe.foundation.multiple + recipe.foundation.add;
-  const workingStitches =
-    style === "Moss / Linen"
-      ? Math.max(1, Math.floor((chain - 1) / 2))
-      : style === "Block Stitch"
-        ? Math.max(1, Math.floor(chain / 2))
-        : style === "V-Stitch"
-          ? Math.max(1, Math.floor((chain - 4) / 3) * 2 + 1)
-          : style === "Waffle Stitch"
-            ? Math.max(1, chain - 2)
-            : Math.max(1, chain - 1);
-  return { startingChain: chain, totalRows, workingStitches };
+  return blueprintFor(width, length, stitchGauge, rowGauge, style);
 }
 function BlueprintCard({
   label,
