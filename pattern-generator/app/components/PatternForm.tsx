@@ -2,7 +2,8 @@
 
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
-import { STITCH_CATEGORIES, STITCH_LIBRARY, type StitchRecipe } from "../lib/stitch-library";
+import { STITCH_CATEGORIES, STITCH_LIBRARY, stitchAbbr, type StitchRecipe } from "../lib/stitch-library";
+import StitchStructurePreview from "./StitchStructurePreview";
 import { blueprintFor, buildPreviewRows as enginePreviewRows } from "../lib/stitch-engine";
 
 type Stitch = StitchRecipe["name"];
@@ -378,15 +379,16 @@ export default function PatternForm() {
                         <button key={option.id} type="button" onClick={() => { setSelectedStitch(option.name); setSelectedStyle(option.name); }} aria-pressed={selectedStitch === option.name}
                           className={"overflow-hidden rounded-2xl border text-left transition-all " + (selectedStitch === option.name ? "border-[#9b6d52] bg-[#f2e2d5] ring-2 ring-[#d9bca5]" : "border-[#d2c0ad] bg-[#fbf6ef] hover:border-[#b99b84]")}>
                           <div className="h-40 border-b border-[#d2c0ad] bg-[#ead8c8]">
-                            <StitchFabricSwatch
+                            <StitchStructurePreview
                               stitch={option.name}
                               colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
+                              compact
                             />
                           </div>
                           <div className="p-3">
                             <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
                             <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
-                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 1" : option.name === "Moss / Linen" ? "dc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
+                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{stitchAbbr(option, terminology)} · chain multiple {option.foundation.multiple} + {option.foundation.add} · turn ch {option.turningChain}</p>
                           </div>
                         </button>
                       ))}
@@ -422,13 +424,13 @@ export default function PatternForm() {
               <div className="flex items-center justify-between gap-3 border-b border-[#d2c0ad] px-4 py-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">Live stitch preview</p>
-                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStitch} · Striped Chart Repeat</p>
+                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStitch} · {stitchAbbr(STITCH_OPTIONS.find((item) => item.name === selectedStitch) ?? STITCH_OPTIONS[0], terminology)} structure</p>
                 </div>
                 <span className="text-xs text-[#78695d]">{selectedPalette}</span>
               </div>
               <div className="p-3 sm:p-4">
-                <PatternStylePreview
-                  style={selectedStyle}
+                <StitchStructurePreview
+                  stitch={selectedStitch}
                   colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
                   large
                   widthUnits={blueprint?.startingChain}
@@ -748,8 +750,8 @@ function PatternPreviewWall({
 
           <div className="mt-4 overflow-hidden rounded-2xl border border-[#cdb9a5] bg-[#d9bea0] p-2">
             <div className="rounded-xl border border-[#c7a98a] bg-[#e7ceb2] p-3 shadow-[inset_0_2px_8px_rgba(114,81,61,0.12)]">
-              <PatternStylePreview
-                style={selectedStyle}
+              <StitchStructurePreview
+                stitch={selectedStitch}
                 colors={paletteColors}
                 large
                 widthUnits={blueprint.startingChain}
