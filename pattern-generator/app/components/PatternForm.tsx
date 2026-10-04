@@ -881,7 +881,7 @@ function PatternStylePreview({
   // Keep the chart crisp and chart-like: every cell is a discrete colourwork square.
   const cellColour = (row: number, col: number) => {
     // Plain crochet is represented as a continuous fabric block rather than colourwork.
-    if (stitchKind === "plain") return palette[0];
+    if (style === "Plain" || stitchKind === "plain") return palette[0];
 
     // Moss/Linen: offset each row to suggest the alternating stitch / chain-space structure.
     if (stitchKind === "moss") {
