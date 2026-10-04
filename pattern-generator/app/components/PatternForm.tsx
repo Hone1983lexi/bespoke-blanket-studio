@@ -373,12 +373,15 @@ export default function PatternForm() {
                 return (
                   <div key={category}>
                     <h3 className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#78695d]">{category}</h3>
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       {options.map((option) => (
                         <button key={option.id} type="button" onClick={() => { setSelectedStitch(option.name); setSelectedStyle(option.name); }} aria-pressed={selectedStitch === option.name}
                           className={"overflow-hidden rounded-2xl border text-left transition-all " + (selectedStitch === option.name ? "border-[#9b6d52] bg-[#f2e2d5] ring-2 ring-[#d9bca5]" : "border-[#d2c0ad] bg-[#fbf6ef] hover:border-[#b99b84]")}>
-                          <div className="h-24 border-b border-[#d2c0ad] bg-[#ead8c8]">
-                            <PatternStylePreview style={option.name} colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors} />
+                          <div className="h-40 border-b border-[#d2c0ad] bg-[#ead8c8]">
+                            <StitchFabricSwatch
+                              stitch={option.name}
+                              colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
+                            />
                           </div>
                           <div className="p-3">
                             <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
@@ -846,6 +849,132 @@ function PatternPreviewWall({
         </div>
       )}
     </section>
+  );
+}
+
+function StitchFabricSwatch({
+  stitch,
+  colors,
+}: {
+  stitch: Stitch;
+  colors: readonly string[];
+}) {
+  const palette = colors.length ? colors : ["#b98568", "#d7b49b", "#8f6655", "#e5cdbb"];
+  const yarn = (index: number) => palette[index % palette.length];
+
+  const rows = Array.from({ length: 7 }, (_, row) => row);
+  const cols = Array.from({ length: 9 }, (_, col) => col);
+
+  return (
+    <svg
+      viewBox="0 0 600 260"
+      className="h-full w-full"
+      role="img"
+      aria-label={stitch + " crochet fabric swatch"}
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id={"fabric-" + stitch.replace(/[^a-z0-9]/gi, "")} x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#f0dfcc" />
+          <stop offset="100%" stopColor="#d8bda3" />
+        </linearGradient>
+        <filter id={"soft-" + stitch.replace(/[^a-z0-9]/gi, "")}>
+          <feGaussianBlur stdDeviation="0.8" />
+        </filter>
+      </defs>
+      <rect width="600" height="260" fill={"url(#fabric-" + stitch.replace(/[^a-z0-9]/gi, "") + ")"} />
+
+      <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+        {stitch === "Plain" &&
+          rows.map((row) => (
+            <path
+              key={"plain-" + row}
+              d={"M-20 " + (28 + row * 34) + " C60 " + (5 + row * 34) + ", 120 " + (51 + row * 34) + ", 200 " + (28 + row * 34) + " S340 " + (5 + row * 34) + ", 420 " + (28 + row * 34) + " S560 " + (51 + row * 34) + ", 620 " + (28 + row * 34)}
+              stroke={yarn(row + 1)}
+              strokeWidth="18"
+              opacity=".92"
+            />
+          ))}
+
+        {stitch === "Moss / Linen" &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 38 + col * 68 + (row % 2 ? 34 : 0);
+              const y = 28 + row * 34;
+              return (
+                <path
+                  key={"moss-" + row + "-" + col}
+                  d={"M" + (x - 22) + " " + y + " Q" + x + " " + (y + 22) + " " + (x + 22) + " " + y}
+                  stroke={yarn(row + col)}
+                  strokeWidth="15"
+                  opacity=".94"
+                />
+              );
+            }),
+          )}
+
+        {stitch === "Lemon Peel" &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 38 + col * 68;
+              const y = 25 + row * 34;
+              const tall = (row + col) % 2 === 0;
+              return (
+                <path
+                  key={"lemon-" + row + "-" + col}
+                  d={tall ? "M" + (x - 15) + " " + (y + 20) + " L" + x + " " + (y - 4) + " L" + (x + 15) + " " + (y + 20) : "M" + (x - 20) + " " + y + " Q" + x + " " + (y + 22) + " " + (x + 20) + " " + y}
+                  stroke={yarn(row + col)}
+                  strokeWidth="14"
+                />
+              );
+            }),
+          )}
+
+        {(stitch === "Granny Stripe" || stitch === "Block Stitch") &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 25 + col * 70;
+              const y = 20 + row * 35;
+              const block = stitch === "Block Stitch" ? ((col + row) % 2 === 0) : true;
+              return (
+                <g key={"block-" + row + "-" + col}>
+                  {block && <path d={"M" + x + " " + y + " h42 M" + (x + 8) + " " + (y + 11) + " h28"} stroke={yarn(row)} strokeWidth="13" />}
+                  {!block && <path d={"M" + (x + 4) + " " + (y + 8) + " q20 20 40 0"} stroke={yarn(row + 1)} strokeWidth="13" />}
+                </g>
+              );
+            }),
+          )}
+
+        {stitch === "V-Stitch" &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 42 + col * 67;
+              const y = 24 + row * 34;
+              return <path key={"v-" + row + "-" + col} d={"M" + (x - 22) + " " + y + " L" + x + " " + (y + 22) + " L" + (x + 22) + " " + y} stroke={yarn(row + col)} strokeWidth="15" />;
+            }),
+          )}
+
+        {stitch === "Shell Stitch" &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 40 + col * 67;
+              const y = 22 + row * 34;
+              return <path key={"shell-" + row + "-" + col} d={"M" + (x - 28) + " " + (y + 18) + " Q" + (x - 14) + " " + (y - 2) + " " + x + " " + (y + 18) + " Q" + (x + 14) + " " + (y - 2) + " " + (x + 28) + " " + (y + 18)} stroke={yarn(row + col)} strokeWidth="14" />;
+            }),
+          )}
+
+        {stitch === "Waffle Stitch" &&
+          rows.flatMap((row) =>
+            cols.map((col) => {
+              const x = 34 + col * 68;
+              const y = 18 + row * 34;
+              return <rect key={"waffle-" + row + "-" + col} x={x - 22} y={y} width="44" height="25" rx="8" fill={yarn(row + col)} stroke="#c7a98a" strokeWidth="5" opacity=".95" />;
+            }),
+          )}
+      </g>
+
+      <rect x="0" y="0" width="600" height="260" fill="none" stroke="#c7a98a" strokeWidth="5" />
+    </svg>
   );
 }
 
