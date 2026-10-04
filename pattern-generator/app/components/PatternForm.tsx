@@ -1021,23 +1021,23 @@ function buildPreviewRows(startingChain:number, workingStitches:number, stitch:S
   const shellCount = Math.floor((workingStitches - 1) / 6);
 
   if (style === "Shell Stitch") {
-    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook, *" +
-      miss + " 2 ch, 5 " + tr + " in next ch, " +
-      miss + " 2 ch, 1 " + dc + " in next ch; repeat from * across. Turn. (" +
+    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook. " +
+      "Repeat " + shellCount + " times: " + miss + " 2 ch, 5 " + tr +
+      " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn. (" +
       workingStitches + " stitches).";
 
     const row2 = "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. " +
-      "*" + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
-      miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-      "; repeat from * across, ending with " + miss + " 2 stitches, 1 " + dc +
-      " in the next stitch, " + miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn. (" +
+      "Repeat " + Math.max(0, shellCount - 1) + " times: " + miss + " 2 stitches, 1 " + dc +
+      " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
+      ". Then " + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
+      miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn. (" +
       workingStitches + " stitches).";
 
     const row3 = "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. " +
-      "*" + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-      ", " + miss + " 2 stitches, 1 " + dc + " in the next " + tr +
-      "; repeat from * across, ending with 1 " + dc + " in the top of the turning chain-3. Turn. (" +
-      workingStitches + " stitches).";
+      "Repeat " + shellCount + " times: " + miss + " 2 stitches, 5 " + tr +
+      " in the next " + dc + ", " + miss + " 2 stitches, 1 " + dc +
+      " in the next " + tr + ". On the final repeat, work that last " + dc +
+      " in the top of the turning chain-3. Turn. (" + workingStitches + " stitches).";
 
     return [
       { rowNumber:1, label:"Row 1", text:row1 },
