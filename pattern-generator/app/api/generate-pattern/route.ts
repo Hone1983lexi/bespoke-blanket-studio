@@ -44,7 +44,9 @@ function blueprintFor(width: number, length: number, stitchGauge: number, rowGau
   const workingStitches =
     style === "Moss / Linen"
       ? Math.max(1, Math.floor((chain - 1) / 2))
-      : Math.max(1, chain - 1);
+      : style === "Waffle Stitch"
+        ? Math.max(1, chain - 2)
+        : Math.max(1, chain - 1);
   return { startingChain: chain, totalRows: rows, workingStitches };
 }
 
@@ -299,8 +301,21 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       continue;
     }
     if (style === "Plain") {
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+a+" in 2nd chain from hook and in each chain across. Turn.");
-      else push(r,"Ch 3 and turn. Work 1 "+a+" in each stitch across. Turn.");
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". 1 " + a + " in 2nd ch from hook and in each ch across. Turn your work.",
+          stitches,
+          stitches + " stitches",
+        );
+      } else {
+        push(
+          r,
+          "Ch 2 (does not count as a stitch). 1 " + a + " in each stitch across. Turn your work.",
+          stitches,
+          stitches + " stitches",
+        );
+      }
       continue;
     }
     push(r,(r>1?"Change to "+colourName+". ":"")+"Ch 1 and turn. Work 1 "+a+" in each stitch across. Turn.");
