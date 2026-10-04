@@ -376,7 +376,7 @@ export default function PatternForm() {
                           <div className="p-3">
                             <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
                             <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
-                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{terminology === "UK" ? option.uk : option.us} · chain multiple {option.foundation.multiple} + {option.foundation.add}</p>
+                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 2" : option.name === "Moss / Linen" ? "sc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
                           </div>
                         </button>
                       ))}
