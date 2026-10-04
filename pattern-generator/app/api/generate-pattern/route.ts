@@ -98,9 +98,9 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       if (r === 1) {
         push(
           r,
-          "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook, *" +
-            miss + " 2 ch, 5 " + tr + " in next ch, " +
-            miss + " 2 ch, 1 " + dc + " in next ch; repeat from * across. Turn.",
+          "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook. " +
+            "Repeat " + shellCount + " times: " + miss + " 2 ch, 5 " + tr +
+            " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn.",
           stitches,
           shellCount + " shells + " + (shellCount + 1) + " " + dc + " = " + stitches + " stitches",
         );
@@ -110,10 +110,10 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
           r,
           change +
             "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. " +
-            "*" + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
-            miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-            "; repeat from * across, ending with " + miss + " 2 stitches, 1 " + dc +
-            " in the next stitch, " + miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn.",
+            "Repeat " + Math.max(0, shellCount - 1) + " times: " + miss + " 2 stitches, 1 " + dc +
+            " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
+            ". Then " + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
+            miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn.",
           stitches,
           "2 half-shells + " + Math.max(0, shellCount - 1) + " full shells + " + shellCount + " " + dc + " anchors = " + stitches + " stitches",
         );
@@ -123,9 +123,10 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
           r,
           change +
             "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. " +
-            "*" + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-            ", " + miss + " 2 stitches, 1 " + dc + " in the next " + tr +
-            "; repeat from * across, ending with 1 " + dc + " in the top of the turning chain-3. Turn.",
+            "Repeat " + shellCount + " times: " + miss + " 2 stitches, 5 " + tr +
+            " in the next " + dc + ", " + miss + " 2 stitches, 1 " + dc +
+            " in the next " + tr + ". On the final repeat, work that last " + dc +
+            " in the top of the turning chain-3. Turn.",
           stitches,
           shellCount + " shells + " + (shellCount + 1) + " " + dc + " anchors = " + stitches + " stitches",
         );
