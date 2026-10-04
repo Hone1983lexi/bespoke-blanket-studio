@@ -632,6 +632,58 @@ body{background:#ead3c2}
 #quoteChoices{color:#5d4a40!important}
 .size-note{color:#6d584d!important}
 </style>
+<style id="quote-builder-mobile-cleanup">
+/* Keep selected-state text contained and readable on narrow screens. */
+.quote-toggle{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto auto!important;
+  column-gap:12px!important;
+  align-items:center!important;
+  text-align:left!important;
+}
+.quote-toggle .toggle-label{
+  min-width:0!important;
+  line-height:1.2!important;
+}
+.quote-toggle .toggle-status{
+  min-width:0!important;
+  max-width:180px!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+  color:#e7c5b0!important;
+  text-align:right!important;
+  overflow-wrap:anywhere!important;
+}
+.quote-toggle .toggle-plus{
+  flex:none!important;
+  width:22px!important;
+  text-align:center!important;
+}
+@media(max-width:560px){
+  .quote-toggle{
+    min-height:68px!important;
+    padding:15px 14px!important;
+    column-gap:9px!important;
+  }
+  .quote-toggle .toggle-status{
+    max-width:105px!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+  }
+  .quote-toggle .toggle-plus{
+    font-size:25px!important;
+  }
+  .quote-option.open .quote-panel{
+    grid-template-columns:1fr!important;
+  }
+  .size-choice{
+    min-height:68px!important;
+    padding:12px 13px!important;
+  }
+  .size-choice strong{font-size:15px!important}
+  .size-choice small{font-size:12px!important}
+}
+</style>
 </head>
 <body>
 
