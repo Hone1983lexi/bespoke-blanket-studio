@@ -376,7 +376,7 @@ export default function PatternForm() {
                           <div className="p-3">
                             <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
                             <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
-                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 2" : option.name === "Moss / Linen" ? "dc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
+                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 1" : option.name === "Moss / Linen" ? "dc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
                           </div>
                         </button>
                       ))}
@@ -1018,64 +1018,138 @@ function buildPreviewRows(startingChain:number, workingStitches:number, stitch:S
   const dc = uk ? "dc" : "sc";
   const tr = uk ? "tr" : "dc";
   const miss = uk ? "miss" : "skip";
-  const shellCount = Math.floor((workingStitches - 1) / 6);
 
-  if (style === "Shell Stitch") {
-    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook. " +
-      "Repeat " + shellCount + " times: " + miss + " 2 ch, 5 " + tr +
-      " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn. (" +
-      workingStitches + " stitches).";
-
-    const row2 = "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. " +
-      "Repeat " + Math.max(0, shellCount - 1) + " times: " + miss + " 2 stitches, 1 " + dc +
-      " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
-      ". Then " + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
-      miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn. (" +
-      workingStitches + " stitches).";
-
-    const row3 = "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. " +
-      "Repeat " + shellCount + " times: " + miss + " 2 stitches, 5 " + tr +
-      " in the next " + dc + ", " + miss + " 2 stitches, 1 " + dc +
-      " in the next " + tr + ". On the final repeat, work that last " + dc +
-      " in the top of the turning chain-3. Turn. (" + workingStitches + " stitches).";
-
+  if (style === "Moss / Linen") {
+    const dcCount = Math.floor((startingChain - 1) / 2);
+    const repeatCount = Math.max(0, dcCount - 1);
+    const row1 =
+      "Ch " + startingChain + ". 1 " + dc + " in 3rd ch from hook. Repeat " + repeatCount +
+      " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn your work. (" +
+      dcCount + " " + dc + " stitches, " + (dcCount - 1) + " ch-1 spaces).";
+    const row2 =
+      "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. Repeat " +
+      Math.max(0, dcCount - 2) + " times: ch 1, " + miss + " 1 " + dc +
+      ", 1 " + dc + " in the next ch-1 space. Turn your work. (" + dcCount + " " + dc + " stitches).";
     return [
       { rowNumber:1, label:"Row 1", text:row1 },
       { rowNumber:2, label:"Row 2", text:row2 },
-      { rowNumber:3, label:"Row 3", text:row3 },
+      { rowNumber:3, label:"Row 3", text:row2 },
     ];
   }
 
-  if (style === "Moss / Linen") {
-    const dc = terminology === "UK" ? "dc" : "sc";
-    const miss = terminology === "UK" ? "miss" : "skip";
-    const dcCount = Math.floor((startingChain - 1) / 2);
-    const repeatCount = Math.max(0, dcCount - 1);
-
-    const row1 =
-      "Ch " + startingChain + ". 1 " + dc + " in 3rd ch from hook (the 2 missed chains count as 1 " + dc + " and 1 ch). " +
-      "Repeat " + repeatCount + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn your work. (" +
-      dcCount + " " + dc + " stitches, " + (dcCount - 1) + " ch-1 spaces).";
-
-    const row2 =
-      "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. " +
-      "Repeat " + Math.max(0, dcCount - 2) + " times: ch 1, " + miss + " 1 " + dc + ", 1 " + dc +
-      " in the next ch-1 space. Turn your work. (" + dcCount + " " + dc + " stitches).";
-
+  if (style === "Lemon Peel") {
+    const change = (row:number) => row > 1 && row % 2 === 1 ? "Change to Colour " + (((row - 1) / 2) % 4 + 1) + ". " : "";
+    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook, 1 " + tr +
+      " in next ch; repeat this alternating sequence across to the end. Turn your work. (" +
+      workingStitches + " stitches).";
+    const row2 = "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch, 1 " + tr +
+      " in the next stitch; repeat across, working the " + dc + " into each previous " + tr +
+      " and the " + tr + " into each previous " + dc + ". Turn your work. (" + workingStitches + " stitches).";
     return [
-      { rowNumber: 1, label: "Row 1", text: row1 },
-      { rowNumber: 2, label: "Row 2", text: row2 },
-      { rowNumber: 3, label: "Row 3", text: row2 },
+      { rowNumber:1, label:"Row 1", text:row1 },
+      { rowNumber:2, label:"Row 2", text:row2 },
+      { rowNumber:3, label:"Row 3", text:change(3)+row2 },
+    ];
+  }
+
+  if (style === "Granny Stripe") {
+    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook and in each ch across. Turn your work. (" +
+      workingStitches + " stitches).";
+    const row2 = "Ch 3 (counts as 1 " + tr + "). Work 1 " + tr + " in the first stitch; *miss 2 stitches, 3 " +
+      tr + " in the next stitch; repeat from * until 3 stitches remain, miss 2 stitches, 2 " + tr +
+      " in the last stitch. Turn your work. (" + workingStitches + " stitches including the turning chain).";
+    const row3 = "Ch 3 (counts as 1 " + tr + "). Miss the next stitch; work 3 " + tr +
+      " in each space between clusters across. Finish with 1 " + tr +
+      " in the top of the previous turning chain. Turn your work. (" + workingStitches + " stitches including the turning chain).";
+    return [
+      {rowNumber:1,label:"Row 1",text:row1},
+      {rowNumber:2,label:"Row 2",text:row2},
+      {rowNumber:3,label:"Row 3",text:row3},
+    ];
+  }
+
+  if (style === "Block Stitch") {
+    const base = uk ? "htr" : "hdc";
+    const tall = uk ? "tr" : "dc";
+    const row1 = "Ch " + startingChain + ". 1 " + base + " in 2nd ch from hook; *ch 1, " + miss +
+      " 1 ch, 1 " + base + " in next ch; repeat from * across. Turn your work. (" +
+      workingStitches + " stitches and ch-1 spaces).";
+    const row2 = "Ch 3 (counts as 1 " + tall + "). Work 3 " + tall +
+      " in each ch-1 space across, then 1 " + tall + " in the final edge stitch. Turn your work. (" +
+      workingStitches + " stitches including the turning chain).";
+    const row3 = "Ch 1 (does not count as a stitch). Work 1 " + base +
+      " in the first stitch; *ch 1, 1 " + base +
+      " in the space between the next cluster groups; repeat across to the final stitch, then 1 " +
+      base + " in the final stitch. Turn your work. (" + workingStitches + " stitches).";
+    return [
+      {rowNumber:1,label:"Row 1",text:row1},
+      {rowNumber:2,label:"Row 2",text:row2},
+      {rowNumber:3,label:"Row 3",text:row3},
+    ];
+  }
+
+  if (style === "V-Stitch") {
+    const tall = uk ? "tr" : "dc";
+    const row1 = "Ch " + startingChain + ". Work (1 " + tall + ", ch 1, 1 " + tall +
+      ") in each V-stitch position across, with plain edge " + tall +
+      " stitches at the sides. Turn your work. (" + workingStitches + " working stitches).";
+    const row2 = "Ch 3 (counts as 1 " + tall + "). Work (1 " + tall + ", ch 1, 1 " + tall +
+      ") in each V-stitch ch-1 space across. Finish with 1 " + tall +
+      " in the top of the previous turning chain. Turn your work. (" + workingStitches + " working stitches).";
+    return [
+      {rowNumber:1,label:"Row 1",text:row1},
+      {rowNumber:2,label:"Row 2",text:row2},
+      {rowNumber:3,label:"Row 3",text:row2},
+    ];
+  }
+
+  if (style === "Shell Stitch") {
+    const shellCount = Math.floor((workingStitches - 1) / 6);
+    const row1 = "Ch " + startingChain + ". 1 " + dc + " in 2nd ch from hook. Repeat " +
+      shellCount + " times: " + miss + " 2 ch, 5 " + tr + " in next ch, " + miss +
+      " 2 ch, 1 " + dc + " in next ch. Turn your work. (" + workingStitches + " stitches).";
+    const row2 = "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. Repeat " +
+      Math.max(0,shellCount-1) + " times: " + miss + " 2 stitches, 1 " + dc +
+      " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
+      ". Finish with the final partial shell at the edge. Turn your work. (" + workingStitches + " stitches).";
+    const row3 = "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. Repeat " +
+      shellCount + " times: " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
+      ", " + miss + " 2 stitches, 1 " + dc + " in the next " + tr +
+      ". Finish the last " + dc + " in the top of the turning chain-3. Turn your work. (" +
+      workingStitches + " stitches).";
+    return [
+      {rowNumber:1,label:"Row 1",text:row1},
+      {rowNumber:2,label:"Row 2",text:row2},
+      {rowNumber:3,label:"Row 3",text:row3},
+    ];
+  }
+
+  if (style === "Waffle Stitch") {
+    const tall = uk ? "tr" : "dc";
+    const front = uk ? "front post treble (fptr)" : "front post double crochet (fpdc)";
+    const row1 = "Ch " + startingChain + ". Work 1 " + tall + " in 4th ch from hook and in each ch across. Turn your work. (" +
+      workingStitches + " stitches).";
+    const row2 = "Ch 2 (counts as 1 " + tall + "). Work 1 " + front +
+      " around the next stitch, then 1 " + tall + " in each of the next 2 stitches; repeat across to the edge. Turn your work. (" +
+      workingStitches + " stitches including the turning chain).";
+    const row3 = "Ch 2 (counts as 1 " + tall + "). Work 1 " + tall + " in the next stitch, then 1 " +
+      front + " around each of the next 2 stitches; repeat across to the edge. Turn your work. (" +
+      workingStitches + " stitches including the turning chain).";
+    return [
+      {rowNumber:1,label:"Row 1",text:row1},
+      {rowNumber:2,label:"Row 2",text:row2},
+      {rowNumber:3,label:"Row 3",text:row3},
     ];
   }
 
   const abbr=terminology==="UK"?recipe.uk.split("/")[0]:recipe.us.split("/")[0];
+  const turning = style === "Plain" ? "2" : recipe.turningChain;
   return [1,2,3].map((rowNumber)=>({
     rowNumber,
     label:"Row "+rowNumber,
     text: rowNumber===1
-      ? "Ch "+startingChain+". Work 1 "+abbr+" across. Turn. ("+workingStitches+" stitches)"
-      : "Ch "+recipe.turningChain+", turn. Work "+abbr+" across the row, following the "+style+" repeat. Turn. ("+workingStitches+" stitches)"
+      ? "Ch "+startingChain+". Work 1 "+abbr+" in 2nd ch from hook and in each ch across. Turn your work. ("+workingStitches+" stitches)."
+      : "Ch "+turning+" (does not count as a stitch). Work 1 "+abbr+" in each stitch across. Turn your work. ("+workingStitches+" stitches)."
   }));
 }
 function lockedRowText(stitch: Stitch, stitchCount: number) {
@@ -1175,7 +1249,9 @@ function calculateBlueprint(width: number, length: number, stitchGauge: number, 
   const workingStitches =
     style === "Moss / Linen"
       ? Math.max(1, Math.floor((chain - 1) / 2))
-      : Math.max(1, chain - 1);
+      : style === "Waffle Stitch"
+        ? Math.max(1, chain - 2)
+        : Math.max(1, chain - 1);
   return { startingChain: chain, totalRows, workingStitches };
 }
 function BlueprintCard({
