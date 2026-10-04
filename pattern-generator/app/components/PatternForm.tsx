@@ -848,6 +848,7 @@ function PatternStylePreview({
   large = false,
   widthUnits,
   rowUnits,
+  protectedAfter,
 }: {
   style: PatternStyle;
   colors: readonly string[];
