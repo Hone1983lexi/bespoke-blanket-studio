@@ -424,7 +424,6 @@ export default function PatternForm() {
                 />
               </div>
             </div>
-          </section>
         </div>
 
         <section className="mt-8 rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-5 sm:p-6">
