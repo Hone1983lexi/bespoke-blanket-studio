@@ -412,7 +412,7 @@ export default function PatternForm() {
               <div className="flex items-center justify-between gap-3 border-b border-[#d2c0ad] px-4 py-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">Live stitch preview</p>
-                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStyle} · {selectedStitch}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStitch} · {selectedStyle === selectedStitch ? selectedStitch + " Repeat" : selectedStyle}</p>
                 </div>
                 <span className="text-xs text-[#78695d]">{selectedPalette}</span>
               </div>
@@ -421,6 +421,8 @@ export default function PatternForm() {
                   style={selectedStyle}
                   colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
                   large
+                  widthUnits={blueprint?.startingChain}
+                  rowUnits={blueprint?.totalRows}
                 />
               </div>
             </div>
@@ -893,7 +895,7 @@ function PatternPreviewWall({
   );
 }
 
-function PatternStylePreview({ style, colors, large = false }: { style: PatternStyle; colors: readonly string[]; large?: boolean }) {
+function PatternStylePreview({ style, colors, large = false, widthUnits, rowUnits }: { style: PatternStyle; colors: readonly string[]; large?: boolean; widthUnits?: number; rowUnits?: number }) {
   const recipe = STITCH_OPTIONS.find((item) => item.name === style);
   const kind = recipe?.preview ?? "plain";
   const width = large ? 700 : 420;
@@ -1006,6 +1008,18 @@ function PatternStylePreview({ style, colors, large = false }: { style: PatternS
         </g>
       ))}
       <path d={`M 8 ${height - 6} Q ${width * .5} ${height + 1} ${width - 8} ${height - 6}`} fill="none" stroke={colors[colors.length - 1] ?? "#555"} strokeWidth="2" opacity=".35" />
+      {widthUnits && rowUnits && (
+        <g fill="#78695d" fontSize={large ? "11" : "9"} fontWeight="600" opacity=".72">
+          <line x1="18" y1="5" x2={width - 18} y2="5" stroke="#78695d" strokeWidth="1" opacity=".35" />
+          <line x1="18" y1="2" x2="18" y2="8" stroke="#78695d" strokeWidth="1" opacity=".45" />
+          <line x1={width - 18} y1="2" x2={width - 18} y2="8" stroke="#78695d" strokeWidth="1" opacity=".45" />
+          <text x={width / 2} y="13" textAnchor="middle">{widthUnits} stitches</text>
+          <line x1="5" y1="18" x2="5" y2={height - 18} stroke="#78695d" strokeWidth="1" opacity=".35" />
+          <line x1="2" y1="18" x2="8" y2="18" stroke="#78695d" strokeWidth="1" opacity=".45" />
+          <line x1="2" y1={height - 18} x2="8" y2={height - 18} stroke="#78695d" strokeWidth="1" opacity=".45" />
+          <text x="13" y={height / 2} textAnchor="middle" transform={`rotate(-90 13 ${height / 2})`}>{rowUnits} rows</text>
+        </g>
+      )
     </svg>
   );
 }
