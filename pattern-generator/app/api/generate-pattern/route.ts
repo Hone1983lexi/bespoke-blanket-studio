@@ -44,57 +44,6 @@ function blueprintFor(width: number, length: number, stitchGauge: number, rowGau
   return { startingChain: chain, totalRows: rows, workingStitches: Math.max(1, chain - 1) };
 }
 
-function valid<T extends string>(value: unknown, values: T[]): value is T {
-  return typeof value === "string" && values.includes(value as T);
-}
-
-function abbr(stitch: Stitch, terminology: Terminology) {
-  if (terminology === "UK") {
-    if (stitch === "Single Crochet") return "dc";
-    if (stitch === "Half Double Crochet") return "htr";
-    return "tr";
-  }
-  if (stitch === "Single Crochet") return "sc";
-  if (stitch === "Half Double Crochet") return "hdc";
-  return "dc";
-}
-
-function nameOf(stitch: Stitch, terminology: Terminology) {
-  if (terminology === "UK") {
-    if (stitch === "Single Crochet") return "double crochet";
-    if (stitch === "Half Double Crochet") return "half treble";
-    return "treble";
-  }
-  if (stitch === "Single Crochet") return "single crochet";
-  if (stitch === "Half Double Crochet") return "half double crochet";
-  return "double crochet";
-}
-
-function startingChainFor(stitches: number, stitch: Stitch) {
-  if (stitch === "Single Crochet") return stitches + 1;
-  return stitches + 2;
-}
-
-function blueprintFor(width: number, length: number, stitchGauge: number, rowGauge: number, style: PatternStyle, stitch: Stitch) {
-  const target = Math.max(4, Math.round(width * stitchGauge / 4));
-  const rows = Math.max(1, Math.round(length * rowGauge / 4));
-  if (style === "Moss Stitch") {
-    const chain = target % 2 === 0 ? target : target + 1;
-    return { startingChain: Math.max(4, chain), totalRows: rows, workingStitches: Math.ceil(chain / 2) };
-  }
-  if (style === "Granny Stripe") {
-    const groups = Math.max(1, Math.round((target - 2) / 3));
-    const chain = groups * 3 + 2;
-    return { startingChain: chain, totalRows: rows, workingStitches: chain - 1 };
-  }
-  if (style === "Chevron / Ripple") {
-    const repeats = Math.max(1, Math.round(target / 16));
-    const stitches = repeats * 16;
-    return { startingChain: stitches + 1, totalRows: rows, workingStitches: stitches };
-  }
-  return { startingChain: startingChainFor(target, stitch), totalRows: rows, workingStitches: target };
-}
-
 function colour(palette: string, row: number) {
   const list = ["Colour 1","Colour 2","Colour 3","Colour 4"];
   return list[row % list.length];
