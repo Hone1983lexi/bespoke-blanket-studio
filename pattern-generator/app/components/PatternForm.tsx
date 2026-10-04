@@ -348,8 +348,16 @@ export default function PatternForm() {
             ["desired-length", "Desired Length", length, setLength, "inches"],
           ].map(([id, label, value, setter, unit]) => (
             <label key={id as string} htmlFor={id as string} className="block">
-              <span className="mb-2 block text-sm font-medium text-[#46392f]">
+              <span className="mb-2 flex items-center gap-2 text-sm font-medium text-[#46392f]">
                 {label as string}
+                {(id === "stitch-gauge" || id === "row-gauge") && (
+                  <span className="group relative inline-flex">
+                    <button type="button" aria-label={"What is " + (label as string) + "?"} className="flex h-5 w-5 items-center justify-center rounded-full border border-[#b99b84] bg-[#f7eee4] text-[11px] font-bold text-[#72513d]">?</button>
+                    <span className="pointer-events-none absolute left-0 top-7 z-30 hidden w-72 rounded-xl border border-[#cdbca9] bg-[#302b27] p-3 text-xs font-normal leading-5 text-white shadow-xl group-hover:block group-focus-within:block">
+                      {id === "stitch-gauge" ? "Stitch gauge is how many stitches you make across 4 inches (10 cm). It controls the blanket width." : "Row gauge is how many rows you make in 4 inches (10 cm). It controls the blanket length."}
+                    </span>
+                  </span>
+                )}
               </span>
               <div className="flex">
                 <input
@@ -371,7 +379,32 @@ export default function PatternForm() {
           ))}
 
           <section className="sm:col-span-2">
-            <div className="flex items-end justify-between gap-3">
+            <div className="rounded-2xl border border-[#cdbca9] bg-[#fbf6ef] p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ead8c8] text-sm font-bold text-[#72513d]">?</div>
+                <div>
+                  <p className="text-sm font-semibold text-[#302b27]">Not sure what gauge means?</p>
+                  <p className="mt-1 text-sm leading-6 text-[#66594f]">Gauge is simply how tightly or loosely you crochet. Make a small tension swatch, measure 4 inches (10 cm), and count the stitches and rows inside that area. Those two numbers tell the generator how many stitches and rows your blanket needs.</p>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-[#d2c0ad] bg-[#f7eee4] p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#78695d]">Stitch gauge</p>
+                  <p className="mt-2 text-lg tracking-[0.22em] text-[#72513d]">○ ○ ○ ○ ○ ○ ○ ○</p>
+                  <p className="mt-1 text-xs text-[#78695d]">Count across 4 in / 10 cm → controls width</p>
+                </div>
+                <div className="rounded-xl border border-[#d2c0ad] bg-[#f7eee4] p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#78695d]">Row gauge</p>
+                  <div className="mt-2 space-y-0.5 text-lg leading-4 text-[#72513d]"><div>────────</div><div>────────</div><div>────────</div><div>────────</div></div>
+                  <p className="mt-1 text-xs text-[#78695d]">Count rows in 4 in / 10 cm → controls length</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-[#78695d]">Example: 16 stitches and 12 rows per 4 in / 10 cm means your 120 cm blanket is calculated from that personal gauge, rather than a generic estimate.</p>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-[#cdbca9] bg-[#eee2d6] px-4 py-3">
+              <p className="text-xs leading-5 text-[#66594f]"><strong className="text-[#46392f]">How to measure:</strong> crochet a tension square larger than 10 × 10 cm, lay it flat without stretching, then count the centre 10 cm.</p>
+            </div>
+            <div className="mt-6 flex items-end justify-between gap-3">
               <div>
                 <span className="mb-2 block text-sm font-medium text-[#46392f]">
                   Base Stitch
