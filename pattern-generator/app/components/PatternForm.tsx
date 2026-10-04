@@ -737,75 +737,22 @@ function PatternPreviewWall({
           </div>
 
           <div className="mt-4 overflow-hidden rounded-2xl border border-[#cdb9a5] bg-[#d9bea0] p-2">
-            <div
-              className="relative overflow-hidden rounded-xl border border-[#c7a98a] bg-[#e7ceb2] p-3 shadow-[inset_0_2px_8px_rgba(114,81,61,0.12)]"
-              aria-label={"Visual crochet fabric preview of your " + selectedStitch.toLowerCase() + " blanket pattern"}
-            >
-              <div
-                className="space-y-[1px] rounded-lg p-1"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(0deg, rgba(114,81,61,0.045) 0px, rgba(114,81,61,0.045) 1px, transparent 1px, transparent 5px), repeating-linear-gradient(90deg, rgba(114,81,61,0.035) 0px, rgba(114,81,61,0.035) 1px, transparent 1px, transparent 5px)",
-                }}
-              >
-                {Array.from({ length: 12 }, (_, rowIndex) => {
-                  const previewRow = rowIndex + 1;
-                  const locked = previewRow > 3;
-
-                  return (
-                    <div
-                      key={previewRow}
-                      className={
-                        "relative grid grid-cols-[repeat(18,minmax(0,1fr))] h-[18px] items-center gap-x-0 overflow-hidden rounded-sm transition-all duration-500 " +
-                        (locked ? "blur-[3px] opacity-35" : "opacity-100")
-                      }
-                    >
-                      {Array.from({ length: 18 }, (_, stitchIndex) => {
-                        const offset = (rowIndex + stitchIndex) % 2 === 0;
-
-                        if (selectedStitch === "Double Crochet") {
-                          return (
-                            <span key={stitchIndex} className="relative h-[18px] w-full">
-                              <span className="absolute left-1/2 top-0 h-[17px] w-[2px] -translate-x-1/2 rounded-full bg-[#805c45]" />
-                              <span className="absolute left-[18%] right-[18%] top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-[#966f53]" />
-                            </span>
-                          );
-                        }
-
-                        if (selectedStitch === "Half Double Crochet") {
-                          return (
-                            <span key={stitchIndex} className="relative h-[18px] w-full">
-                              <span
-                                className="absolute left-[4%] right-[4%] top-1/2 h-[13px] -translate-y-1/2 rounded-[48%] border-2 border-[#8d674e] bg-[#dfc09d]/55 shadow-[inset_0_1px_2px_rgba(114,81,61,0.12)]"
-                                style={{ transform: `translateY(-50%) rotate(${offset ? 2 : -2}deg)` }}
-                              />
-                            </span>
-                          );
-                        }
-
-                        return (
-                          <span key={stitchIndex} className="relative h-[18px] w-full">
-                            <span
-                              className="absolute left-[3%] right-[3%] top-1/2 h-[13px] -translate-y-1/2 rounded-[48%] border-2 border-[#8f684e] bg-[#e0c19f]/55 shadow-[inset_0_1px_2px_rgba(114,81,61,0.12)]"
-                              style={{ transform: `translateY(-50%) rotate(${offset ? 3 : -3}deg)` }}
-                            />
-                            <span className="absolute left-[10%] right-[10%] top-1/2 h-px bg-[#9b7458]/55" />
-                          </span>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#c9aa8a]/45" />
+            <div className="rounded-xl border border-[#c7a98a] bg-[#e7ceb2] p-3 shadow-[inset_0_2px_8px_rgba(114,81,61,0.12)]">
+              <PatternStylePreview
+                style={selectedStyle}
+                colors={paletteColors}
+                large
+                widthUnits={blueprint.startingChain}
+                rowUnits={blueprint.totalRows}
+                protectedAfter={3}
+              />
             </div>
-
             <div className="mt-3 flex items-center justify-between text-[11px] font-medium text-[#78695d]">
               <span>Rows 1–3 visible</span>
               <span>{Math.max(0, blueprint.totalRows - 3)} rows protected</span>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -907,6 +854,7 @@ function PatternStylePreview({
   large?: boolean;
   widthUnits?: number;
   rowUnits?: number;
+  protectedAfter?: number;
 }) {
   const recipe = STITCH_OPTIONS.find((item) => item.name === style);
   const gridColumns = large ? 28 : 18;
@@ -1007,6 +955,7 @@ function PatternStylePreview({
                 fill={colour}
                 stroke="#ffffff"
                 strokeWidth="1"
+                className={protectedAfter && visualRow + 1 > protectedAfter ? "opacity-30" : undefined}
               />
             );
           }),
