@@ -475,7 +475,7 @@ export default function PatternForm() {
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78695d]">
                     Interactive Row Counter
                   </p>
-                  <p className="mt-2 text-lg font-semibold text-[#302b27]">
+                  <p className="mt-2 text-lg font-semibold text-[#302b27] transition-all duration-200">
                     {completedRows.length} of {pattern.totalRows} rows complete
                   </p>
                   <p className="mt-1 text-sm text-[#66594f]">
@@ -512,10 +512,10 @@ export default function PatternForm() {
                       onClick={() => toggleRow(row.rowNumber)}
                       aria-pressed={complete}
                       className={
-                        "flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm font-semibold transition " +
+                        "flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm font-semibold transition-all duration-200 active:scale-95 " +
                         (complete
-                          ? "border-[#72513d] bg-[#72513d] text-white"
-                          : "border-[#cdbca9] bg-[#f7eee4] text-[#46392f] hover:bg-[#e8d9ca]")
+                          ? "border-[#6f8b73] bg-[#6f8b73] text-white shadow-sm"
+                          : "border-[#cdbca9] bg-[#f7eee4] text-[#46392f] hover:-translate-y-0.5 hover:bg-[#e8d9ca]")
                       }
                     >
                       {complete ? "✓ " : ""}
@@ -546,13 +546,13 @@ export default function PatternForm() {
                     key={row.rowNumber}
                     className={
                       "p-5 transition-colors sm:p-6 " +
-                      (complete ? "bg-[#eee2d6]/70" : "bg-[#f7eee4]")
+                      (complete ? "bg-[#e7efe7]" : "bg-[#f7eee4]")
                     }
                   >
                     <button
                       type="button"
                       onClick={() => toggleRow(row.rowNumber)}
-                      className="flex w-full items-center justify-between gap-4 text-left"
+                      className="flex w-full items-center justify-between gap-4 text-left transition-transform duration-200 active:scale-[0.99]"
                       aria-pressed={complete}
                     >
                       <span className="flex items-center gap-3">
@@ -560,7 +560,7 @@ export default function PatternForm() {
                           className={
                             "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold " +
                             (complete
-                              ? "border-[#72513d] bg-[#72513d] text-white"
+                              ? "border-[#6f8b73] bg-[#6f8b73] text-white shadow-sm"
                               : "border-[#cdbca9] bg-[#f7eee4] text-[#72513d]")
                           }
                         >
@@ -569,9 +569,9 @@ export default function PatternForm() {
                         <span>
                           <span
                             className={
-                              "block font-semibold " +
+                              "block font-semibold transition-all duration-200 " +
                               (complete
-                                ? "text-[#78695d] line-through"
+                                ? "text-[#607565] line-through decoration-[#6f8b73] decoration-2"
                                 : "text-[#302b27]")
                             }
                           >
