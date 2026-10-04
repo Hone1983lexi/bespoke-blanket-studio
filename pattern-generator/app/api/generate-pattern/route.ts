@@ -105,9 +105,8 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       continue;
     }
     if (style === "Plain") {
-      const turn=stitch==="Plain" ? "Ch 1" : "Ch 1";
       if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+a+" in 2nd chain from hook and in each chain across. Turn.");
-      else push(r,"Ch "+turn.replace("Ch ","")+" and turn. Work 1 "+a+" in each stitch across. Turn.");
+      else push(r,"Ch 3 and turn. Work 1 "+a+" in each stitch across. Turn.");
       continue;
     }
     push(r,(r>1?"Change to "+colourName+". ":"")+"Ch 1 and turn. Work 1 "+a+" in each stitch across. Turn.");
