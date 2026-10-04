@@ -93,27 +93,40 @@ export async function POST(request: Request) {
       ...(userId ? { clerkUserId: userId } : {}),
     };
 
-    const priceId =
+    // Use inline Stripe pricing for this checkout branch.
+    // This avoids a Sandbox price-resource mismatch where Stripe can see the
+    // Checkout API request but reports the configured price ID as missing.
+    const lineItem =
       mode === "payment"
-        ? process.env.STRIPE_ONE_OFF_PRICE_ID
-        : process.env.STRIPE_PRO_PRICE_ID;
-
-    if (!priceId) {
-      console.error("Missing Stripe price ID for checkout mode:", mode);
-      return NextResponse.json(
-        { error: "Stripe pricing is not configured." },
-        { status: 500 }
-      );
-    }
+        ? {
+            price_data: {
+              currency: "gbp" as const,
+              unit_amount: 299,
+              product_data: {
+                name: "Custom Crochet Pattern",
+                description:
+                  "Create a personalised crochet pattern from your chosen blanket design, stitch pattern, colours and measurements.",
+              },
+            },
+            quantity: 1,
+          }
+        : {
+            price_data: {
+              currency: "gbp" as const,
+              unit_amount: 799,
+              recurring: { interval: "month" as const },
+              product_data: {
+                name: "Bespoke Blanket Studio Pro",
+                description:
+                  "Monthly membership with access to premium crochet designs, advanced pattern features and enhanced pattern generation.",
+              },
+            },
+            quantity: 1,
+          };
 
     const session = await stripe.checkout.sessions.create({
       mode,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: [lineItem],
       ...(mode === "subscription"
         ? {
             subscription_data: {
