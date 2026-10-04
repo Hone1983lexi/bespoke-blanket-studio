@@ -727,7 +727,7 @@ function PatternPreviewWall({
               <span>Rows 1–3 visible</span>
               <span>{Math.max(0, blueprint.totalRows - 3)} rows protected</span>
             </div>
-          </div>          </div>
+          </div>
         </div>
       </div>
 
