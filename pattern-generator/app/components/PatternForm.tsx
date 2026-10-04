@@ -354,16 +354,114 @@ export default function PatternForm() {
               </p>
             </div>
 
+            <div className="border-b border-[#d2c0ad] bg-[#eee2d6] p-5 sm:p-6">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#78695d]">
+                    Interactive Row Counter
+                  </p>
+                  <p className="mt-2 text-lg font-semibold text-[#302b27]">
+                    {completedRows.length} of {pattern.totalRows} rows complete
+                  </p>
+                  <p className="mt-1 text-sm text-[#66594f]">
+                    Tap a row when you finish it. Your progress is saved on this device.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={resetRowCounter}
+                  disabled={completedRows.length === 0}
+                  className="rounded-lg border border-[#c4ad98] bg-[#f7eee4] px-3 py-2 text-xs font-semibold text-[#5f4b3b] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Reset counter
+                </button>
+              </div>
+
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#d7c5b3]">
+                <div
+                  className="h-full rounded-full bg-[#72513d] transition-all"
+                  style={{ width: (completedRows.length / pattern.totalRows) * 100 + "%" }}
+                />
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {pattern.rows.map((row) => {
+                  const complete = completedRows.includes(row.rowNumber);
+                  return (
+                    <button
+                      key={"counter-" + row.rowNumber}
+                      type="button"
+                      onClick={() => toggleRow(row.rowNumber)}
+                      aria-pressed={complete}
+                      className={
+                        "flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm font-semibold transition " +
+                        (complete
+                          ? "border-[#72513d] bg-[#72513d] text-white"
+                          : "border-[#cdbca9] bg-[#f7eee4] text-[#46392f] hover:bg-[#e8d9ca]")
+                      }
+                    >
+                      {complete ? "✓ " : ""}{row.rowNumber}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="divide-y divide-[#d2c0ad]">
-              {pattern.rows.map((row) => (
-                <article key={row.rowNumber} className="p-5 sm:p-6">
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="font-semibold text-[#302b27]">Row {row.rowNumber}</h3>
-                    <span className="text-xs text-[#78695d]">{row.stitchCount} sts</span>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-stone-700">{row.instruction}</p>
-                </article>
-              ))}
+              {pattern.rows.map((row) => {
+                const complete = completedRows.includes(row.rowNumber);
+                return (
+                  <article
+                    key={row.rowNumber}
+                    className={
+                      "p-5 transition-colors sm:p-6 " +
+                      (complete ? "bg-[#eee2d6]/70" : "bg-[#f7eee4]")
+                    }
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleRow(row.rowNumber)}
+                      className="flex w-full items-center justify-between gap-4 text-left"
+                      aria-pressed={complete}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold " +
+                            (complete
+                              ? "border-[#72513d] bg-[#72513d] text-white"
+                              : "border-[#cdbca9] bg-[#f7eee4] text-[#72513d]")
+                          }
+                        >
+                          {complete ? "✓" : row.rowNumber}
+                        </span>
+                        <span>
+                          <span
+                            className={
+                              "block font-semibold " +
+                              (complete ? "text-[#78695d] line-through" : "text-[#302b27]")
+                            }
+                          >
+                            Row {row.rowNumber}
+                          </span>
+                          <span className="mt-1 block text-xs text-[#78695d]">
+                            {row.stitchCount} stitches · tap to {complete ? "uncheck" : "mark complete"}
+                          </span>
+                        </span>
+                      </span>
+                      <span className="text-xs text-[#78695d]">{complete ? "Complete" : "Open"}</span>
+                    </button>
+                    <p
+                      className={
+                        "mt-3 pl-11 text-sm leading-6 " +
+                        (complete ? "text-[#78695d]" : "text-stone-700")
+                      }
+                    >
+                      {row.instruction}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
