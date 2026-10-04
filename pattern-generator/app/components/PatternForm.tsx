@@ -412,7 +412,7 @@ export default function PatternForm() {
               <div className="flex items-center justify-between gap-3 border-b border-[#d2c0ad] px-4 py-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">Live stitch preview</p>
-                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStitch} · {selectedStyle === selectedStitch ? selectedStitch + " Repeat" : selectedStyle}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStitch} · Striped Chart Repeat</p>
                 </div>
                 <span className="text-xs text-[#78695d]">{selectedPalette}</span>
               </div>
@@ -895,131 +895,137 @@ function PatternPreviewWall({
   );
 }
 
-function PatternStylePreview({ style, colors, large = false, widthUnits, rowUnits }: { style: PatternStyle; colors: readonly string[]; large?: boolean; widthUnits?: number; rowUnits?: number }) {
+function PatternStylePreview({
+  style,
+  colors,
+  large = false,
+  widthUnits,
+  rowUnits,
+}: {
+  style: PatternStyle;
+  colors: readonly string[];
+  large?: boolean;
+  widthUnits?: number;
+  rowUnits?: number;
+}) {
   const recipe = STITCH_OPTIONS.find((item) => item.name === style);
-  const kind = recipe?.preview ?? "plain";
+  const gridColumns = large ? 28 : 18;
+  const gridRows = large ? 12 : 8;
+  const leftAxis = large ? 30 : 24;
+  const bottomAxis = large ? 25 : 20;
   const width = large ? 700 : 420;
-  const height = large ? 230 : 125;
-  const rows = large ? 7 : 4;
-  const cols = large ? 10 : 6;
-  const rowGap = (height - 18) / rows;
-  const stroke = large ? 3.2 : 2.4;
-  const motifW = (width - 24) / cols;
+  const height = large ? 250 : 150;
+  const chartX = leftAxis;
+  const chartY = 8;
+  const chartWidth = width - leftAxis - 8;
+  const chartHeight = height - chartY - bottomAxis;
+  const cellW = chartWidth / gridColumns;
+  const cellH = chartHeight / gridRows;
+  const actualStitches = Math.max(1, widthUnits ?? gridColumns);
+  const actualRows = Math.max(1, rowUnits ?? gridRows);
+  const labelEvery = actualStitches >= 50 ? 10 : 5;
+  const rowLabelEvery = actualRows >= 50 ? 10 : 5;
 
-  const colour = (row: number, col = 0) => colors[(row + col + 1) % colors.length] ?? colors[0];
+  const palette = colors.length ? colors : ["#d9e8ea"];
+  const stitchKind = recipe?.preview ?? "plain";
 
-  const motif = (row: number, col: number) => {
-    const x = 12 + col * motifW;
-    const y = 9 + row * rowGap;
-    const w = motifW - 3;
-    const h = rowGap - 4;
-    const c = colour(row, col);
-    const c2 = colour(row, col + 1);
+  // Keep the chart crisp and chart-like: every cell is a discrete colourwork square.
+  const cellColour = (row: number, col: number) => {
+    const stripe = Math.floor(row / (stitchKind === "granny" ? 2 : 1));
+    let index = (row + col + stripe) % palette.length;
 
-    if (kind === "v") {
-      return (
-        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
-          <path d={`M ${x + 5} ${y + 5} L ${x + w / 2} ${y + h - 4} L ${x + w - 5} ${y + 5}`} />
-        </g>
-      );
-    }
+    if (stitchKind === "moss") index = (row + Math.floor(col / 2)) % palette.length;
+    if (stitchKind === "v") index = (col % 3 === 1 ? row + 1 : row + col) % palette.length;
+    if (stitchKind === "shell") index = (Math.floor(col / 3) + row) % palette.length;
+    if (stitchKind === "waffle") index = (Math.floor(col / 3) + Math.floor(row / 2)) % palette.length;
+    if (stitchKind === "block") index = (Math.floor(col / 3) + Math.floor(row / 2)) % palette.length;
+    if (stitchKind === "granny") index = (Math.floor(col / 3) + Math.floor(row / 2)) % palette.length;
 
-    if (kind === "shell") {
-      return (
-        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
-          <path d={`M ${x + 3} ${y + h - 5} Q ${x + w * .2} ${y + 3} ${x + w * .5} ${y + h - 5} Q ${x + w * .8} ${y + 3} ${x + w - 3} ${y + h - 5}`} />
-          <path d={`M ${x + w * .2} ${y + h - 5} Q ${x + w * .5} ${y + 8} ${x + w * .8} ${y + h - 5}`} opacity=".72" />
-        </g>
-      );
-    }
-
-    if (kind === "granny") {
-      return (
-        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
-          <path d={`M ${x + 4} ${y + h - 5} Q ${x + w * .18} ${y + 3} ${x + w * .32} ${y + h - 5}`} />
-          <path d={`M ${x + w * .38} ${y + h - 5} Q ${x + w * .5} ${y + 3} ${x + w * .62} ${y + h - 5}`} />
-          <path d={`M ${x + w * .68} ${y + h - 5} Q ${x + w * .82} ${y + 3} ${x + w - 4} ${y + h - 5}`} />
-        </g>
-      );
-    }
-
-    if (kind === "block") {
-      return (
-        <g key={col}>
-          <rect x={x + 4} y={y + 3} width={w - 8} height={h - 6} rx="3" fill={c} opacity=".82" />
-          <path d={`M ${x + 7} ${y + h - 5} h ${w - 14}`} stroke={c2} strokeWidth={stroke} strokeLinecap="round" opacity=".75" />
-          <path d={`M ${x + w / 2} ${y + 5} v ${h - 10}`} stroke={c2} strokeWidth={stroke} strokeLinecap="round" opacity=".48" />
-        </g>
-      );
-    }
-
-    if (kind === "waffle") {
-      return (
-        <g key={col} fill="none" strokeLinecap="round">
-          <rect x={x + 4} y={y + 3} width={w - 8} height={h - 6} rx="3" fill={c} opacity=".34" />
-          <path d={`M ${x + 5} ${y + h * .28} H ${x + w - 5}`} stroke={c} strokeWidth={stroke + 1.2} />
-          <path d={`M ${x + 5} ${y + h * .72} H ${x + w - 5}`} stroke={c} strokeWidth={stroke + 1.2} />
-          <path d={`M ${x + w * .3} ${y + 5} V ${y + h - 5}`} stroke={c2} strokeWidth={stroke + 1.2} />
-          <path d={`M ${x + w * .7} ${y + 5} V ${y + h - 5}`} stroke={c2} strokeWidth={stroke + 1.2} />
-        </g>
-      );
-    }
-
-    if (kind === "moss") {
-      return (
-        <g key={col} fill="none" strokeLinecap="round">
-          <path d={`M ${x + 7} ${y + h * .32} h ${w * .28}`} stroke={c} strokeWidth={stroke + .6} />
-          <path d={`M ${x + w * .52} ${y + h * .68} h ${w * .28}`} stroke={c2} strokeWidth={stroke + .6} />
-          <path d={`M ${x + w * .43} ${y + 4} q ${w * .08} ${h * .35} 0 ${h * .7}`} stroke={c} strokeWidth={stroke} opacity=".65" />
-        </g>
-      );
-    }
-
-    if (style === "Lemon Peel") {
-      return (
-        <g key={col} fill="none" strokeLinecap="round">
-          <path d={`M ${x + 5} ${y + h - 5} L ${x + w * .5} ${y + 5} L ${x + w - 5} ${y + h - 5}`} stroke={c} strokeWidth={stroke} />
-          <path d={`M ${x + w * .25} ${y + 5} L ${x + w * .75} ${y + h - 5}`} stroke={c2} strokeWidth={stroke} opacity=".7" />
-        </g>
-      );
-    }
-
-    return (
-      <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
-        <path d={`M ${x + 5} ${y + h - 5} Q ${x + w * .5} ${y + 4} ${x + w - 5} ${y + h - 5}`} />
-        <path d={`M ${x + w * .2} ${y + h - 5} V ${y + 7}`} opacity=".5" />
-        <path d={`M ${x + w * .8} ${y + h - 5} V ${y + 7}`} opacity=".5" />
-      </g>
-    );
+    return palette[index % palette.length];
   };
 
+  const xLabels = Array.from(
+    { length: Math.floor(actualStitches / labelEvery) },
+    (_, i) => (i + 1) * labelEvery,
+  ).filter((n) => n <= actualStitches);
+
+  const yLabels = Array.from(
+    { length: Math.floor(actualRows / rowLabelEvery) },
+    (_, i) => (i + 1) * rowLabelEvery,
+  ).filter((n) => n <= actualRows);
+
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-full min-h-[96px] w-full" role="img" aria-label={style + " crochet fabric swatch preview"}>
-      <defs>
-        <filter id={`soft-${kind}`} x="-10%" y="-10%" width="120%" height="120%">
-          <feGaussianBlur stdDeviation="0.25" />
-        </filter>
-      </defs>
-      <rect width={width} height={height} rx="16" fill={colors[0] ?? "#eee"} />
-      {Array.from({ length: rows }, (_, row) => (
-        <g key={row} filter={`url(#soft-${kind})`}>
-          <rect x="7" y={8 + row * rowGap} width={width - 14} height={rowGap - 4} rx="4" fill={colors[row % colors.length]} opacity=".28" />
-          {Array.from({ length: cols }, (_, col) => motif(row, col))}
-        </g>
-      ))}
-      <path d={`M 8 ${height - 6} Q ${width * .5} ${height + 1} ${width - 8} ${height - 6}`} fill="none" stroke={colors[colors.length - 1] ?? "#555"} strokeWidth="2" opacity=".35" />
-      {widthUnits && rowUnits && (
-        <g fill="#78695d" fontSize={large ? "11" : "9"} fontWeight="600" opacity=".72">
-          <line x1="18" y1="5" x2={width - 18} y2="5" stroke="#78695d" strokeWidth="1" opacity=".35" />
-          <line x1="18" y1="2" x2="18" y2="8" stroke="#78695d" strokeWidth="1" opacity=".45" />
-          <line x1={width - 18} y1="2" x2={width - 18} y2="8" stroke="#78695d" strokeWidth="1" opacity=".45" />
-          <text x={width / 2} y="13" textAnchor="middle">{widthUnits} stitches</text>
-          <line x1="5" y1="18" x2="5" y2={height - 18} stroke="#78695d" strokeWidth="1" opacity=".35" />
-          <line x1="2" y1="18" x2="8" y2="18" stroke="#78695d" strokeWidth="1" opacity=".45" />
-          <line x1="2" y1={height - 18} x2="8" y2={height - 18} stroke="#78695d" strokeWidth="1" opacity=".45" />
-          <text x="13" y={height / 2} textAnchor="middle" transform={`rotate(-90 13 ${height / 2})`}>{rowUnits} rows</text>
-        </g>
-      )}
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="h-full min-h-[110px] w-full"
+      role="img"
+      aria-label={`${style} colourwork chart preview, ${actualStitches} stitches by ${actualRows} rows`}
+    >
+      <rect width={width} height={height} rx="14" fill="#f7eee4" />
+
+      {/* Y-axis */}
+      <line x1={leftAxis - 5} y1={chartY} x2={leftAxis - 5} y2={chartY + chartHeight} stroke="#8b7a6b" strokeWidth="1" />
+      {yLabels.map((label) => {
+        const y = chartY + chartHeight - (label / actualRows) * chartHeight;
+        return (
+          <g key={`y-${label}`}>
+            <line x1={leftAxis - 8} y1={y} x2={leftAxis - 2} y2={y} stroke="#8b7a6b" strokeWidth="1" />
+            <text x={leftAxis - 11} y={y + 3} textAnchor="end" fontSize={large ? "9" : "7"} fill="#78695d">
+              {label}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* Filled stitch cells with a sharp graph-paper grid. */}
+      <g shapeRendering="crispEdges">
+        {Array.from({ length: gridRows }, (_, visualRow) =>
+          Array.from({ length: gridColumns }, (_, col) => {
+            const colour = cellColour(visualRow, col);
+            const x = chartX + col * cellW;
+            const y = chartY + visualRow * cellH;
+            return (
+              <rect
+                key={`${visualRow}-${col}`}
+                x={x}
+                y={y}
+                width={cellW + 0.2}
+                height={cellH + 0.2}
+                fill={colour}
+                stroke="#ffffff"
+                strokeWidth="1"
+              />
+            );
+          }),
+        )}
+        <rect
+          x={chartX}
+          y={chartY}
+          width={chartWidth}
+          height={chartHeight}
+          fill="none"
+          stroke="#9b8a7b"
+          strokeWidth="1.25"
+        />
+      </g>
+
+      {/* X-axis */}
+      <line x1={chartX} y1={chartY + chartHeight + 5} x2={chartX + chartWidth} y2={chartY + chartHeight + 5} stroke="#8b7a6b" strokeWidth="1" />
+      {xLabels.map((label) => {
+        const x = chartX + (label / actualStitches) * chartWidth;
+        return (
+          <g key={`x-${label}`}>
+            <line x1={x} y1={chartY + chartHeight + 2} x2={x} y2={chartY + chartHeight + 8} stroke="#8b7a6b" strokeWidth="1" />
+            <text x={x} y={height - 5} textAnchor="middle" fontSize={large ? "9" : "7"} fill="#78695d">
+              {label}
+            </text>
+          </g>
+        );
+      })}
+
+      <text x={chartX + chartWidth / 2} y={height - 5} textAnchor="middle" fontSize={large ? "8" : "6"} fill="#78695d" opacity=".65">
+        stitches
+      </text>
     </svg>
   );
 }
