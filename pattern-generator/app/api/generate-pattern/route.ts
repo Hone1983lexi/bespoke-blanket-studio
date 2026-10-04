@@ -90,9 +90,54 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       continue;
     }
     if (style === "Shell Stitch") {
-      const dc=terminology==="UK"?"tr":"dc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+(terminology==="UK"?"dc":"sc")+" across. Turn.");
-      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. *Skip 2 stitches, work 5 "+dc+" in next stitch, skip 2 stitches, "+(terminology==="UK"?"dc":"sc")+" in next; repeat across. Turn.");
+      const dc = terminology === "UK" ? "dc" : "sc";
+      const tr = terminology === "UK" ? "tr" : "dc";
+      const miss = terminology === "UK" ? "miss" : "skip";
+      const shellCount = Math.floor((stitches - 1) / 6);
+      const colourPrefix = "With " + colourName + ", ";
+
+      if (r === 1) {
+        push(
+          r,
+          colourPrefix +
+            "ch " + chain +
+            ". Work 1 " + dc + " in 2nd ch from hook, *" +
+            miss + " 2 ch, work 5 " + tr + " in next ch, " +
+            miss + " 2 ch, work 1 " + dc + " in next ch; repeat from * across. Turn.",
+          stitches,
+          shellCount + " shells + " + (shellCount + 1) + " " + dc + " = " + stitches + " stitches",
+        );
+      } else if (r % 2 === 0) {
+        const change = r > 2 ? "Change to " + colourName + ". " : "";
+        push(
+          r,
+          change +
+            "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. " +
+            "*" + miss + " 2 stitches, work 1 " + dc + " in the centre " + tr +
+            " of the next shell, " + miss + " 2 stitches, work 5 " + tr +
+            " in the next " + dc + "; repeat from * until one shell remains. " +
+            miss + " 2 stitches, work 1 " + dc + " in the centre " + tr +
+            " of the last shell, " + miss + " 2 stitches, work 3 " + tr +
+            " in the last stitch. Turn.",
+          stitches,
+          (shellCount - 1) + " shells + 2 half-shells + " + shellCount + " " + dc + " = " + stitches + " stitches",
+        );
+      } else {
+        const change = r > 1 ? "Change to " + colourName + ". " : "";
+        push(
+          r,
+          change +
+            "Ch 1 (does not count). Work 1 " + dc + " in the first stitch. " +
+            "*" + miss + " 2 stitches, work 5 " + tr + " in the next " + dc +
+            ", " + miss + " 2 stitches, work 1 " + dc +
+            " in the centre " + tr + " of the next shell; repeat from * until one shell remains. " +
+            miss + " 2 stitches, work 5 " + tr + " in the next " + dc +
+            ", " + miss + " 2 stitches, work 1 " + dc +
+            " in the top of the turning chain-3. Turn.",
+          stitches,
+          shellCount + " shells + " + (shellCount + 1) + " " + dc + " = " + stitches + " stitches",
+        );
+      }
       continue;
     }
     if (style === "Waffle Stitch") {
