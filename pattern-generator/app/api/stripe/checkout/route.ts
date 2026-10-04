@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const STITCHES = ["Single Crochet", "Half Double Crochet", "Double Crochet"] as const;
+const PATTERN_STYLES = ["Plain", "Moss Stitch", "Striped", "Granny Stripe", "Chevron / Ripple", "Floral Granny", "Stitch Sampler"] as const;
 type CheckoutMode = "payment" | "subscription";
 
 function positiveNumber(value: unknown) {
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     const width = positiveNumber(body.width);
     const length = positiveNumber(body.length);
     const selectedStitch = body.selectedStitch;
+    const patternStyle = body.patternStyle;
 
     if (
       !Number.isInteger(startingChain) ||
@@ -49,7 +51,8 @@ export async function POST(request: Request) {
       !rowGauge ||
       !width ||
       !length ||
-      !STITCHES.includes(selectedStitch)
+      !STITCHES.includes(selectedStitch) ||
+      !PATTERN_STYLES.includes(patternStyle)
     ) {
       return NextResponse.json({ error: "Invalid pattern measurements." }, { status: 400 });
     }
@@ -85,6 +88,7 @@ export async function POST(request: Request) {
       startingChain: String(startingChain),
       totalRows: String(totalRows),
       selectedStitch: String(selectedStitch),
+      patternStyle: String(patternStyle),
       stitchGauge: String(stitchGauge),
       rowGauge: String(rowGauge),
       width: String(width),
