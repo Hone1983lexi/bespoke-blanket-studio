@@ -90,7 +90,6 @@ export default function StitchStructurePreview({
         const dLeft = `M${x - 30} ${y - 18} L${x} ${y + 22}`;
         const dRight = `M${x} ${y + 22} L${x + 30} ${y - 18}`;
         return <g key={`v-${row}-${col}`}>{yarnPath(`v-l-${row}-${col}`, dLeft, yarn(row + col), opacity, stroke - 1)}{yarnPath(`v-r-${row}-${col}`, dRight, yarn(row + col), opacity, stroke - 1)}</g>;
-        return yarnPath(`v-${row}-${col}`, d, yarn(row + col), opacity, stroke);
       });
     }
 
