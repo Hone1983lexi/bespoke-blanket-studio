@@ -1172,7 +1172,11 @@ function calculateBlueprint(width: number, length: number, stitchGauge: number, 
   const target = Math.max(4, Math.round(width * stitchGauge / 4));
   const totalRows = Math.max(1, Math.round(length * rowGauge / 4));
   const chain = Math.ceil(Math.max(1, target - recipe.foundation.add) / recipe.foundation.multiple) * recipe.foundation.multiple + recipe.foundation.add;
-  return { startingChain: chain, totalRows, workingStitches: Math.max(1, chain - 1) };
+  const workingStitches =
+    style === "Moss / Linen"
+      ? Math.max(1, Math.floor((chain - 1) / 2))
+      : Math.max(1, chain - 1);
+  return { startingChain: chain, totalRows, workingStitches };
 }
 function BlueprintCard({
   label,
