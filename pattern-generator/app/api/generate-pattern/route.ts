@@ -1,19 +1,48 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { STITCH_LIBRARY, type Terminology, type StitchRecipe } from "../../lib/stitch-library";
 import Stripe from "stripe";
 
 export const runtime = "nodejs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-type Stitch = "Single Crochet" | "Half Double Crochet" | "Double Crochet";
-type PatternStyle = "Plain" | "Striped" | "Moss Stitch" | "Granny Stripe" | "Chevron / Ripple" | "Stitch Sampler";
-type Terminology = "UK" | "US";
-
-const STITCHES: Stitch[] = ["Single Crochet", "Half Double Crochet", "Double Crochet"];
-const STYLES: PatternStyle[] = ["Plain", "Striped", "Moss Stitch", "Granny Stripe", "Chevron / Ripple", "Stitch Sampler"];
+type Stitch = StitchRecipe["name"];
+type PatternStyle = Stitch;
+const STITCHES = STITCH_LIBRARY.map((recipe) => recipe.name);
+const STYLES = STITCHES;
 const TERMINOLOGIES: Terminology[] = ["UK", "US"];
+
+function valid<T extends string>(value: unknown, values: readonly T[]): value is T {
+  return typeof value === "string" && values.includes(value as T);
+}
+
+function recipeFor(name: Stitch) {
+  return STITCH_LIBRARY.find((recipe) => recipe.name === name)!;
+}
+
+function abbr(stitch: Stitch, terminology: Terminology) {
+  const recipe = recipeFor(stitch);
+  return terminology === "UK" ? recipe.uk : recipe.us;
+}
+
+function primaryAbbr(stitch: Stitch, terminology: Terminology) {
+  const recipe = recipeFor(stitch);
+  return terminology === "UK" ? recipe.uk.split("/")[0] : recipe.us.split("/")[0];
+}
+
+function startingChainFor(stitches: number, stitch: Stitch) {
+  const rule = recipeFor(stitch).foundation;
+  return Math.ceil(Math.max(1, stitches - rule.add) / rule.multiple) * rule.multiple + rule.add;
+}
+
+function blueprintFor(width: number, length: number, stitchGauge: number, rowGauge: number, style: PatternStyle) {
+  const target = Math.max(4, Math.round(width * stitchGauge / 4));
+  const rows = Math.max(1, Math.round(length * rowGauge / 4));
+  const chain = startingChainFor(target, style);
+  return { startingChain: chain, totalRows: rows, workingStitches: Math.max(1, chain - 1) };
+}
 
 function valid<T extends string>(value: unknown, values: T[]): value is T {
   return typeof value === "string" && values.includes(value as T);
@@ -67,85 +96,74 @@ function blueprintFor(width: number, length: number, stitchGauge: number, rowGau
 }
 
 function colour(palette: string, row: number) {
-  const names: Record<string, string[]> = {
-    "Warm Neutral": ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-    Sunset: ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-    Ocean: ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-    Pastel: ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-    Rainbow: ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-    Forest: ["Colour 1", "Colour 2", "Colour 3", "Colour 4"],
-  };
-  const list = names[palette] || names["Warm Neutral"];
+  const list = ["Colour 1","Colour 2","Colour 3","Colour 4"];
   return list[row % list.length];
 }
 
-function plainRow(stitch: Stitch, terminology: Terminology, chain: number, stitches: number, row: number) {
-  const a = abbr(stitch, terminology);
-  const n = nameOf(stitch, terminology);
-  if (row === 1) {
-    if (stitch === "Single Crochet") return "Ch " + chain + ". Work 1 " + n + " (" + a + ") in the 2nd chain from the hook and in each chain across. Turn. (" + stitches + " " + a + ")";
-    if (stitch === "Half Double Crochet") return "Ch " + chain + ". Work 1 " + n + " (" + a + ") in the 3rd chain from the hook and in each chain across. Turn. (" + stitches + " " + a + ")";
-    return "Ch " + chain + ". The first 3 chains count as the first " + a + ". Work 1 " + a + " in the 4th chain from the hook and in each chain across. Turn. (" + stitches + " " + a + ")";
-  }
-  const turn = stitch === "Single Crochet" ? "Ch 1" : stitch === "Half Double Crochet" ? "Ch 2" : "Ch 3";
-  return turn + " and turn. Work 1 " + a + " in each stitch across, including the final stitch. Turn. (" + stitches + " " + a + ")";
-}
-
 function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology, chain: number, rows: number, stitches: number, palette: string) {
-  const result: Array<{ rowNumber: number; instruction: string; stitchCount: number; countLabel?: string }> = [];
-  if (style === "Moss Stitch") {
-    const sc = terminology === "UK" ? "dc" : "sc";
-    const count = Math.ceil(chain / 2);
-    for (let r = 1; r <= rows; r++) {
-      const c = colour(palette, Math.floor((r - 1) / 2));
-      if (r === 1) result.push({ rowNumber: r, instruction: "With " + c + ", ch " + chain + ". 1 " + sc + " in 2nd ch from hook, *ch 1, skip 1 ch, 1 " + sc + " in next ch; repeat across, ending with 1 " + sc + " in last ch. Turn.", stitchCount: count, countLabel: count + " " + sc + " + chain-1 spaces" });
-      else result.push({ rowNumber: r, instruction: ((r - 1) % 2 === 0 ? "Change to " + c + ". " : "") + "Ch 1 and turn. 1 " + sc + " in first ch-1 space, *ch 1, skip the next stitch, 1 " + sc + " in next ch-1 space; repeat across, ending with 1 " + sc + " in the last ch-1 space. Turn.", stitchCount: count, countLabel: count + " " + sc + " + chain-1 spaces" });
+  const result: Array<{ rowNumber:number; instruction:string; stitchCount:number; countLabel?:string }> = [];
+  const a = primaryAbbr(stitch, terminology);
+  const full = abbr(stitch, terminology);
+  const c = (r:number) => colour(palette, Math.floor((r - 1) / 2));
+  const push = (rowNumber:number, instruction:string, stitchCount=stitches, countLabel=stitches+" "+a) => result.push({rowNumber,instruction,stitchCount,countLabel});
+
+  for (let r=1; r<=rows; r++) {
+    const colourName = c(r);
+    if (style === "Moss / Linen") {
+      const dc = terminology === "UK" ? "dc" : "sc";
+      if (r===1) push(r, "With "+colourName+", ch "+chain+". 1 "+dc+" in 2nd ch from hook, *ch 1, skip 1 ch, 1 "+dc+" in next ch; repeat across. Turn.", Math.ceil(chain/2), Math.ceil(chain/2)+" "+dc+" + chain-1 spaces");
+      else push(r, (r%2===1 ? "Change to "+colourName+". " : "")+"Ch 1 and turn. 1 "+dc+" in each ch-1 space across, working 1 dc in the final edge stitch. Turn.", Math.ceil(chain/2), Math.ceil(chain/2)+" "+dc+" + chain-1 spaces");
+      continue;
     }
-    return result;
-  }
-  if (style === "Granny Stripe") {
-    const dc = terminology === "UK" ? "tr" : "dc";
-    const first = terminology === "UK" ? "dc" : "sc";
-    const groups = Math.max(1, Math.round((chain - 2) / 3));
-    for (let r = 1; r <= rows; r++) {
-      const c = colour(palette, Math.floor((r - 1) / 2));
-      if (r === 1) result.push({ rowNumber: r, instruction: "With " + c + ", ch " + chain + ". Work 1 " + first + " in 2nd ch from hook and in each ch across. Turn.", stitchCount: chain - 1, countLabel: (chain - 1) + " " + first });
-      else if (r % 2 === 0) result.push({ rowNumber: r, instruction: (r > 2 ? "Change to " + c + ". " : "") + "Ch 3 and turn. 1 " + dc + " in first stitch, *skip 2 stitches, 3 " + dc + " in next stitch; repeat across until 3 stitches remain, skip 2 stitches, 2 " + dc + " in final stitch. Turn.", stitchCount: chain - 1, countLabel: groups + " granny clusters + edge stitches" });
-      else result.push({ rowNumber: r, instruction: "Ch 3 and turn. Work 3 " + dc + " in each space between clusters across. Finish with 1 " + dc + " in the top of the turning chain. Turn.", stitchCount: chain - 1, countLabel: groups + " granny clusters + edge stitch" });
+    if (style === "Lemon Peel") {
+      const sc=terminology==="UK"?"dc":"sc", dc=terminology==="UK"?"tr":"dc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". 1 "+sc+" in 2nd ch, 1 "+dc+" in next ch; *1 "+sc+" in next, 1 "+dc+" in next; repeat across. Turn.");
+      else push(r,(r%2===1?"Change to "+colourName+". ":"")+"Ch 1 and turn. Work 1 "+sc+" in each "+dc+" and 1 "+dc+" in each "+sc+" across. Turn.");
+      continue;
     }
-    return result;
-  }
-  if (style === "Chevron / Ripple") {
-    const sc = terminology === "UK" ? "dc" : "sc";
-    const repeats = stitches / 16;
-    for (let r = 1; r <= rows; r++) {
-      const c = colour(palette, r - 1);
-      if (r === 1) result.push({ rowNumber: r, instruction: "With " + c + ", ch " + chain + ". Work 1 " + sc + " in 2nd ch from hook and in each ch across. Turn.", stitchCount: stitches, countLabel: stitches + " " + sc });
-      else result.push({ rowNumber: r, instruction: "Change to " + c + ". Ch 1 and turn. Repeat " + repeats + " times: 2 " + sc + " in next stitch, 1 " + sc + " in each of next 5 stitches, " + sc + "2tog twice, 1 " + sc + " in each of next 5 stitches, 2 " + sc + " in next stitch. Turn.", stitchCount: stitches, countLabel: stitches + " " + sc + " — " + repeats + " ripple repeats" });
+    if (style === "Granny Stripe") {
+      const dc=terminology==="UK"?"tr":"dc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+(terminology==="UK"?"dc":"sc")+" in 2nd ch and across. Turn.",chain-1,(chain-1)+" edge stitches");
+      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. Work 3 "+dc+" in each space between clusters across, with an edge "+dc+" at each end. Turn.",stitches,"3-"+dc+" clusters + edge stitches");
+      continue;
     }
-    return result;
-  }
-  if (style === "Stitch Sampler") {
-    const sequence: Stitch[] = ["Single Crochet", "Half Double Crochet", "Double Crochet", stitch];
-    for (let r = 1; r <= rows; r++) {
-      const rowStitch = sequence[(r - 1) % sequence.length];
-      const rowChain = startingChainForStitch(stitches, rowStitch);
-      const a = abbr(rowStitch, terminology);
-      const c = colour(palette, Math.floor((r - 1) / 2));
-      result.push({ rowNumber: r, instruction: (r === 1 ? "With " + c + ", " : (r % 2 === 1 ? "Change to " + c + ". " : "")) + plainRow(rowStitch, terminology, rowChain, stitches, 1).replace(/^Ch [0-9]+\\. /, "Ch " + rowChain + ". "), stitchCount: stitches, countLabel: stitches + " " + a });
+    if (style === "Block Stitch") {
+      const dc=terminology==="UK"?"tr":"dc", sc=terminology==="UK"?"dc":"sc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+sc+" in 2nd ch and across. Turn.");
+      else if(r%2===0) push(r,"Change to "+colourName+". Ch 3 and turn. Work 3 "+dc+" in each chain-1 space across, with "+sc+" between groups. Turn.");
+      else push(r,"Ch 1 and turn. Work "+sc+" into each "+dc+" group and each intervening space across. Turn.");
+      continue;
     }
-    return result;
-  }
-  for (let r = 1; r <= rows; r++) {
-    const c = colour(palette, r - 1);
-    const text = plainRow(stitch, terminology, chain, stitches, r);
-    result.push({ rowNumber: r, instruction: style === "Striped" ? (r === 1 ? "With " + c + ", " + text : "Change to " + c + ". " + text) : text, stitchCount: stitches, countLabel: stitches + " " + abbr(stitch, terminology) });
+    if (style === "V-Stitch") {
+      const dc=terminology==="UK"?"tr":"dc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+dc+" across. Turn.");
+      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. Work 1 "+dc+", *skip 2 stitches, ("+dc+", ch 1, "+dc+") in next stitch; repeat across, ending with "+dc+" in the final stitch. Turn.");
+      continue;
+    }
+    if (style === "Shell Stitch") {
+      const dc=terminology==="UK"?"tr":"dc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+(terminology==="UK"?"dc":"sc")+" across. Turn.");
+      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. *Skip 2 stitches, work 5 "+dc+" in next stitch, skip 2 stitches, "+(terminology==="UK"?"dc":"sc")+" in next; repeat across. Turn.");
+      continue;
+    }
+    if (style === "Waffle Stitch") {
+      const post=terminology==="UK"?"front post treble (fptr)":"front post double crochet (fpdc)";
+      const back=terminology==="UK"?"back post treble (bptr)":"back post double crochet (bpdc)";
+      const dc=terminology==="UK"?"tr":"dc";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+dc+" in 4th ch from hook and in each ch across. Turn.");
+      else if(r%2===0) push(r,(r>2?"Change to "+colourName+". ":"")+"Ch 3 and turn. *"+post+" around next "+dc+", "+back+" around next "+dc+", "+post+" around next "+dc+"; repeat across. Turn.");
+      else push(r,"Ch 3 and turn. *"+back+" around next "+dc+", "+post+" around next "+dc+", "+back+" around next "+dc+"; repeat across. Turn.");
+      continue;
+    }
+    if (style === "Plain") {
+      const turn=stitch==="Plain" ? "Ch 1" : "Ch 1";
+      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+a+" in 2nd chain from hook and in each chain across. Turn.");
+      else push(r,"Ch "+turn.replace("Ch ","")+" and turn. Work 1 "+a+" in each stitch across. Turn.");
+      continue;
+    }
+    push(r,(r>1?"Change to "+colourName+". ":"")+"Ch 1 and turn. Work 1 "+a+" in each stitch across. Turn.");
   }
   return result;
-}
-
-function startingChainForStitch(stitches: number, stitch: Stitch) {
-  return stitch === "Single Crochet" ? stitches + 1 : stitches + 2;
 }
 
 async function hasActiveProSubscription(userId: string) {
