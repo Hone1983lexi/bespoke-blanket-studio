@@ -1054,13 +1054,13 @@ function buildPreviewRows(startingChain:number, workingStitches:number, stitch:S
 
     const row1 =
       "Ch " + startingChain + ". 1 " + dc + " in 3rd ch from hook (the 2 missed chains count as 1 " + dc + " and 1 ch). " +
-      "Repeat " + repeatCount + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn. (" +
+      "Repeat " + repeatCount + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn your work. (" +
       dcCount + " " + dc + " stitches, " + (dcCount - 1) + " ch-1 spaces).";
 
     const row2 =
       "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. " +
       "Repeat " + Math.max(0, dcCount - 2) + " times: ch 1, " + miss + " 1 " + dc + ", 1 " + dc +
-      " in the next ch-1 space. Turn. (" + dcCount + " " + dc + " stitches).";
+      " in the next ch-1 space. Turn your work. (" + dcCount + " " + dc + " stitches).";
 
     return [
       { rowNumber: 1, label: "Row 1", text: row1 },
