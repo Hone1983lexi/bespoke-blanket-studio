@@ -376,7 +376,7 @@ export default function PatternForm() {
                           <div className="p-3">
                             <div className="flex items-center justify-between gap-2"><strong className="text-sm text-[#302b27]">{option.name}</strong><span className="text-[10px] font-semibold text-[#78695d]">{option.difficulty}</span></div>
                             <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
-                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 2" : option.name === "Moss / Linen" ? "sc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
+                            <p className="mt-2 text-[11px] font-medium text-[#72513d]">{option.name === "Plain" ? "dc · chain multiple 1 + 2" : option.name === "Moss / Linen" ? "dc · chain multiple 2 + 1" : `${terminology === "UK" ? option.uk : option.us} · chain multiple ${option.foundation.multiple} + ${option.foundation.add}`}</p>
                           </div>
                         </button>
                       ))}
@@ -1043,6 +1043,29 @@ function buildPreviewRows(startingChain:number, workingStitches:number, stitch:S
       { rowNumber:1, label:"Row 1", text:row1 },
       { rowNumber:2, label:"Row 2", text:row2 },
       { rowNumber:3, label:"Row 3", text:row3 },
+    ];
+  }
+
+  if (style === "Moss / Linen") {
+    const dc = terminology === "UK" ? "dc" : "sc";
+    const miss = terminology === "UK" ? "miss" : "skip";
+    const dcCount = Math.floor((startingChain - 1) / 2);
+    const repeatCount = Math.max(0, dcCount - 1);
+
+    const row1 =
+      "Ch " + startingChain + ". 1 " + dc + " in 3rd ch from hook (the 2 missed chains count as 1 " + dc + " and 1 ch). " +
+      "Repeat " + repeatCount + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn. (" +
+      dcCount + " " + dc + " stitches, " + (dcCount - 1) + " ch-1 spaces).";
+
+    const row2 =
+      "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. " +
+      "Repeat " + Math.max(0, dcCount - 2) + " times: ch 1, " + miss + " 1 " + dc + ", 1 " + dc +
+      " in the next ch-1 space. Turn. (" + dcCount + " " + dc + " stitches).";
+
+    return [
+      { rowNumber: 1, label: "Row 1", text: row1 },
+      { rowNumber: 2, label: "Row 2", text: row2 },
+      { rowNumber: 3, label: "Row 3", text: row2 },
     ];
   }
 
