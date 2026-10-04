@@ -25,10 +25,6 @@ const REAL_FABRIC_PHOTOS: Partial<Record<Stitch, { src: string; credit: string }
     src: "https://commons.wikimedia.org/wiki/Special:FilePath/Crochet_Moss_Stitch.jpg",
     credit: "Photo: Stilfehler / Wikimedia Commons",
   },
-  "V-Stitch": {
-    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Crochet_Single_V_Stitch.jpg",
-    credit: "Photo: Stilfehler / Wikimedia Commons",
-  },
   "Shell Stitch": {
     src: "https://commons.wikimedia.org/wiki/Special:FilePath/Scallop_edge,_also_known_as_shell_stitch_border.jpg",
     credit: "Photo: Most Craft / Wikimedia Commons",
