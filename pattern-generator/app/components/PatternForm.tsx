@@ -149,9 +149,9 @@ export default function PatternForm() {
   const previewRows = useMemo(
     () =>
       blueprint
-        ? buildPreviewRows(blueprint.startingChain, selectedStitch)
+        ? buildPreviewRows(blueprint.startingChain, blueprint.workingStitches, selectedStitch, selectedStyle, terminology)
         : [],
-    [blueprint, selectedStitch],
+    [blueprint, selectedStitch, selectedStyle, terminology],
   );
 
   async function generateFromCheckout(sessionId: string, attempt = 0) {
@@ -1037,20 +1037,6 @@ function PatternStylePreview({
 
               if (style === "Granny Stripe") {
                 return <path key={col} d={`M ${x + 1} ${y + rowH - 3} Q ${x + cellW / 2} ${y + 3} ${x + cellW - 1} ${y + rowH - 3}`} fill="none" stroke={colors[(col + row + 1) % colors.length]} strokeWidth={large ? 6 : 4} strokeLinecap="round" />;
-              }
-
-              if (style === "Floral Granny") {
-                const cx = x + cellW / 2;
-                const cy = y + rowH / 2;
-                return (
-                  <g key={col}>
-                    {[0, 1, 2, 3].map((petal) => {
-                      const a = (petal * Math.PI) / 2;
-                      return <circle key={petal} cx={cx + Math.cos(a) * (large ? 7 : 4)} cy={cy + Math.sin(a) * (large ? 7 : 4)} r={large ? 5 : 3} fill={colors[(col + petal + 1) % colors.length]} opacity="0.9" />;
-                    })}
-                    <circle cx={cx} cy={cy} r={large ? 4 : 2.5} fill={colors[(col + row + 2) % colors.length]} />
-                  </g>
-                );
               }
 
               if (style === "Stitch Sampler") {
