@@ -4,11 +4,54 @@ import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useMemo, useState } from "react";
 
 type Stitch = "Single Crochet" | "Half Double Crochet" | "Double Crochet";
+type PatternStyle =
+  | "Plain"
+  | "Moss Stitch"
+  | "Striped"
+  | "Granny Stripe"
+  | "Chevron / Ripple"
+  | "Floral Granny"
+  | "Stitch Sampler";
 type CheckoutMode = "payment" | "subscription";
+
+const STITCH_OPTIONS: Array<{ name: Stitch; description: string }> = [
+  {
+    name: "Single Crochet",
+    description: "Dense, neat and structured with a firm everyday fabric.",
+  },
+  {
+    name: "Half Double Crochet",
+    description: "Soft medium-height texture with a little more drape.",
+  },
+  {
+    name: "Double Crochet",
+    description: "Taller and more open for a lighter, flowing fabric.",
+  },
+];
+
+const STYLE_OPTIONS: Array<{ name: PatternStyle; description: string }> = [
+  { name: "Plain", description: "Clean, even rows that let your colours lead." },
+  { name: "Moss Stitch", description: "A small textured rhythm with a woven feel." },
+  { name: "Striped", description: "Bold horizontal colour bands across the blanket." },
+  { name: "Granny Stripe", description: "Classic clustered rows with a traditional crochet look." },
+  { name: "Chevron / Ripple", description: "A flowing zigzag rhythm with peaks and valleys." },
+  { name: "Floral Granny", description: "Soft flower-inspired motif styling." },
+  { name: "Stitch Sampler", description: "A playful mix of textures and visual sections." },
+];
+
+const PALETTES = [
+  { name: "Warm Neutral", colors: ["#ead8c8", "#c7a98a", "#9b7659", "#6d5547"] },
+  { name: "Sunset", colors: ["#f2d0b7", "#d98f72", "#b85f55", "#6d4141"] },
+  { name: "Ocean", colors: ["#d6e5e5", "#8db7bd", "#4f808b", "#315766"] },
+  { name: "Pastel", colors: ["#f2dce0", "#d8c8e7", "#b8d8d0", "#e8d6b8"] },
+  { name: "Rainbow", colors: ["#e68b8b", "#e5b66d", "#c9d17e", "#7fb4a7"] },
+  { name: "Forest", colors: ["#d8d7c2", "#a7b28a", "#71836c", "#46564b"] },
+] as const;
 
 type GeneratedPattern = {
   title: string;
   stitch: Stitch;
+  style?: PatternStyle;
   startingChain: number;
   totalRows: number;
   rows: Array<{
@@ -31,6 +74,8 @@ export default function PatternForm() {
   const [width, setWidth] = useState("");
   const [length, setLength] = useState("");
   const [selectedStitch, setSelectedStitch] = useState<Stitch>("Single Crochet");
+  const [selectedStyle, setSelectedStyle] = useState<PatternStyle>("Plain");
+  const [selectedPalette, setSelectedPalette] = useState("Warm Neutral");
   const [pattern, setPattern] = useState<GeneratedPattern | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
@@ -188,6 +233,8 @@ export default function PatternForm() {
           startingChain: blueprint.startingChain,
           totalRows: blueprint.totalRows,
           selectedStitch,
+          patternStyle: selectedStyle,
+          palette: selectedPalette,
           stitchGauge: Number(stitchGauge),
           rowGauge: Number(rowGauge),
           width: Number(width),
@@ -228,6 +275,8 @@ export default function PatternForm() {
           startingChain: blueprint.startingChain,
           totalRows: blueprint.totalRows,
           selectedStitch,
+          patternStyle: selectedStyle,
+          palette: selectedPalette,
         }),
       });
 
@@ -315,40 +364,119 @@ export default function PatternForm() {
             </label>
           ))}
 
-          <label htmlFor="selected-stitch" className="block sm:col-span-2">
-            <span className="mb-2 block text-sm font-medium text-[#46392f]">
-              Selected Stitch
-            </span>
-            <select
-              id="selected-stitch"
-              value={selectedStitch}
-              onChange={(e) => setSelectedStitch(e.target.value as Stitch)}
-              className="w-full rounded-xl border border-[#b99b84] bg-[#f7eee4] px-4 py-3 outline-none focus:border-[#8a7564] focus:ring-2 focus:ring-[#d8c8b8]"
-            >
-              <option>Single Crochet</option>
-              <option>Half Double Crochet</option>
-              <option>Double Crochet</option>
-            </select>
-
-            <div className="mt-4 overflow-hidden rounded-2xl border border-[#d2c0ad] bg-[#fbf6ef]">
-              <div className="grid gap-0 sm:grid-cols-[180px_1fr]">
-                <div className="flex flex-col justify-center border-b border-[#d2c0ad] p-4 sm:border-b-0 sm:border-r">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">
-                    Stitch Preview
-                  </p>
-                  <p className="mt-2 text-base font-semibold text-[#302b27]">
-                    {selectedStitch}
-                  </p>
-                  <p className="mt-1 text-sm leading-5 text-[#66594f]">
-                    {stitchDescription(selectedStitch)}
-                  </p>
-                </div>
-                <div className="min-h-[150px] p-3 sm:p-4">
-                  <StitchPreview stitch={selectedStitch} />
-                </div>
+          <section className="sm:col-span-2">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <span className="mb-2 block text-sm font-medium text-[#46392f]">
+                  Base Stitch
+                </span>
+                <select
+                  id="selected-stitch"
+                  value={selectedStitch}
+                  onChange={(e) => setSelectedStitch(e.target.value as Stitch)}
+                  className="w-full rounded-xl border border-[#b99b84] bg-[#f7eee4] px-4 py-3 outline-none focus:border-[#8a7564] focus:ring-2 focus:ring-[#d8c8b8]"
+                >
+                  {STITCH_OPTIONS.map((option) => (
+                    <option key={option.name}>{option.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
-          </label>
+
+            <div className="mt-6">
+              <div className="flex items-end justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-[#46392f]">Pattern Style</p>
+                  <p className="mt-1 text-xs text-[#78695d]">
+                    Choose the look you want the generated blanket to follow.
+                  </p>
+                </div>
+                <span className="rounded-full border border-[#d2c0ad] bg-[#eee2d6] px-3 py-1 text-[11px] font-semibold text-[#72513d]">
+                  {selectedStyle}
+                </span>
+              </div>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {STYLE_OPTIONS.map((option) => (
+                  <button
+                    key={option.name}
+                    type="button"
+                    onClick={() => setSelectedStyle(option.name)}
+                    aria-pressed={selectedStyle === option.name}
+                    className={
+                      "overflow-hidden rounded-2xl border text-left transition-all duration-200 active:scale-[0.99] " +
+                      (selectedStyle === option.name
+                        ? "border-[#9b6d52] bg-[#f2e2d5] shadow-[0_8px_22px_rgba(114,81,61,0.12)] ring-2 ring-[#d9bca5]"
+                        : "border-[#d2c0ad] bg-[#fbf6ef] hover:-translate-y-0.5 hover:border-[#b99b84] hover:shadow-sm")
+                    }
+                  >
+                    <div className="h-24 border-b border-[#d2c0ad] bg-[#ead8c8]">
+                      <PatternStylePreview style={option.name} colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors} />
+                    </div>
+                    <div className="p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <strong className="text-sm text-[#302b27]">{option.name}</strong>
+                        {selectedStyle === option.name && (
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#72513d] text-[11px] font-bold text-white">✓</span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs leading-5 text-[#78695d]">{option.description}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-[#302b27]">Colour palette</p>
+                  <p className="mt-1 text-xs text-[#78695d]">Preview your pattern in a ready-made yarn palette.</p>
+                </div>
+                <span className="text-xs font-medium text-[#72513d]">{selectedPalette}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
+                {PALETTES.map((palette) => (
+                  <button
+                    key={palette.name}
+                    type="button"
+                    onClick={() => setSelectedPalette(palette.name)}
+                    className={
+                      "rounded-xl border p-2 text-left transition " +
+                      (selectedPalette === palette.name
+                        ? "border-[#9b6d52] bg-[#f7eee4] shadow-sm"
+                        : "border-transparent hover:border-[#d2c0ad] hover:bg-[#f7eee4]")
+                    }
+                    aria-label={"Use " + palette.name + " palette"}
+                  >
+                    <span className="flex h-9 overflow-hidden rounded-lg border border-[#d2c0ad]">
+                      {palette.colors.map((color) => (
+                        <span key={color} className="flex-1" style={{ backgroundColor: color }} />
+                      ))}
+                    </span>
+                    <span className="mt-1 block truncate text-[10px] font-medium text-[#66594f]">{palette.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 overflow-hidden rounded-2xl border border-[#d2c0ad] bg-[#fbf6ef]">
+              <div className="flex items-center justify-between gap-3 border-b border-[#d2c0ad] px-4 py-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">Live stitch preview</p>
+                  <p className="mt-1 text-sm font-semibold text-[#302b27]">{selectedStyle} · {selectedStitch}</p>
+                </div>
+                <span className="text-xs text-[#78695d]">{selectedPalette}</span>
+              </div>
+              <div className="p-3 sm:p-4">
+                <PatternStylePreview
+                  style={selectedStyle}
+                  colors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
+                  large
+                />
+              </div>
+            </div>
+          </section>
         </div>
 
         <section className="mt-8 rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-5 sm:p-6">
@@ -393,6 +521,8 @@ export default function PatternForm() {
           <PatternPreviewWall
             blueprint={blueprint}
             selectedStitch={selectedStitch}
+            selectedStyle={selectedStyle}
+            paletteColors={PALETTES.find((p) => p.name === selectedPalette)?.colors ?? PALETTES[0].colors}
             previewRows={previewRows}
             isGenerating={isGenerating}
             onUnlock={() => void startCheckout("payment")}
@@ -609,12 +739,16 @@ export default function PatternForm() {
 function PatternPreviewWall({
   blueprint,
   selectedStitch,
+  selectedStyle,
+  paletteColors,
   previewRows,
   isGenerating,
   onUnlock,
 }: {
   blueprint: { startingChain: number; totalRows: number };
   selectedStitch: Stitch;
+  selectedStyle: PatternStyle;
+  paletteColors: readonly string[];
   previewRows: PreviewRow[];
   isGenerating: boolean;
   onUnlock: () => void;
@@ -809,6 +943,105 @@ function PatternPreviewWall({
         </div>
       )}
     </section>
+  );
+}
+
+function PatternStylePreview({
+  style,
+  colors,
+  large = false,
+}: {
+  style: PatternStyle;
+  colors: readonly string[];
+  large?: boolean;
+}) {
+  const rows = large ? 8 : 4;
+  const columns = large ? 28 : 14;
+  const width = large ? 700 : 420;
+  const height = large ? 210 : 120;
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="h-full min-h-[96px] w-full"
+      role="img"
+      aria-label={style + " crochet pattern preview"}
+    >
+      <rect width={width} height={height} rx="16" fill={colors[0]} />
+      {Array.from({ length: rows }, (_, row) => {
+        const rowColor = colors[row % colors.length];
+        const y = 8 + row * ((height - 16) / rows);
+        const rowH = (height - 16) / rows - 2;
+
+        if (style === "Striped") {
+          return (
+            <rect
+              key={row}
+              x="8"
+              y={y}
+              width={width - 16}
+              height={rowH}
+              rx="3"
+              fill={rowColor}
+              opacity={0.95}
+            />
+          );
+        }
+
+        return (
+          <g key={row}>
+            <rect x="8" y={y} width={width - 16} height={rowH} rx="3" fill={rowColor} opacity={0.82} />
+            {Array.from({ length: columns }, (_, col) => {
+              const x = 10 + col * ((width - 20) / columns);
+              const cellW = (width - 24) / columns;
+              const alt = (row + col) % 2 === 0;
+
+              if (style === "Chevron / Ripple") {
+                const mid = x + cellW / 2;
+                const yy = y + rowH / 2 + (alt ? -4 : 4);
+                return <path key={col} d={`M ${x} ${yy} Q ${mid} ${yy + (alt ? -6 : 6)} ${x + cellW} ${yy}`} fill="none" stroke={colors[(col + row + 1) % colors.length]} strokeWidth={large ? 5 : 3} strokeLinecap="round" />;
+              }
+
+              if (style === "Granny Stripe") {
+                return <path key={col} d={`M ${x + 1} ${y + rowH - 3} Q ${x + cellW / 2} ${y + 3} ${x + cellW - 1} ${y + rowH - 3}`} fill="none" stroke={colors[(col + row + 1) % colors.length]} strokeWidth={large ? 6 : 4} strokeLinecap="round" />;
+              }
+
+              if (style === "Floral Granny") {
+                const cx = x + cellW / 2;
+                const cy = y + rowH / 2;
+                return (
+                  <g key={col}>
+                    {[0, 1, 2, 3].map((petal) => {
+                      const a = (petal * Math.PI) / 2;
+                      return <circle key={petal} cx={cx + Math.cos(a) * (large ? 7 : 4)} cy={cy + Math.sin(a) * (large ? 7 : 4)} r={large ? 5 : 3} fill={colors[(col + petal + 1) % colors.length]} opacity="0.9" />;
+                    })}
+                    <circle cx={cx} cy={cy} r={large ? 4 : 2.5} fill={colors[(col + row + 2) % colors.length]} />
+                  </g>
+                );
+              }
+
+              if (style === "Stitch Sampler") {
+                const variant = (row + col) % 3;
+                return variant === 0 ? (
+                  <circle key={col} cx={x + cellW / 2} cy={y + rowH / 2} r={large ? 6 : 4} fill="none" stroke={colors[(col + 1) % colors.length]} strokeWidth="2" />
+                ) : variant === 1 ? (
+                  <path key={col} d={`M ${x} ${y + rowH - 2} L ${x + cellW / 2} ${y + 2} L ${x + cellW} ${y + rowH - 2}`} fill="none" stroke={colors[(col + 2) % colors.length]} strokeWidth={large ? 4 : 2.5} />
+                ) : (
+                  <path key={col} d={`M ${x} ${y + rowH / 2} Q ${x + cellW / 2} ${y - 2} ${x + cellW} ${y + rowH / 2}`} fill="none" stroke={colors[(col + 3) % colors.length]} strokeWidth={large ? 4 : 2.5} />
+                );
+              }
+
+              if (style === "Moss Stitch") {
+                return <rect key={col} x={x + 1} y={y + (alt ? 2 : 5)} width={Math.max(3, cellW - 3)} height={large ? 7 : 4} rx="2" fill={colors[(col + row + 1) % colors.length]} opacity="0.95" />;
+              }
+
+              return <circle key={col} cx={x + cellW / 2} cy={y + rowH / 2} r={large ? 5 : 3} fill={colors[(col + row + 1) % colors.length]} opacity="0.8" />;
+            })}
+          </g>
+        );
+      })}
+      {style === "Plain" && <path d={`M8 ${height - 10} H${width - 8}`} stroke={colors[3]} strokeWidth={large ? 5 : 3} opacity=".65" />}
+    </svg>
   );
 }
 
