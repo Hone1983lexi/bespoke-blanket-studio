@@ -41,7 +41,11 @@ function blueprintFor(width: number, length: number, stitchGauge: number, rowGau
   const target = Math.max(4, Math.round(width * stitchGauge / 4));
   const rows = Math.max(1, Math.round(length * rowGauge / 4));
   const chain = startingChainFor(target, style);
-  return { startingChain: chain, totalRows: rows, workingStitches: Math.max(1, chain - 1) };
+  const workingStitches =
+    style === "Moss / Linen"
+      ? Math.max(1, Math.floor((chain - 1) / 2))
+      : Math.max(1, chain - 1);
+  return { startingChain: chain, totalRows: rows, workingStitches };
 }
 
 function colour(palette: string, row: number) {
