@@ -694,7 +694,7 @@ function PatternPreviewWall({
   isGenerating,
   onUnlock,
 }: {
-  blueprint: { startingChain: number; totalRows: number };
+  blueprint: { startingChain: number; totalRows: number; workingStitches: number };
   selectedStitch: Stitch;
   selectedStyle: PatternStyle;
   paletteColors: readonly string[];
@@ -767,7 +767,7 @@ function PatternPreviewWall({
           <PreviewRowCard
             key={row.rowNumber}
             title={"Row " + row.rowNumber}
-            meta={blueprint.startingChain + " stitches"}
+            meta={blueprint.workingStitches + " stitches"}
             text={row.text}
           />
         ))}
@@ -1014,6 +1014,41 @@ function PreviewRowCard({
 
 function buildPreviewRows(startingChain:number, workingStitches:number, stitch:Stitch, style:PatternStyle, terminology:"UK"|"US"):PreviewRow[] {
   const recipe=STITCH_OPTIONS.find((item)=>item.name===stitch) ?? STITCH_OPTIONS[0];
+  const uk = terminology === "UK";
+  const dc = uk ? "dc" : "sc";
+  const tr = uk ? "tr" : "dc";
+  const miss = uk ? "miss" : "skip";
+  const shellCount = Math.floor((workingStitches - 1) / 6);
+
+  if (style === "Shell Stitch") {
+    const row1 = "Ch " + startingChain + ". Work 1 " + dc + " in 2nd ch from hook, *" +
+      miss + " 2 ch, work 5 " + tr + " in next ch, " +
+      miss + " 2 ch, work 1 " + dc + " in next ch; repeat from * across. Turn. (" +
+      workingStitches + " stitches; " + shellCount + " shells + " + (shellCount + 1) + " " + dc + ").";
+
+    const row2 = "Ch 3 (counts as 1 " + tr + "). Work 2 " + tr + " in the first stitch. *" +
+      miss + " 2 stitches, work 1 " + dc + " in the centre " + tr + " of the next shell, " +
+      miss + " 2 stitches, work 5 " + tr + " in the next " + dc +
+      "; repeat from * until one shell remains. " +
+      miss + " 2 stitches, work 1 " + dc + " in the centre " + tr + " of the last shell, " +
+      miss + " 2 stitches, work 3 " + tr + " in the last stitch. Turn. (" +
+      workingStitches + " stitches; " + (shellCount - 1) + " shells + 2 half-shells + " + shellCount + " " + dc + ").";
+
+    const row3 = "Ch 1 (does not count). Work 1 " + dc + " in the first stitch. *" +
+      miss + " 2 stitches, work 5 " + tr + " in the next " + dc + ", " +
+      miss + " 2 stitches, work 1 " + dc + " in the centre " + tr +
+      " of the next shell; repeat from * until one shell remains. " +
+      miss + " 2 stitches, work 5 " + tr + " in the next " + dc + ", " +
+      miss + " 2 stitches, work 1 " + dc + " in the top of the turning chain-3. Turn. (" +
+      workingStitches + " stitches; " + shellCount + " shells + " + (shellCount + 1) + " " + dc + ").";
+
+    return [
+      { rowNumber:1, label:"Row 1", text:row1 },
+      { rowNumber:2, label:"Row 2", text:row2 },
+      { rowNumber:3, label:"Row 3", text:row3 },
+    ];
+  }
+
   const abbr=terminology==="UK"?recipe.uk.split("/")[0]:recipe.us.split("/")[0];
   return [1,2,3].map((rowNumber)=>({
     rowNumber,
