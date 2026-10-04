@@ -93,6 +93,10 @@ export default function PatternForm() {
     };
   }, [stitchGauge, rowGauge, width, length]);
 
+  useEffect(() => {
+    setError("");
+  }, [stitchGauge, rowGauge, width, length, selectedStitch]);
+
   const previewRows = useMemo(
     () =>
       blueprint
