@@ -90,30 +90,137 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
       continue;
     }
     if (style === "Lemon Peel") {
-      const sc=terminology==="UK"?"dc":"sc", dc=terminology==="UK"?"tr":"dc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". 1 "+sc+" in 2nd ch, 1 "+dc+" in next ch; *1 "+sc+" in next, 1 "+dc+" in next; repeat across. Turn.");
-      else push(r,(r%2===1?"Change to "+colourName+". ":"")+"Ch 1 and turn. Work 1 "+sc+" in each "+dc+" and 1 "+dc+" in each "+sc+" across. Turn.");
+      const sc = terminology === "UK" ? "dc" : "sc";
+      const dc = terminology === "UK" ? "tr" : "dc";
+      const change = (r > 1 && r % 2 === 1) ? "Change to " + colourName + ". " : "";
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". 1 " + sc + " in 2nd ch from hook, 1 " + dc +
+            " in next ch; repeat this alternating sequence across to the end. Turn your work.",
+          stitches,
+          stitches + " stitches (alternating " + sc + " and " + dc + ")",
+        );
+      } else {
+        push(
+          r,
+          change + "Ch 1 (does not count as a stitch). 1 " + sc + " in the first stitch, 1 " + dc +
+            " in the next stitch; repeat across, working the " + sc + " into each previous " + dc +
+            " and the " + dc + " into each previous " + sc + ". Turn your work.",
+          stitches,
+          stitches + " stitches",
+        );
+      }
       continue;
     }
+
     if (style === "Granny Stripe") {
-      const dc=terminology==="UK"?"tr":"dc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+(terminology==="UK"?"dc":"sc")+" in 2nd ch and across. Turn.",chain-1,(chain-1)+" edge stitches");
-      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. Work 3 "+dc+" in each space between clusters across, with an edge "+dc+" at each end. Turn.",stitches,"3-"+dc+" clusters + edge stitches");
+      const edge = terminology === "UK" ? "dc" : "sc";
+      const tr = terminology === "UK" ? "tr" : "dc";
+      const change = r > 1 && r % 2 === 1 ? "Change to " + colourName + ". " : "";
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". 1 " + edge + " in 2nd ch from hook and in each ch across. Turn your work.",
+          stitches,
+          stitches + " stitches",
+        );
+      } else if (r === 2) {
+        push(
+          r,
+          "Change to " + colourName + ". Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
+            " in the first stitch; *miss 2 stitches, work 3 " + tr + " in the next stitch; repeat from * until 3 stitches remain, miss 2 stitches, work 2 " +
+            tr + " in the last stitch. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      } else if (r % 2 === 1) {
+        push(
+          r,
+          change + "Ch 3 (counts as 1 " + tr + "). Miss the next stitch; work 3 " + tr +
+            " in each space between clusters across. At the end, work 1 " + tr +
+            " in the top of the previous turning chain. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      } else {
+        push(
+          r,
+          change + "Ch 3 (counts as 1 " + tr + "). Work 1 " + tr +
+            " in the first space between the edge stitches, then 3 " + tr +
+            " in each space between clusters across. Finish with 1 " + tr +
+            " in the top of the previous turning chain. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      }
       continue;
     }
+
     if (style === "Block Stitch") {
-      const dc=terminology==="UK"?"tr":"dc", sc=terminology==="UK"?"dc":"sc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+sc+" in 2nd ch and across. Turn.");
-      else if(r%2===0) push(r,"Change to "+colourName+". Ch 3 and turn. Work 3 "+dc+" in each chain-1 space across, with "+sc+" between groups. Turn.");
-      else push(r,"Ch 1 and turn. Work "+sc+" into each "+dc+" group and each intervening space across. Turn.");
+      const base = terminology === "UK" ? "htr" : "hdc";
+      const tr = terminology === "UK" ? "tr" : "dc";
+      const change = r > 1 && r % 2 === 0 ? "Change to " + colourName + ". " : "";
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". 1 " + base + " in 2nd ch from hook; *ch 1, miss 1 ch, 1 " +
+            base + " in next ch; repeat from * across. Turn your work.",
+          stitches,
+          stitches + " stitches and " + Math.max(0, stitches - 1) + " ch-1 spaces",
+        );
+      } else if (r % 2 === 0) {
+        push(
+          r,
+          change + "Ch 3 (counts as 1 " + tr + "). Work 3 " + tr +
+            " in each ch-1 space across, then 1 " + tr + " in the final edge stitch. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      } else {
+        push(
+          r,
+          "Ch 1 (does not count as a stitch). Work 1 " + base +
+            " in the first stitch; *ch 1, work 1 " + base +
+            " in the space between the next cluster groups; repeat across to the final stitch, then work 1 " +
+            base + " in the final stitch. Turn your work.",
+          stitches,
+          stitches + " stitches and ch-1 spaces",
+        );
+      }
       continue;
     }
+
     if (style === "V-Stitch") {
-      const dc=terminology==="UK"?"tr":"dc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work "+dc+" across. Turn.");
-      else push(r,(r%2===0?"Change to "+colourName+". ":"")+"Ch 3 and turn. Work 1 "+dc+", *skip 2 stitches, ("+dc+", ch 1, "+dc+") in next stitch; repeat across, ending with "+dc+" in the final stitch. Turn.");
+      const stitchName = terminology === "UK" ? "tr" : "dc";
+      const change = r > 1 && r % 2 === 1 ? "Change to " + colourName + ". " : "";
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". Miss 3 ch (the turning chain), then work (1 " + stitchName +
+            ", ch 1, 1 " + stitchName + ") in the next ch; *miss 2 ch, work (1 " + stitchName +
+            ", ch 1, 1 " + stitchName + ") in the next ch; repeat across. Finish with 1 " + stitchName +
+            " at the edge as needed for the stated foundation multiple. Turn your work.",
+          stitches,
+          stitches + " working stitches across the row",
+        );
+      } else {
+        push(
+          r,
+          change + "Ch 2 (does not count as a stitch). Work (1 " + stitchName + ", ch 1, 1 " + stitchName +
+            ") in each V-stitch chain-1 space across. Finish with 1 " + stitchName +
+            " in the top of the previous turning chain. Turn your work.",
+          stitches,
+          stitches + " working stitches across the row",
+        );
+      }
       continue;
     }
+
     if (style === "Shell Stitch") {
       const dc = terminology === "UK" ? "dc" : "sc";
       const tr = terminology === "UK" ? "tr" : "dc";
@@ -125,9 +232,9 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
           r,
           "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 2nd ch from hook. " +
             "Repeat " + shellCount + " times: " + miss + " 2 ch, 5 " + tr +
-            " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn.",
+            " in next ch, " + miss + " 2 ch, 1 " + dc + " in next ch. Turn your work.",
           stitches,
-          shellCount + " shells + " + (shellCount + 1) + " " + dc + " = " + stitches + " stitches",
+          shellCount + " shells + " + (shellCount + 1) + " " + dc + " anchors = " + stitches + " stitches",
         );
       } else if (r % 2 === 0) {
         const change = r > 2 ? "Change to " + colourName + ". " : "";
@@ -138,9 +245,9 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
             "Repeat " + Math.max(0, shellCount - 1) + " times: " + miss + " 2 stitches, 1 " + dc +
             " in the next stitch, " + miss + " 2 stitches, 5 " + tr + " in the next " + dc +
             ". Then " + miss + " 2 stitches, 1 " + dc + " in the next stitch, " +
-            miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn.",
+            miss + " 2 stitches, 3 " + tr + " in the last stitch. Turn your work.",
           stitches,
-          "2 half-shells + " + Math.max(0, shellCount - 1) + " full shells + " + shellCount + " " + dc + " anchors = " + stitches + " stitches",
+          "Shell repeat balanced to " + stitches + " stitches",
         );
       } else {
         const change = r > 1 ? "Change to " + colourName + ". " : "";
@@ -150,21 +257,45 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
             "Ch 1 (does not count as a stitch). 1 " + dc + " in the first stitch. " +
             "Repeat " + shellCount + " times: " + miss + " 2 stitches, 5 " + tr +
             " in the next " + dc + ", " + miss + " 2 stitches, 1 " + dc +
-            " in the next " + tr + ". On the final repeat, work that last " + dc +
-            " in the top of the turning chain-3. Turn.",
+            " in the next " + tr + ". On the final repeat, work the last " + dc +
+            " into the top of the turning chain-3. Turn your work.",
           stitches,
-          shellCount + " shells + " + (shellCount + 1) + " " + dc + " anchors = " + stitches + " stitches",
+          "Shell repeat balanced to " + stitches + " stitches",
         );
       }
       continue;
     }
+
     if (style === "Waffle Stitch") {
-      const post=terminology==="UK"?"front post treble (fptr)":"front post double crochet (fpdc)";
-      const back=terminology==="UK"?"back post treble (bptr)":"back post double crochet (bpdc)";
-      const dc=terminology==="UK"?"tr":"dc";
-      if(r===1) push(r,"With "+colourName+", ch "+chain+". Work 1 "+dc+" in 4th ch from hook and in each ch across. Turn.");
-      else if(r%2===0) push(r,(r>2?"Change to "+colourName+". ":"")+"Ch 3 and turn. *"+post+" around next "+dc+", "+back+" around next "+dc+", "+post+" around next "+dc+"; repeat across. Turn.");
-      else push(r,"Ch 3 and turn. *"+back+" around next "+dc+", "+post+" around next "+dc+", "+back+" around next "+dc+"; repeat across. Turn.");
+      const base = terminology === "UK" ? "tr" : "dc";
+      const front = terminology === "UK" ? "front post treble (fptr)" : "front post double crochet (fpdc)";
+      const back = terminology === "UK" ? "back post treble (bptr)" : "back post double crochet (bpdc)";
+      const change = r > 1 && r % 2 === 0 ? "Change to " + colourName + ". " : "";
+
+      if (r === 1) {
+        push(
+          r,
+          "With " + colourName + ", ch " + chain + ". Work 1 " + base + " in 4th ch from hook and in each ch across. Turn your work.",
+          stitches,
+          stitches + " stitches",
+        );
+      } else if (r % 2 === 0) {
+        push(
+          r,
+          change + "Ch 2 (counts as 1 " + base + "). Work 1 " + front + " around the next stitch, then 1 " + base +
+            " in each of the next 2 stitches; repeat this 3-stitch repeat across. Finish with the edge stitch at the turning chain. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      } else {
+        push(
+          r,
+          "Ch 2 (counts as 1 " + base + "). Work 1 " + base + " in the next stitch, then 1 " + front +
+            " around each of the next 2 stitches; repeat across. Finish with the edge stitches as required. Turn your work.",
+          stitches,
+          stitches + " stitches including the turning chain",
+        );
+      }
       continue;
     }
     if (style === "Plain") {
