@@ -125,11 +125,31 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const startingChain = Number(body.startingChain);
-    const totalRows = Number(body.totalRows);
-    const selectedStitch = body.selectedStitch;
     const sessionId =
       typeof body.sessionId === "string" ? body.sessionId : null;
+
+    let startingChain = Number(body.startingChain);
+    let totalRows = Number(body.totalRows);
+    let selectedStitch = body.selectedStitch;
+
+    // After Stripe redirects back to the app, the form inputs are no longer
+    // available in the request. Recover the original blueprint from the
+    // verified Checkout Session metadata instead.
+    if (
+      sessionId &&
+      (!Number.isInteger(startingChain) ||
+        startingChain <= 0 ||
+        !Number.isInteger(totalRows) ||
+        totalRows <= 0 ||
+        !StitchSchema.safeParse(selectedStitch).success)
+    ) {
+      const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId);
+      const metadata = checkoutSession.metadata ?? {};
+
+      startingChain = Number(metadata.startingChain);
+      totalRows = Number(metadata.totalRows);
+      selectedStitch = metadata.selectedStitch;
+    }
 
     if (!Number.isInteger(startingChain) || startingChain <= 0) {
       return NextResponse.json({ error: "Invalid Starting Chain." }, { status: 400 });
