@@ -139,11 +139,7 @@ export default function PatternForm() {
       return null;
     }
 
-    return {
-      startingChain: Math.round(desiredWidth * (gauge / 4)),
-      totalRows: Math.round(desiredLength * (rows / 4)),
-      workingStitches: Math.round(desiredWidth * (gauge / 4)),
-    };
+    return calculateBlueprint(desiredWidth, desiredLength, gauge, rows, selectedStyle, selectedStitch);
   }, [stitchGauge, rowGauge, width, length, selectedStitch, selectedStyle]);
 
   useEffect(() => {
@@ -1236,6 +1232,33 @@ function StitchPreview({ stitch }: { stitch: Stitch }) {
   );
 }
 
+function calculateBlueprint(
+  width: number,
+  length: number,
+  stitchGauge: number,
+  rowGauge: number,
+  style: PatternStyle,
+  stitch: Stitch,
+) {
+  const target = Math.max(4, Math.round(width * stitchGauge / 4));
+  const totalRows = Math.max(1, Math.round(length * rowGauge / 4));
+  if (style === "Moss Stitch") {
+    const startingChain = target % 2 === 0 ? target : target + 1;
+    return { startingChain, totalRows, workingStitches: Math.ceil(startingChain / 2) };
+  }
+  if (style === "Granny Stripe") {
+    const groups = Math.max(1, Math.round((target - 2) / 3));
+    const startingChain = groups * 3 + 2;
+    return { startingChain, totalRows, workingStitches: startingChain - 1 };
+  }
+  if (style === "Chevron / Ripple") {
+    const repeats = Math.max(1, Math.round(target / 16));
+    const workingStitches = repeats * 16;
+    return { startingChain: workingStitches + 1, totalRows, workingStitches };
+  }
+  const startingChain = stitch === "Single Crochet" ? target + 1 : target + 2;
+  return { startingChain, totalRows, workingStitches: target };
+}
 function BlueprintCard({
   label,
   value,
