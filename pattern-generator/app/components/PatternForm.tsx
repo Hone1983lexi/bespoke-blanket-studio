@@ -385,6 +385,16 @@ export default function PatternForm() {
           </div>
         )}
 
+        {blueprint && !pattern && (
+          <PatternPreviewWall
+            blueprint={blueprint}
+            selectedStitch={selectedStitch}
+            previewRows={previewRows}
+            isGenerating={isGenerating}
+            onUnlock={() => void startCheckout("payment")}
+          />
+        )}
+
         <section className="mt-6 rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-5 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <button
@@ -440,16 +450,6 @@ export default function PatternForm() {
             your authenticated account.
           </p>
         </section>
-
-        {blueprint && !pattern && (
-          <PatternPreviewWall
-            blueprint={blueprint}
-            selectedStitch={selectedStitch}
-            previewRows={previewRows}
-            isGenerating={isGenerating}
-            onUnlock={() => void startCheckout("payment")}
-          />
-        )}
 
         {pattern && (
           <section className="mt-8 rounded-2xl border border-[#d2c0ad] bg-[#f7eee4]">
