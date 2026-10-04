@@ -1,7 +1,7 @@
 "use client";
 
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Stitch = "Single Crochet" | "Half Double Crochet" | "Double Crochet";
 type CheckoutMode = "payment" | "subscription";
@@ -28,8 +28,48 @@ export default function PatternForm() {
   const [pattern, setPattern] = useState<GeneratedPattern | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [completedRows, setCompletedRows] = useState<number[]>([]);
 
   const isPro = user?.publicMetadata?.subscriptionStatus === "active";
+
+  const counterKey = pattern
+    ? "bespoke-crochet-row-counter:" + pattern.title + ":" + pattern.stitch + ":" + pattern.startingChain + ":" + pattern.totalRows
+    : "";
+
+  useEffect(() => {
+    if (!pattern || !counterKey) {
+      setCompletedRows([]);
+      return;
+    }
+    try {
+      const saved = window.localStorage.getItem(counterKey);
+      const parsed = saved ? JSON.parse(saved) : [];
+      setCompletedRows(
+        Array.isArray(parsed) ? parsed.filter((n: unknown) => Number.isInteger(n)) : [],
+      );
+    } catch {
+      setCompletedRows([]);
+    }
+  }, [pattern, counterKey]);
+
+  useEffect(() => {
+    if (!counterKey) return;
+    try {
+      window.localStorage.setItem(counterKey, JSON.stringify(completedRows));
+    } catch {}
+  }, [completedRows, counterKey]);
+
+  function toggleRow(rowNumber: number) {
+    setCompletedRows((current) =>
+      current.includes(rowNumber)
+        ? current.filter((row) => row !== rowNumber)
+        : [...current, rowNumber].sort((a, b) => a - b),
+    );
+  }
+
+  function resetRowCounter() {
+    setCompletedRows([]);
+  }
 
   const blueprint = useMemo(() => {
     const gauge = Number(stitchGauge);
