@@ -93,27 +93,24 @@ export async function POST(request: Request) {
       ...(userId ? { clerkUserId: userId } : {}),
     };
 
+    const priceId =
+      mode === "payment"
+        ? process.env.STRIPE_ONE_OFF_PRICE_ID
+        : process.env.STRIPE_PRO_PRICE_ID;
+
+    if (!priceId) {
+      console.error("Missing Stripe price ID for checkout mode:", mode);
+      return NextResponse.json(
+        { error: "Stripe pricing is not configured." },
+        { status: 500 }
+      );
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode,
       line_items: [
         {
-          price_data: {
-            currency: "gbp",
-            unit_amount: mode === "payment" ? 299 : 799,
-            product_data: {
-              name:
-                mode === "payment"
-                  ? "Single Crochet Pattern Unlock"
-                  : "Bespoke Crochet Pro Membership",
-              description:
-                mode === "payment"
-                  ? "One custom AI-generated crochet pattern."
-                  : "Unlimited custom crochet pattern generations.",
-            },
-            ...(mode === "subscription"
-              ? { recurring: { interval: "month" as const } }
-              : {}),
-          },
+          price: priceId,
           quantity: 1,
         },
       ],
