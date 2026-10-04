@@ -81,11 +81,11 @@ export function buildRows(
       const count = chain - 1;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. 1 ${dc} in 2nd ch from hook and in each ch across. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work 1 ${dc} in the 2nd ch from hook, then work 1 ${dc} in each chain across. Turn your work.`,
           count, `${count} ${dc} stitches`);
       } else {
         push(rows, r,
-          `Ch 1 (does not count as a stitch). 1 ${dc} in each stitch across. Turn your work.`,
+          `Ch 1 (does not count as a stitch). Work 1 ${dc} in the first stitch, then work 1 ${dc} in each stitch across to the end. Turn your work.`,
           count, `${count} ${dc} stitches`);
       }
       continue;
@@ -97,11 +97,11 @@ export function buildRows(
       const spaces = dcCount;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. Ch 2 (counts as 1 ${dc} and ch 1). ${miss} the stitch at the base of the ch-2 and the next stitch, then work 1 ${dc} in the next stitch. Repeat: ch 1, ${miss} 1 stitch, 1 ${dc} in the next stitch across. Turn your work.`,
+          `With ${colour}, ch ${chain}. Ch 2 (counts as 1 ${dc} and ch 1). ${miss} the stitch at the base of the ch-2 and the next stitch, then work 1 ${dc} in the next stitch. After each ${dc}, ch 1, ${miss} 1 stitch, then work 1 ${dc} in the next stitch. Repeat this sequence across. Turn your work.`,
           dcCount, `${dcCount} ${dc} stitches + ${spaces} ch-1 spaces`);
       } else {
         push(rows, r,
-          `Ch 2 (counts as 1 ${dc} and ch 1). Work 1 ${dc} in the first ch-1 space, then repeat: ch 1, ${miss} 1 ${dc}, 1 ${dc} in the next ch-1 space across. Work the final ${dc} into the ch-2 turning chain from the previous row. Turn your work.`,
+          `Ch 2 (counts as 1 ${dc} and ch 1). Work 1 ${dc} in the first ch-1 space. After each ${dc}, ch 1, ${miss} 1 ${dc}, then work 1 ${dc} in the next ch-1 space. Repeat this sequence across. Work the final ${dc} into the ch-2 turning chain from the previous row. Turn your work.`,
           dcCount + 1, `${dcCount + 1} ${dc} stitches + ${spaces} ch-1 spaces`);
       }
       continue;
@@ -112,11 +112,11 @@ export function buildRows(
       const first = r === 1;
       if (first) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. Work 1 ${dc} in 2nd ch from hook, 1 ${tr} in next ch; repeat this alternating sequence across to the final chain. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work 1 ${dc} in the 2nd ch from hook, then 1 ${tr} in the next chain. Continue across by alternating 1 ${dc}, then 1 ${tr}, working the opposite stitch into each successive chain. Turn your work.`,
           count, `${count} alternating ${dc}/${tr} stitches`);
       } else {
         push(rows, r,
-          `Ch 1 (does not count as a stitch). Work 1 ${tr} in the first ${dc} below, then 1 ${dc} in the next ${tr} below; repeat the alternating sequence across. Turn your work.`,
+          `Ch 1 (does not count as a stitch). Work 1 ${tr} in the first ${dc} below, then 1 ${dc} in the next ${tr} below. Continue across by alternating 1 ${tr}, then 1 ${dc}, working the opposite stitch into each successive stitch below. Turn your work.`,
           count, `${count} stitches`);
       }
       continue;
@@ -127,11 +127,11 @@ export function buildRows(
       const row1 = chain - 1;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. 1 ${dc} in 2nd ch from hook, then 1 ${dc} in each ch across. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work 1 ${dc} in the 2nd ch from hook, then work 1 ${dc} in each chain across. Turn your work.`,
           row1, `${row1} ${dc} stitches`);
       } else if (r === 2) {
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${tr} in the same stitch as the ch-3. Repeat ${Math.max(0, k - 1)} times: ${miss} 2 stitches, 3 ${tr} in the next stitch. ${miss} 2 stitches, 2 ${tr} in the last stitch. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${tr} in the same stitch as the ch-3. ${miss} 2 stitches, then work 3 ${tr} in the next stitch. Repeat this sequence across. After the final 3-${tr} cluster, ${miss} 2 stitches, then work 2 ${tr} in the last stitch. Turn your work.`,
           row1, `${row1} ${tr} stitches`);
       } else if (r % 2 === 1) {
         // Bella Coco Rows 3+: the number of actual tr stitches changes because the
@@ -139,13 +139,13 @@ export function buildRows(
         const clusters = Math.max(1, k - 1);
         const count = clusters * 3 + 2;
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). ${miss} the next stitch. Work 3 ${tr} in the first space between clusters from the previous row. Repeat: ${miss} 3 stitches, 3 ${tr} in the next space between clusters. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). ${miss} the next stitch, then work 3 ${tr} in the first space between clusters from the previous row. After each 3-${tr} cluster, ${miss} 3 stitches, then work 3 ${tr} in the next space between clusters. Repeat across. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
           count, `${clusters} 3-${tr} clusters + 2 edge ${tr}`);
       } else {
         const clusters = Math.max(1, k - 1);
         const count = clusters * 3 + 2;
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${tr} in the first space between the first and second stitches of the previous row. Repeat: ${miss} 3 stitches, 3 ${tr} in the next space between clusters. Finish with 1 ${tr} in the final edge space and 1 ${tr} in the top of the previous ch-3. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${tr} in the first space between the first and second stitches of the previous row. After each 3-${tr} cluster, ${miss} 3 stitches, then work 3 ${tr} in the next space between clusters. Repeat across. Finish with 1 ${tr} in the final edge space, then work 1 ${tr} in the top of the previous ch-3. Turn your work.`,
           count, `${clusters} 3-${tr} clusters + 2 edge ${tr}`);
       }
       continue;
@@ -156,16 +156,16 @@ export function buildRows(
       const spaces = row1Count - 1;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. 1 ${hdc} in 2nd ch from hook. Repeat: ch 1, ${miss} 1 chain, 1 ${hdc} in next chain, across to the end. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work 1 ${hdc} in the 2nd ch from hook. After each ${hdc}, ch 1, ${miss} 1 chain, then work 1 ${hdc} in the next chain. Repeat this sequence across to the end. Turn your work.`,
           row1Count, `${row1Count} ${hdc} stitches + ${spaces} ch-1 spaces`);
       } else if (r % 2 === 0) {
         const count = spaces * 3 + 2;
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 3 ${tr} in each ch-1 space across. Finish with 1 ${tr} in the final stitch. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 3 ${tr} in the first ch-1 space. After each 3-${tr} group, work 3 ${tr} in the next ch-1 space. Repeat across. Finish with 1 ${tr} in the final stitch. Turn your work.`,
           count, `${count} ${tr} stitches`);
       } else {
         push(rows, r,
-          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 1 ${hdc} in the first stitch. Repeat: ch 1, 1 ${hdc} in the space between the groups of three ${tr}, across to the last group. Finish with ch 1 and 1 ${hdc} in the last stitch. Turn your work.`,
+          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 1 ${hdc} in the first stitch. After each group of three ${tr}, ch 1, then work 1 ${hdc} in the space between the next groups. Repeat across. Finish with ch 1 and 1 ${hdc} in the last stitch. Turn your work.`,
           row1Count, `${row1Count} ${hdc} stitches + ${spaces} ch-1 spaces`);
       }
       continue;
@@ -192,16 +192,16 @@ export function buildRows(
       const row1Count = chain - 1;
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. 1 ${dc} in 2nd ch from hook. Repeat ${shells} times: ${miss} 2 chains, work 5 ${tr} in the next chain, ${miss} 2 chains, 1 ${dc} in the next chain. Turn your work.`,
+          `With ${colour}, ch ${chain}. Work 1 ${dc} in the 2nd ch from hook. ${miss} 2 chains, then work 5 ${tr} in the next chain. After each 5-${tr} shell, ${miss} 2 chains, then work 1 ${dc} in the next chain. Repeat this shell-and-anchor sequence across. Turn your work.`,
           row1Count, `${shells + 1} ${dc} stitches + ${shells} shells (5 ${tr} each)`);
       } else if (r % 2 === 0) {
         const count = shells * 6;
         push(rows, r,
-          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 3 ${tr} in the first stitch. Repeat ${Math.max(0, shells - 1)} times: ${miss} 2 stitches, 1 ${dc} in the middle ${tr} of the next shell, ${miss} 2 stitches, 5 ${tr} in the next ${dc}. Finish with 3 ${tr} in the last ${dc}. Turn your work.`,
+          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 3 ${tr} in the first stitch. ${miss} 2 stitches, then work 1 ${dc} in the middle ${tr} of the next shell. ${miss} 2 stitches, then work 5 ${tr} in the next ${dc}. Repeat this sequence across. Finish with 3 ${tr} in the last ${dc}. Turn your work.`,
           count, `${count} working stitches: ${shells} shell-row units with 3-tr edge halves`);
       } else {
         push(rows, r,
-          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 1 ${dc} in the first stitch. Repeat ${Math.max(0, shells - 1)} times: 5 ${tr} in the next ${dc}, ${miss} 2 stitches, 1 ${dc} in the middle ${tr} of the next shell, ${miss} 2 stitches. Finish with 1 ${dc} in the final stitch. Turn your work.`,
+          `Change to ${colour}. Ch 1 (does not count as a stitch). Work 1 ${dc} in the first stitch. Work 5 ${tr} in the next ${dc}, then ${miss} 2 stitches and work 1 ${dc} in the middle ${tr} of the next shell. Repeat this shell-and-anchor sequence across. After the final anchor, ${miss} 2 stitches, then finish with 1 ${dc} in the final stitch. Turn your work.`,
           row1Count, `${shells + 1} ${dc} anchors + ${shells} shells`);
       }
       continue;
@@ -213,15 +213,15 @@ export function buildRows(
       const fp = terminology === "UK" ? "front post treble (fptr)" : "front post double crochet (fpdc)";
       if (r === 1) {
         push(rows, r,
-          `With ${colour}, ch ${chain}. Work 1 ${tr} in the 4th ch from hook (the first 3 chains count as 1 ${tr}), then 1 ${tr} in each chain across. Turn your work.`,
+          `With ${colour}, ch ${chain}. The first 3 chains count as 1 ${tr}. Work 1 ${tr} in the 4th ch from hook, then work 1 ${tr} in each remaining chain across. Turn your work.`,
           count, `${count} ${tr} stitches`);
       } else if (r % 2 === 0) {
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Repeat ${repeats} times: work 1 ${fp} around each of the next 2 stitches, then 1 ${tr} in the next stitch. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${fp} around each of the next 2 stitches, then work 1 ${tr} in the next stitch. Repeat this 2-${fp}-then-${tr} sequence across. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
           count, `${count} stitches`);
       } else {
         push(rows, r,
-          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Repeat ${repeats} times: work 1 ${fp} around the next stitch, then 1 ${tr} in each of the next 2 stitches. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
+          `Change to ${colour}. Ch 3 (counts as 1 ${tr}). Work 1 ${fp} around the next stitch, then work 1 ${tr} in each of the next 2 stitches. Repeat this ${fp}-then-2-${tr} sequence across. Finish with 1 ${tr} in the top of the previous ch-3. Turn your work.`,
           count, `${count} stitches`);
       }
       continue;
