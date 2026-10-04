@@ -195,10 +195,10 @@ export function buildRows(
           `With ${colour}, ch ${chain}. 1 ${dc} in 2nd ch from hook. Repeat ${shells} times: ${miss} 2 chains, work 5 ${tr} in the next chain, ${miss} 2 chains, 1 ${dc} in the next chain. Turn your work.`,
           row1Count, `${shells + 1} ${dc} stitches + ${shells} shells (5 ${tr} each)`);
       } else if (r % 2 === 0) {
-        const count = row1Count;
+        const count = shells * 6;
         push(rows, r,
           `Change to ${colour}. Ch 1 (does not count as a stitch). Work 3 ${tr} in the first stitch. Repeat ${Math.max(0, shells - 1)} times: ${miss} 2 stitches, 1 ${dc} in the middle ${tr} of the next shell, ${miss} 2 stitches, 5 ${tr} in the next ${dc}. Finish with 3 ${tr} in the last ${dc}. Turn your work.`,
-          count, `${shells - 1} shells + ${shells} ${dc} anchors + edge half-shells`);
+          count, `${count} working stitches: ${shells} shell-row units with 3-tr edge halves`);
       } else {
         push(rows, r,
           `Change to ${colour}. Ch 1 (does not count as a stitch). Work 1 ${dc} in the first stitch. Repeat ${Math.max(0, shells - 1)} times: 5 ${tr} in the next ${dc}, ${miss} 2 stitches, 1 ${dc} in the middle ${tr} of the next shell, ${miss} 2 stitches. Finish with 1 ${dc} in the final stitch. Turn your work.`,
@@ -258,7 +258,7 @@ export function validateStitchEngine() {
     ["Granny Stripe", 65, [64, 64, 62]],
     ["Block Stitch", 64, [32, 95, 32]],
     ["V-Stitch", 64, [41, 42, 42]],
-    ["Shell Stitch", 68, [67, 67, 67]],
+    ["Shell Stitch", 68, [67, 66, 67]],
     ["Waffle Stitch", 61, [59, 59, 59]],
   ];
 
