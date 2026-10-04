@@ -277,7 +277,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please check your measurements, stitch, style and terminology." }, { status: 400 });
     }
 
-    const blueprint = blueprintFor(width, length, stitchGauge, rowGauge, patternStyle, selectedStitch);
+    const blueprint = blueprintFor(width, length, stitchGauge, rowGauge, patternStyle);
     if (blueprint.startingChain > 1000 || blueprint.totalRows > 1000) {
       return NextResponse.json({ error: "The requested blanket is too large for this generator." }, { status: 400 });
     }
