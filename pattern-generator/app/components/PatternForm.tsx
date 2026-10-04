@@ -1016,87 +1016,29 @@ function PatternPreviewWall({
   );
 }
 
-function PatternStylePreview({
-  style,
-  colors,
-  large = false,
-}: {
-  style: PatternStyle;
-  colors: readonly string[];
-  large?: boolean;
-}) {
+function PatternStylePreview({ style, colors, large = false }: { style: PatternStyle; colors: readonly string[]; large?: boolean }) {
+  const recipe = STITCH_OPTIONS.find((item) => item.name === style);
   const rows = large ? 8 : 4;
   const columns = large ? 28 : 14;
   const width = large ? 700 : 420;
   const height = large ? 210 : 120;
-
+  const kind = recipe?.preview ?? "plain";
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      className="h-full min-h-[96px] w-full"
-      role="img"
-      aria-label={style + " crochet pattern preview"}
-    >
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-full min-h-[96px] w-full" role="img" aria-label={style + " crochet swatch preview"}>
       <rect width={width} height={height} rx="16" fill={colors[0]} />
-      {Array.from({ length: rows }, (_, row) => {
-        const rowColor = colors[row % colors.length];
-        const y = 8 + row * ((height - 16) / rows);
-        const rowH = (height - 16) / rows - 2;
-
-        if (style === "Striped") {
-          return (
-            <rect
-              key={row}
-              x="8"
-              y={y}
-              width={width - 16}
-              height={rowH}
-              rx="3"
-              fill={rowColor}
-              opacity={0.95}
-            />
-          );
-        }
-
-        return (
-          <g key={row}>
-            <rect x="8" y={y} width={width - 16} height={rowH} rx="3" fill={rowColor} opacity={0.82} />
-            {Array.from({ length: columns }, (_, col) => {
-              const x = 10 + col * ((width - 20) / columns);
-              const cellW = (width - 24) / columns;
-              const alt = (row + col) % 2 === 0;
-
-              if (style === "Chevron / Ripple") {
-                const mid = x + cellW / 2;
-                const yy = y + rowH / 2 + (alt ? -4 : 4);
-                return <path key={col} d={`M ${x} ${yy} Q ${mid} ${yy + (alt ? -6 : 6)} ${x + cellW} ${yy}`} fill="none" stroke={colors[(col + row + 1) % colors.length]} strokeWidth={large ? 5 : 3} strokeLinecap="round" />;
-              }
-
-              if (style === "Granny Stripe") {
-                return <path key={col} d={`M ${x + 1} ${y + rowH - 3} Q ${x + cellW / 2} ${y + 3} ${x + cellW - 1} ${y + rowH - 3}`} fill="none" stroke={colors[(col + row + 1) % colors.length]} strokeWidth={large ? 6 : 4} strokeLinecap="round" />;
-              }
-
-              if (style === "Stitch Sampler") {
-                const variant = (row + col) % 3;
-                return variant === 0 ? (
-                  <circle key={col} cx={x + cellW / 2} cy={y + rowH / 2} r={large ? 6 : 4} fill="none" stroke={colors[(col + 1) % colors.length]} strokeWidth="2" />
-                ) : variant === 1 ? (
-                  <path key={col} d={`M ${x} ${y + rowH - 2} L ${x + cellW / 2} ${y + 2} L ${x + cellW} ${y + rowH - 2}`} fill="none" stroke={colors[(col + 2) % colors.length]} strokeWidth={large ? 4 : 2.5} />
-                ) : (
-                  <path key={col} d={`M ${x} ${y + rowH / 2} Q ${x + cellW / 2} ${y - 2} ${x + cellW} ${y + rowH / 2}`} fill="none" stroke={colors[(col + 3) % colors.length]} strokeWidth={large ? 4 : 2.5} />
-                );
-              }
-
-              if (style === "Moss Stitch") {
-                return <rect key={col} x={x + 1} y={y + (alt ? 2 : 5)} width={Math.max(3, cellW - 3)} height={large ? 7 : 4} rx="2" fill={colors[(col + row + 1) % colors.length]} opacity="0.95" />;
-              }
-
-              return <circle key={col} cx={x + cellW / 2} cy={y + rowH / 2} r={large ? 5 : 3} fill={colors[(col + row + 1) % colors.length]} opacity="0.8" />;
-            })}
-          </g>
-        );
+      {Array.from({length:rows},(_,row)=>{
+        const y=8+row*((height-16)/rows); const rowH=(height-16)/rows-2;
+        return <g key={row}><rect x="8" y={y} width={width-16} height={rowH} rx="3" fill={colors[row%colors.length]} opacity=".82"/>
+          {Array.from({length:columns},(_,col)=>{
+            const x=10+col*((width-20)/columns); const cellW=(width-24)/columns; const alt=(row+col)%2===0;
+            if(kind==="waffle") return <rect key={col} x={x+2} y={y+3} width={cellW-4} height={rowH-6} rx="2" fill={colors[(col+row+1)%colors.length]} opacity={alt?.9:.55}/>;
+            if(kind==="granny"||kind==="shell") return <path key={col} d={`M ${x} ${y+rowH-3} Q ${x+cellW/2} ${y+3} ${x+cellW} ${y+rowH-3}`} fill="none" stroke={colors[(col+row+1)%colors.length]} strokeWidth={large?6:4} strokeLinecap="round"/>;
+            if(kind==="v") return <path key={col} d={`M ${x} ${y+4} L ${x+cellW/2} ${y+rowH-4} L ${x+cellW} ${y+4}`} fill="none" stroke={colors[(col+row+1)%colors.length]} strokeWidth={large?5:3}/>;
+            if(kind==="moss") return <rect key={col} x={x+1} y={y+(alt?2:5)} width={Math.max(3,cellW-3)} height={large?7:4} rx="2" fill={colors[(col+row+1)%colors.length]}/>;
+            return <circle key={col} cx={x+cellW/2} cy={y+rowH/2} r={large?5:3} fill={colors[(col+row+1)%colors.length]} opacity=".8"/>;
+          })}
+        </g>;
       })}
-      {style === "Plain" && <path d={`M8 ${height - 10} H${width - 8}`} stroke={colors[3]} strokeWidth={large ? 5 : 3} opacity=".65" />}
     </svg>
   );
 }
@@ -1255,32 +1197,12 @@ function StitchPreview({ stitch }: { stitch: Stitch }) {
   );
 }
 
-function calculateBlueprint(
-  width: number,
-  length: number,
-  stitchGauge: number,
-  rowGauge: number,
-  style: PatternStyle,
-  stitch: Stitch,
-) {
+function calculateBlueprint(width: number, length: number, stitchGauge: number, rowGauge: number, style: PatternStyle, _stitch: Stitch) {
+  const recipe = STITCH_OPTIONS.find((item) => item.name === style) ?? STITCH_OPTIONS[0];
   const target = Math.max(4, Math.round(width * stitchGauge / 4));
   const totalRows = Math.max(1, Math.round(length * rowGauge / 4));
-  if (style === "Moss Stitch") {
-    const startingChain = target % 2 === 0 ? target : target + 1;
-    return { startingChain, totalRows, workingStitches: Math.ceil(startingChain / 2) };
-  }
-  if (style === "Granny Stripe") {
-    const groups = Math.max(1, Math.round((target - 2) / 3));
-    const startingChain = groups * 3 + 2;
-    return { startingChain, totalRows, workingStitches: startingChain - 1 };
-  }
-  if (style === "Chevron / Ripple") {
-    const repeats = Math.max(1, Math.round(target / 16));
-    const workingStitches = repeats * 16;
-    return { startingChain: workingStitches + 1, totalRows, workingStitches };
-  }
-  const startingChain = stitch === "Single Crochet" ? target + 1 : target + 2;
-  return { startingChain, totalRows, workingStitches: target };
+  const chain = Math.ceil(Math.max(1, target - recipe.foundation.add) / recipe.foundation.multiple) * recipe.foundation.multiple + recipe.foundation.add;
+  return { startingChain: chain, totalRows, workingStitches: Math.max(1, chain - 1) };
 }
 function BlueprintCard({
   label,
