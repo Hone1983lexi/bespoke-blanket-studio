@@ -29,198 +29,145 @@ export default function StitchStructurePreview({
   const yarn = (i: number) => palette[i % palette.length];
   const width = large ? 760 : 600;
   const height = compact ? 190 : large ? 300 : 240;
-  const rowCount = 5;
-  const columns = compact ? 8 : 10;
+  const rowCount = compact ? 4 : 5;
+  const columns = compact ? 7 : 9;
   const rowGap = height / (rowCount + 1);
   const colGap = width / columns;
-  const stroke = compact ? 12 : large ? 14 : 13;
+  const stroke = compact ? 15 : large ? 18 : 16;
   const mutedOpacity = (row: number) =>
-    protectedAfter && row + 1 > protectedAfter ? 0.24 : 0.96;
+    protectedAfter && row + 1 > protectedAfter ? 0.22 : 1;
+
+  const yarnPath = (
+    key: string,
+    d: string,
+    color: string,
+    opacity: number,
+    widthPx = stroke,
+  ) => (
+    <g key={key} opacity={opacity} filter={`url(#yarn-shadow-${safeId(stitch)})`}>
+      <path d={d} fill="none" stroke="#6b5548" strokeWidth={widthPx + 7} strokeLinecap="round" strokeLinejoin="round" opacity="0.2" />
+      <path d={d} fill="none" stroke={color} strokeWidth={widthPx} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={d} fill="none" stroke="#fff8ee" strokeWidth={Math.max(2, widthPx * 0.18)} strokeLinecap="round" strokeLinejoin="round" opacity="0.52" />
+      <path d={d} fill="none" stroke="#6f584a" strokeWidth={Math.max(1.5, widthPx * 0.12)} strokeLinecap="round" strokeLinejoin="round" opacity="0.24" strokeDasharray="2 7" />
+    </g>
+  );
 
   const rows = Array.from({ length: rowCount }, (_, row) => row);
-  const cols = Array.from({ length: columns + 1 }, (_, col) => col);
-
-  const stitchLayer = rows.flatMap((row) => {
+  const motifs = rows.flatMap((row) => {
     const y = rowGap * (row + 1);
     const opacity = mutedOpacity(row);
 
     if (stitch === "Plain") {
-      return [
-        <path
-          key={"plain-" + row}
-          d={`M-20 ${y} C70 ${y - 28}, 140 ${y + 28}, 230 ${y} S390 ${y - 28}, 480 ${y} S640 ${y + 28}, 780 ${y}`}
-          fill="none"
-          stroke={yarn(row)}
-          strokeWidth={stroke}
-          opacity={opacity}
-          strokeLinecap="round"
-        />,
-      ];
+      return Array.from({ length: columns }, (_, col) => {
+        const x = col * colGap + colGap / 2;
+        const d = `M${x - 30} ${y + 8} C${x - 18} ${y - 20}, ${x + 18} ${y - 20}, ${x + 30} ${y + 8}`;
+        return yarnPath(`plain-${row}-${col}`, d, yarn(row), opacity);
+      });
     }
 
     if (stitch === "Moss / Linen") {
-      return cols.map((col) => {
-        const x = col * colGap + (row % 2 ? colGap / 2 : 0);
-        return (
-          <path
-            key={`moss-${row}-${col}`}
-            d={`M${x - 24} ${y} Q${x} ${y + 22} ${x + 24} ${y}`}
-            fill="none"
-            stroke={yarn(row + col)}
-            strokeWidth={stroke - 1}
-            opacity={opacity}
-            strokeLinecap="round"
-          />
-        );
+      return Array.from({ length: columns }, (_, col) => {
+        const x = col * colGap + colGap / 2 + (row % 2 ? colGap / 2 : 0);
+        const d = `M${x - 25} ${y + 8} Q${x - 8} ${y - 24} ${x + 25} ${y + 8}`;
+        return yarnPath(`moss-${row}-${col}`, d, yarn(row + col), opacity, stroke - 1);
       });
     }
 
     if (stitch === "Lemon Peel") {
-      return cols.slice(0, columns).map((_, col) => {
+      return Array.from({ length: columns }, (_, col) => {
         const x = col * colGap + colGap / 2;
         const raised = (row + col) % 2 === 0;
-        return (
-          <path
-            key={`lemon-${row}-${col}`}
-            d={raised
-              ? `M${x - 15} ${y + 17} L${x} ${y - 16} L${x + 15} ${y + 17}`
-              : `M${x - 24} ${y - 2} Q${x} ${y + 20} ${x + 24} ${y - 2}`}
-            fill="none"
-            stroke={yarn(row + col)}
-            strokeWidth={stroke - 1}
-            opacity={opacity}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        );
+        const d = raised
+          ? `M${x - 22} ${y + 12} Q${x} ${y - 28} ${x + 22} ${y + 12}`
+          : `M${x - 28} ${y - 4} Q${x} ${y + 28} ${x + 28} ${y - 4}`;
+        return yarnPath(`lemon-${row}-${col}`, d, yarn(row + col), opacity, stroke - 1);
       });
     }
 
     if (stitch === "V-Stitch") {
-      return cols.slice(0, columns).map((_, col) => {
+      return Array.from({ length: columns }, (_, col) => {
         const x = col * colGap + colGap / 2;
-        return (
-          <path
-            key={`v-${row}-${col}`}
-            d={`M${x - 25} ${y - 16} L${x} ${y + 18} L${x + 25} ${y - 16}`}
-            fill="none"
-            stroke={yarn(row + col)}
-            strokeWidth={stroke}
-            opacity={opacity}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        );
+        const d = `M${x - 30} ${y - 18} Q${x - 12} ${y + 12} ${x} ${y + 28} Q${x + 12} ${y + 12} ${x + 30} ${y - 18}`;
+        return yarnPath(`v-${row}-${col}`, d, yarn(row + col), opacity, stroke);
       });
     }
 
     if (stitch === "Shell Stitch") {
-      return cols.slice(0, columns).map((_, col) => {
+      return Array.from({ length: columns }, (_, col) => {
         const x = col * colGap + colGap / 2;
-        return (
-          <path
-            key={`shell-${row}-${col}`}
-            d={`M${x - 34} ${y + 17} Q${x - 25} ${y - 18} ${x - 17} ${y + 10} Q${x - 8} ${y - 24} ${x} ${y + 10} Q${x + 8} ${y - 24} ${x + 17} ${y + 10} Q${x + 25} ${y - 18} ${x + 34} ${y + 17}`}
-            fill="none"
-            stroke={yarn(row + col)}
-            strokeWidth={stroke - 2}
-            opacity={opacity}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        );
+        const arcs = Array.from({ length: 5 }, (_, i) => {
+          const sx = x - 34 + i * 17;
+          return yarnPath(
+            `shell-${row}-${col}-${i}`,
+            `M${sx} ${y + 20} Q${sx + 8} ${y - 30} ${sx + 16} ${y + 20}`,
+            yarn(row + col + i),
+            opacity,
+            stroke - 3,
+          );
+        });
+        return <g key={`shell-${row}-${col}`}>{arcs}</g>;
       });
     }
 
     if (stitch === "Waffle Stitch") {
-      return cols.slice(0, columns).map((_, col) => {
-        const x = col * colGap + 7;
-        return (
-          <g key={`waffle-${row}-${col}`} opacity={opacity}>
-            <rect
-              x={x - 25}
-              y={y - 20}
-              width="50"
-              height="40"
-              rx="8"
-              fill="none"
-              stroke={yarn(row + col)}
-              strokeWidth={stroke - 3}
-            />
-            <path
-              d={`M${x - 19} ${y - 13} H${x + 19} M${x - 19} ${y + 13} H${x + 19}`}
-              stroke={yarn(row + col + 1)}
-              strokeWidth="5"
-              strokeLinecap="round"
-            />
-          </g>
-        );
+      return Array.from({ length: columns }, (_, col) => {
+        const x = col * colGap + colGap / 2;
+        const d1 = `M${x - 30} ${y - 20} Q${x} ${y + 4} ${x + 30} ${y - 20}`;
+        const d2 = `M${x - 30} ${y + 20} Q${x} ${y - 4} ${x + 30} ${y + 20}`;
+        return <g key={`waffle-${row}-${col}`}>{yarnPath(`w1-${row}-${col}`, d1, yarn(row + col), opacity, stroke - 2)}{yarnPath(`w2-${row}-${col}`, d2, yarn(row + col + 1), opacity, stroke - 2)}</g>;
       });
     }
 
     if (stitch === "Block Stitch") {
-      return cols.slice(0, columns).flatMap((_, col) => {
-        const x = col * colGap + 5;
-        const isBlock = (col + row) % 2 === 0;
-        return isBlock
-          ? [
-              <g key={`block-${row}-${col}`} opacity={opacity}>
-                <path d={`M${x - 25} ${y - 10} H${x + 25}`} stroke={yarn(row)} strokeWidth={stroke} strokeLinecap="round" />
-                <path d={`M${x - 18} ${y + 10} H${x + 18}`} stroke={yarn(row)} strokeWidth={stroke - 3} strokeLinecap="round" />
-              </g>,
-            ]
-          : [
-              <path
-                key={`block-gap-${row}-${col}`}
-                d={`M${x - 22} ${y + 8} Q${x} ${y - 18} ${x + 22} ${y + 8}`}
-                fill="none"
-                stroke={yarn(row + 1)}
-                strokeWidth={stroke - 2}
-                opacity={opacity}
-                strokeLinecap="round"
-              />,
-            ];
+      return Array.from({ length: columns }, (_, col) => {
+        const x = col * colGap + colGap / 2;
+        const d = (row + col) % 2 === 0
+          ? `M${x - 30} ${y - 12} Q${x} ${y + 18} ${x + 30} ${y - 12}`
+          : `M${x - 28} ${y + 14} Q${x} ${y - 16} ${x + 28} ${y + 14}`;
+        return yarnPath(`block-${row}-${col}`, d, yarn(row + col), opacity);
       });
     }
 
     if (stitch === "Granny Stripe") {
-      return Array.from({ length: 5 }, (_, cluster) => {
-        const x = cluster * (width / 5) + width / 10;
-        return (
-          <g key={`granny-${row}-${cluster}`} opacity={opacity}>
-            <path
-              d={`M${x - 26} ${y + 14} C${x - 18} ${y - 16}, ${x - 8} ${y - 16}, ${x} ${y + 14} C${x + 8} ${y - 16}, ${x + 18} ${y - 16}, ${x + 26} ${y + 14}`}
-              fill="none"
-              stroke={yarn(row)}
-              strokeWidth={stroke - 1}
-              strokeLinecap="round"
-            />
-          </g>
-        );
+      return Array.from({ length: columns }, (_, col) => {
+        const x = col * colGap + colGap / 2;
+        const d = `M${x - 28} ${y + 16} Q${x - 14} ${y - 20} ${x} ${y + 16} Q${x + 14} ${y - 20} ${x + 28} ${y + 16}`;
+        return yarnPath(`granny-${row}-${col}`, d, yarn(row), opacity, stroke - 1);
       });
     }
 
     return [];
   });
 
+  const bgId = `fabric-${safeId(stitch)}-${compact ? "compact" : "large"}`;
+  const shadowId = `yarn-shadow-${safeId(stitch)}`;
+
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl">
+    <div className="relative h-full w-full overflow-hidden rounded-xl bg-[#cbb39b]">
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="h-full min-h-[150px] w-full"
         role="img"
-        aria-label={`${stitch} crochet stitch structure preview`}
+        aria-label={`${stitch} realistic crochet fabric preview`}
         preserveAspectRatio="none"
       >
         <defs>
-          <linearGradient id={`fabric-${safeId(stitch)}-${compact ? "compact" : "large"}`} x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stopColor="#f0dfcc" />
-            <stop offset="100%" stopColor="#d8bda3" />
+          <linearGradient id={bgId} x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f5e8d9" />
+            <stop offset="48%" stopColor="#d8bea5" />
+            <stop offset="100%" stopColor="#b99b80" />
           </linearGradient>
+          <filter id={shadowId} x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="2.5" floodOpacity="0.28" />
+          </filter>
+          <filter id={`texture-${safeId(stitch)}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" />
+          </filter>
         </defs>
-        <rect width={width} height={height} fill={`url(#fabric-${safeId(stitch)}-${compact ? "compact" : "large"})`} />
-        <g>{stitchLayer}</g>
-        <rect x="2" y="2" width={width - 4} height={height - 4} rx="14" fill="none" stroke="#c7a98a" strokeWidth="4" />
+        <rect width={width} height={height} fill={`url(#${bgId})`} />
+        <g filter={`url(#texture-${safeId(stitch)})`}>{motifs}</g>
+        <rect width={width} height={height} fill="none" stroke="#fff7ed" strokeWidth="5" opacity="0.38" />
       </svg>
       {(widthUnits || rowUnits) && (
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between rounded-lg bg-[#f7eee4]/90 px-3 py-1.5 text-[10px] font-medium text-[#78695d] backdrop-blur-sm">
