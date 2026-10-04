@@ -71,7 +71,7 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
         push(
           r,
           "With " + colourName + ", ch " + chain + ". 1 " + dc + " in 3rd ch from hook (the 2 missed chains count as 1 " + dc + " and 1 ch). " +
-            "Repeat " + (stitchCount - 1) + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn.",
+            "Repeat " + (stitchCount - 1) + " times: ch 1, " + miss + " 1 ch, 1 " + dc + " in next ch. Turn your work.",
           stitchCount,
           stitchCount + " " + dc + " + " + (stitchCount - 1) + " ch-1 spaces",
         );
@@ -82,7 +82,7 @@ function buildRows(style: PatternStyle, stitch: Stitch, terminology: Terminology
           change +
             "Ch 2 (counts as 1 " + dc + "). 1 " + dc + " in the next ch-1 space. " +
             "Repeat " + (stitchCount - 2) + " times: ch 1, " + miss + " 1 " + dc + ", 1 " + dc + " in the next ch-1 space. " +
-            "Turn.",
+            "Turn your work.",
           stitchCount,
           stitchCount + " " + dc + " stitches worked into " + (stitchCount - 1) + " ch-1 spaces",
         );
