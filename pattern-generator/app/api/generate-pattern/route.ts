@@ -115,10 +115,11 @@ async function verifyPaidCheckoutGrant(
     return false;
   }
 
-  const cookieStore = await cookies();
-  const nonce = cookieStore.get("premium_checkout_nonce")?.value;
-
-  return Boolean(nonce && metadata.grantNonce === nonce);
+  // The Checkout Session ID is already a high-entropy, server-issued secret.
+  // Rely on the verified Stripe session metadata instead of a browser cookie,
+  // because the Stripe-to-app redirect can cross deployment URLs and make a
+  // SameSite cookie unavailable.
+  return metadata.paymentGrant === "paid";
 }
 
 export async function POST(request: Request) {
