@@ -931,10 +931,23 @@ function PatternStylePreview({
 
   // Keep the chart crisp and chart-like: every cell is a discrete colourwork square.
   const cellColour = (row: number, col: number) => {
+    // Plain crochet is represented as a continuous fabric block rather than colourwork.
+    if (stitchKind === "plain") return palette[0];
+
+    // Moss/Linen: offset each row to suggest the alternating stitch / chain-space structure.
+    if (stitchKind === "moss") {
+      const offset = row % 2;
+      return palette[(Math.floor(col / 2) + offset) % palette.length];
+    }
+
+    // Lemon Peel keeps a distinct alternating stitch rhythm.
+    if (style === "Lemon Peel") {
+      return palette[(col + row) % palette.length];
+    }
+
     const stripe = Math.floor(row / (stitchKind === "granny" ? 2 : 1));
     let index = (row + col + stripe) % palette.length;
 
-    if (stitchKind === "moss") index = (row + Math.floor(col / 2)) % palette.length;
     if (stitchKind === "v") index = (col % 3 === 1 ? row + 1 : row + col) % palette.length;
     if (stitchKind === "shell") index = (Math.floor(col / 3) + row) % palette.length;
     if (stitchKind === "waffle") index = (Math.floor(col / 3) + Math.floor(row / 2)) % palette.length;
