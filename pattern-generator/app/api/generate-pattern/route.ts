@@ -76,7 +76,15 @@ async function verifyPaidCheckoutGrant(
   const metadata = session.metadata ?? {};
 
   if (session.mode === "subscription") {
-    if (!userId || metadata.clerkUserId !== userId) {
+    // The Stripe return can arrive before Clerk's browser session is restored.
+    // The Checkout Session itself is a server-issued, high-entropy credential,
+    // so verify the subscription directly and only enforce the Clerk-user match
+    // when a Clerk user is available on this request.
+    if (!metadata.clerkUserId) {
+      return false;
+    }
+
+    if (userId && metadata.clerkUserId !== userId) {
       return false;
     }
 
