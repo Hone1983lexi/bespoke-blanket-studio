@@ -637,6 +637,63 @@ function PatternPreviewWall({
         </p>
       </div>
 
+      <div className="border-b border-[#d2c0ad] bg-[#eee2d6] p-4 sm:p-6">
+        <div className="rounded-2xl border border-[#d2c0ad] bg-[#f7eee4] p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#78695d]">
+                Visual pattern
+              </p>
+              <p className="mt-1 text-sm text-[#66594f]">
+                Your {selectedStitch.toLowerCase()} pattern building row by row
+              </p>
+            </div>
+            <span className="rounded-full border border-[#d2c0ad] bg-[#eee2d6] px-3 py-1 text-xs font-medium text-[#72513d]">
+              {blueprint.startingChain} × {blueprint.totalRows}
+            </span>
+          </div>
+
+          <div className="mt-4 overflow-hidden rounded-xl border border-[#cdb9a5] bg-[#ead9c7] p-2">
+            <div
+              className="grid gap-[2px] rounded-lg bg-[#dbc3ad] p-2"
+              style={{
+                gridTemplateColumns: "repeat(20, minmax(0, 1fr))",
+              }}
+              aria-label={"Visual preview of your " + selectedStitch.toLowerCase() + " blanket pattern"}
+            >
+              {Array.from({ length: 240 }, (_, index) => {
+                const visualRow = Math.floor(index / 20) + 1;
+                const locked = visualRow > 3;
+                return (
+                  <span
+                    key={index}
+                    className={
+                      "relative flex aspect-[1.7] items-center justify-center rounded-[2px] bg-[#f7eee4] transition-all duration-300 " +
+                      (locked ? "blur-[2px] opacity-45" : "opacity-100")
+                    }
+                  >
+                    <span
+                      className={
+                        selectedStitch === "Single Crochet"
+                          ? "h-[2px] w-2 rounded-full bg-[#72513d]"
+                          : selectedStitch === "Half Double Crochet"
+                            ? "h-2 w-2 rounded-full border-2 border-[#72513d]"
+                            : "h-3 w-[2px] rounded-full bg-[#72513d]"
+                      }
+                    />
+                  </span>
+                );
+              })}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between text-[11px] font-medium text-[#78695d]">
+              <span>Rows 1–3 visible</span>
+              <span>{Math.max(0, blueprint.totalRows - 3)} rows protected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="divide-y divide-[#d2c0ad]">
         <PreviewRowCard
           title="Foundation Chain"
