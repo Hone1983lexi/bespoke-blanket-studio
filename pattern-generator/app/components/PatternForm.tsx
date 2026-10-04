@@ -1063,54 +1063,20 @@ function PreviewRowCard({
   );
 }
 
-function buildPreviewRows(startingChain: number, workingStitches: number, stitch: Stitch, style: PatternStyle, terminology: "UK" | "US"): PreviewRow[] {
-  const abbr = terminology === "UK"
-    ? stitch === "Single Crochet" ? "dc" : stitch === "Half Double Crochet" ? "htr" : "tr"
-    : stitch === "Single Crochet" ? "sc" : stitch === "Half Double Crochet" ? "hdc" : "dc";
-
-  if (style === "Moss Stitch") {
-    return [
-      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". " + abbr + " in 2nd ch, *ch 1, skip 1, " + abbr + " in next; repeat across. Turn." },
-      { rowNumber: 2, label: "Row 2", text: "Ch 1. " + abbr + " in each chain-1 space across. Turn." },
-      { rowNumber: 3, label: "Row 3", text: "Repeat Row 2. Keep the chain-1 spaces loose and count your edge stitches." },
-    ];
-  }
-  if (style === "Granny Stripe") {
-    return [
-      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". Work " + (terminology === "UK" ? "dc" : "sc") + " across. Turn." },
-      { rowNumber: 2, label: "Row 2", text: "Ch 3. Work the first edge stitch, then 3-stitch clusters across the row. Turn." },
-      { rowNumber: 3, label: "Row 3", text: "Ch 3. Work 3-stitch clusters into the spaces between clusters. Finish at the turning chain." },
-    ];
-  }
-  if (style === "Chevron / Ripple") {
-    const repeats = Math.max(1, Math.round(workingStitches / 16));
-    return [
-      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". " + abbr + " across. Turn. (" + workingStitches + " stitches)" },
-      { rowNumber: 2, label: "Row 2", text: "Repeat the ripple sequence " + repeats + " times: 2 in next, 5 across, 2 decreases, 5 across, 2 in next." },
-      { rowNumber: 3, label: "Row 3", text: "Repeat the same ripple sequence, keeping every peak and valley aligned." },
-    ];
-  }
-  return [1,2,3].map((rowNumber) => ({
+function buildPreviewRows(startingChain:number, workingStitches:number, stitch:Stitch, style:PatternStyle, terminology:"UK"|"US"):PreviewRow[] {
+  const recipe=STITCH_OPTIONS.find((item)=>item.name===stitch) ?? STITCH_OPTIONS[0];
+  const abbr=terminology==="UK"?recipe.uk.split("/")[0]:recipe.us.split("/")[0];
+  return [1,2,3].map((rowNumber)=>({
     rowNumber,
-    label: "Row " + rowNumber,
-    text: rowNumber === 1
-      ? "Ch " + startingChain + ". Work " + abbr + " across. Turn. (" + workingStitches + " stitches)"
-      : "Ch " + (stitch === "Single Crochet" ? 1 : stitch === "Half Double Crochet" ? 2 : 3) + ", turn. Work " + abbr + " in every stitch across. Turn. (" + workingStitches + " stitches)",
+    label:"Row "+rowNumber,
+    text: rowNumber===1
+      ? "Ch "+startingChain+". Work 1 "+abbr+" across. Turn. ("+workingStitches+" stitches)"
+      : "Ch "+recipe.turningChain+", turn. Work "+abbr+" across the row, following the "+style+" repeat. Turn. ("+workingStitches+" stitches)"
   }));
 }
 function lockedRowText(stitch: Stitch, stitchCount: number) {
-  const abbreviation =
-    stitch === "Single Crochet"
-      ? "sc"
-      : stitch === "Half Double Crochet"
-        ? "hdc"
-        : "dc";
-
-  return (
-    "Continue with " +
-    abbreviation +
-    " across the row, following the complete custom instructions and stitch count..."
-  );
+  const recipe=STITCH_OPTIONS.find((item)=>item.name===stitch) ?? STITCH_OPTIONS[0];
+  return "Continue with "+(recipe.uk.split("/")[0])+" across the row, following the complete "+recipe.name+" instructions and stitch count...";
 }
 
 function stitchDescription(stitch: Stitch) {
