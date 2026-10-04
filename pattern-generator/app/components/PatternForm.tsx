@@ -482,8 +482,12 @@ function stitchDescription(stitch: Stitch) {
 }
 
 function StitchPreview({ stitch }: { stitch: Stitch }) {
-  const cols = 9;
-  const rows = 6;
+  const symbol =
+    stitch === "Single Crochet"
+      ? "sc"
+      : stitch === "Half Double Crochet"
+        ? "hdc"
+        : "dc";
 
   return (
     <div className="h-full min-h-[150px] rounded-xl border border-[#d6c3ae] bg-[#e7d5c1] p-2 shadow-inner">
@@ -491,74 +495,60 @@ function StitchPreview({ stitch }: { stitch: Stitch }) {
         viewBox="0 0 420 190"
         className="h-full min-h-[142px] w-full"
         role="img"
-        aria-label={stitch + " crocheted fabric swatch preview"}
+        aria-label={stitch + " crochet stitch symbol preview"}
       >
-        <defs>
-          <linearGradient id="swatch-base" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f0dfcc" />
-            <stop offset="100%" stopColor="#dcc2a8" />
-          </linearGradient>
-          <filter id="yarn-soft" x="-20%" y="-20%" width="140%" height="140%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" />
-          </filter>
-          <filter id="yarn-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1.2" stdDeviation="1.2" floodColor="#704d37" floodOpacity="0.24" />
-          </filter>
-          <pattern id="fine-yarn" width="5" height="5" patternUnits="userSpaceOnUse">
-            <path d="M-1 4 L4 -1 M1 6 L6 1" stroke="#fff7ed" strokeOpacity="0.16" strokeWidth="0.7" />
-          </pattern>
-        </defs>
+        <rect
+          x="8"
+          y="8"
+          width="404"
+          height="174"
+          rx="18"
+          fill="#f0dfcc"
+          stroke="#d6c3ae"
+          strokeWidth="2"
+        />
 
-        <rect x="8" y="8" width="404" height="174" rx="18" fill="url(#swatch-base)" />
-        <rect x="8" y="8" width="404" height="174" rx="18" fill="url(#fine-yarn)" />
+        <g
+          fill="none"
+          stroke="#72513d"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {symbol === "sc" && (
+            <>
+              <path d="M150 95 H270" />
+              <path d="M210 35 V155" />
+            </>
+          )}
 
-        <g filter="url(#yarn-soft)" opacity="0.96">
-          {Array.from({ length: rows }).map((_, row) =>
-            Array.from({ length: cols }).map((__, col) => {
-              const x = 35 + col * 43 + (row % 2 ? 21.5 : 0);
-              const y = 30 + row * 25;
-              const key = stitch + "-" + row + "-" + col;
+          {symbol === "hdc" && (
+            <>
+              <path d="M145 55 H275" />
+              <path d="M210 55 V150" />
+            </>
+          )}
 
-              if (stitch === "Double Crochet") {
-                return (
-                  <g key={key} transform={"translate(" + x + " " + y + ")"} filter="url(#yarn-shadow)">
-                    <path d="M0 18 C-1 8 1-1 9-1 C18-1 20 9 17 19" fill="none" stroke="#966f50" strokeWidth="8" strokeLinecap="round" />
-                    <path d="M9 1 C8 7 9 13 9 23" fill="none" stroke="#6f4b35" strokeWidth="5" strokeLinecap="round" />
-                    <path d="M3 3 C6 0 12 0 15 3" fill="none" stroke="#c19b79" strokeWidth="2" strokeLinecap="round" />
-                  </g>
-                );
-              }
-
-              if (stitch === "Half Double Crochet") {
-                return (
-                  <g key={key} transform={"translate(" + x + " " + y + ")"} filter="url(#yarn-shadow)">
-                    <path d="M0 18 C1 5 5 0 10 0 C16 0 20 7 19 18" fill="none" stroke="#966f50" strokeWidth="9" strokeLinecap="round" />
-                    <path d="M10 3 C9 8 9 13 10 21" fill="none" stroke="#704c36" strokeWidth="4.5" strokeLinecap="round" />
-                    <path d="M4 4 C8 1 13 1 16 4" fill="none" stroke="#c29b78" strokeWidth="2" strokeLinecap="round" />
-                  </g>
-                );
-              }
-
-              return (
-                <g key={key} transform={"translate(" + x + " " + y + ")"} filter="url(#yarn-shadow)">
-                  <path d="M0 17 C1 6 5 1 10 1 C16 1 19 7 18 17" fill="none" stroke="#966f50" strokeWidth="9" strokeLinecap="round" />
-                  <path d="M9 4 C8 9 9 14 9 20" fill="none" stroke="#704c36" strokeWidth="4.5" strokeLinecap="round" />
-                  <path d="M4 5 C8 2 13 2 15 5" fill="none" stroke="#c29b78" strokeWidth="2" strokeLinecap="round" />
-                </g>
-              );
-            }),
+          {symbol === "dc" && (
+            <>
+              <path d="M145 55 H275" />
+              <path d="M210 55 V150" />
+              <path d="M182 95 L238 67" />
+            </>
           )}
         </g>
 
-        <path
-          d="M25 164 C95 171 160 159 225 166 C290 173 340 160 395 166"
-          fill="none"
-          stroke="#b58d6c"
-          strokeOpacity="0.55"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
+        <text
+          x="210"
+          y="174"
+          textAnchor="middle"
+          fontSize="14"
+          fontWeight="600"
+          letterSpacing="2"
+          fill="#78695d"
+        >
+          {symbol.toUpperCase()}
+        </text>
       </svg>
     </div>
   );
