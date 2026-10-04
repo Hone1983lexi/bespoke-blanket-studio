@@ -16,21 +16,6 @@ type Props = {
 
 const safeId = (value: string) => value.replace(/[^a-z0-9]/gi, "").toLowerCase();
 
-const REAL_FABRIC_PHOTOS: Partial<Record<Stitch, { src: string; credit: string }>> = {
-  Plain: {
-    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Crochet_Single_Stitch.jpg",
-    credit: "Photo: Stilfehler / Wikimedia Commons",
-  },
-  "Moss / Linen": {
-    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Crochet_Moss_Stitch.jpg",
-    credit: "Photo: Stilfehler / Wikimedia Commons",
-  },
-  "Shell Stitch": {
-    src: "https://commons.wikimedia.org/wiki/Special:FilePath/Scallop_edge,_also_known_as_shell_stitch_border.jpg",
-    credit: "Photo: Most Craft / Wikimedia Commons",
-  },
-};
-
 export default function StitchStructurePreview({
   stitch,
   colors,
@@ -51,27 +36,6 @@ export default function StitchStructurePreview({
   const stroke = compact ? 15 : large ? 18 : 16;
   const mutedOpacity = (row: number) =>
     protectedAfter && row + 1 > protectedAfter ? 0.22 : 1;
-
-  const realPhoto = REAL_FABRIC_PHOTOS[stitch];
-
-  if (realPhoto) {
-    return (
-      <div className="relative h-full w-full overflow-hidden rounded-xl bg-[#d8c3ad]">
-        <img
-          src={realPhoto.src}
-          alt={`${stitch} real crochet fabric swatch`}
-          className="h-full w-full object-cover"
-          loading="lazy"
-          referrerPolicy="no-referrer"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-white/5" />
-        <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between gap-2 rounded-lg bg-[#2f2925]/80 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-sm">
-          <span>Real fabric swatch</span>
-          <span className="truncate opacity-80">{realPhoto.credit}</span>
-        </div>
-      </div>
-    );
-  }
 
   const yarnPath = (
     key: string,
@@ -123,7 +87,9 @@ export default function StitchStructurePreview({
     if (stitch === "V-Stitch") {
       return Array.from({ length: columns }, (_, col) => {
         const x = col * colGap + colGap / 2;
-        const d = `M${x - 30} ${y - 18} Q${x - 12} ${y + 12} ${x} ${y + 28} Q${x + 12} ${y + 12} ${x + 30} ${y - 18}`;
+        const dLeft = `M${x - 30} ${y - 18} L${x} ${y + 22}`;
+        const dRight = `M${x} ${y + 22} L${x + 30} ${y - 18}`;
+        return <g key={`v-${row}-${col}`}>{yarnPath(`v-l-${row}-${col}`, dLeft, yarn(row + col), opacity, stroke - 1)}{yarnPath(`v-r-${row}-${col}`, dRight, yarn(row + col), opacity, stroke - 1)}</g>;
         return yarnPath(`v-${row}-${col}`, d, yarn(row + col), opacity, stroke);
       });
     }
@@ -148,8 +114,8 @@ export default function StitchStructurePreview({
     if (stitch === "Waffle Stitch") {
       return Array.from({ length: columns }, (_, col) => {
         const x = col * colGap + colGap / 2;
-        const d1 = `M${x - 30} ${y - 20} Q${x} ${y + 4} ${x + 30} ${y - 20}`;
-        const d2 = `M${x - 30} ${y + 20} Q${x} ${y - 4} ${x + 30} ${y + 20}`;
+        const d1 = `M${x - 30} ${y - 22} L${x - 10} ${y + 18} L${x + 10} ${y - 22} L${x + 30} ${y + 18}`;
+        const d2 = `M${x - 30} ${y + 22} L${x - 10} ${y - 18} L${x + 10} ${y + 22} L${x + 30} ${y - 18}`;
         return <g key={`waffle-${row}-${col}`}>{yarnPath(`w1-${row}-${col}`, d1, yarn(row + col), opacity, stroke - 2)}{yarnPath(`w2-${row}-${col}`, d2, yarn(row + col + 1), opacity, stroke - 2)}</g>;
       });
     }
