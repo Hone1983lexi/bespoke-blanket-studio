@@ -56,7 +56,11 @@ type GeneratedPattern = {
     rowNumber: number;
     instruction: string;
     stitchCount: number;
+    countLabel?: string;
   }>;
+  terminology: "UK" | "US";
+  palette?: string;
+  notes?: string[];
 };
 
 type PreviewRow = {
@@ -138,8 +142,9 @@ export default function PatternForm() {
     return {
       startingChain: Math.round(desiredWidth * (gauge / 4)),
       totalRows: Math.round(desiredLength * (rows / 4)),
+      workingStitches: Math.round(desiredWidth * (gauge / 4)),
     };
-  }, [stitchGauge, rowGauge, width, length]);
+  }, [stitchGauge, rowGauge, width, length, selectedStitch, selectedStyle]);
 
   useEffect(() => {
     setError("");
