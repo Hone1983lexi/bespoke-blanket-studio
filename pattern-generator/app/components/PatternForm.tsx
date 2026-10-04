@@ -671,7 +671,7 @@ function PatternPreviewWall({
                         (locked ? "blur-[3px] opacity-35" : "opacity-100")
                       }
                     >
-                      {Array.from({ length: 28 }, (_, stitchIndex) => {
+                      {Array.from({ length: 18 }, (_, stitchIndex) => {
                         const offset =
                           selectedStitch === "Double Crochet"
                             ? (rowIndex % 2 === 0 ? stitchIndex % 2 : (stitchIndex + 1) % 2)
@@ -681,10 +681,10 @@ function PatternPreviewWall({
                           return (
                             <span
                               key={stitchIndex}
-                              className="relative h-8 w-4 shrink-0"
+                              className="relative h-7 w-3 shrink-0"
                             >
-                              <span className="absolute left-1/2 top-0 h-7 w-[4px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
-                              <span className="absolute left-1/2 top-[10px] h-[4px] w-4 -translate-x-1/2 rounded-full bg-[#9a7559]" />
+                              <span className="absolute left-1/2 top-0 h-6 w-[3px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
+                              <span className="absolute left-1/2 top-[9px] h-[3px] w-3 -translate-x-1/2 rounded-full bg-[#9a7559]" />
                             </span>
                           );
                         }
@@ -693,9 +693,9 @@ function PatternPreviewWall({
                           return (
                             <span
                               key={stitchIndex}
-                              className="relative h-7 w-12 shrink-0"
+                              className="relative h-6 w-9 shrink-0"
                             >
-                              <span className="absolute inset-x-0 top-1/2 h-5 -translate-y-1/2 rounded-[45%] border-2 border-[#8f6b51] bg-[#e1c29f]" />
+                              <span className="absolute inset-x-0 top-1/2 h-4 -translate-y-1/2 rounded-[45%] border-2 border-[#8f6b51] bg-[#e1c29f]" />
                             </span>
                           );
                         }
@@ -707,11 +707,11 @@ function PatternPreviewWall({
                           >
                             <span
                               className={
-                                "absolute left-1/2 top-1/2 h-5 w-11 -translate-x-1/2 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
+                                "absolute left-1/2 top-1/2 h-4 w-8 -translate-x-1/2 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
                                 (offset ? "rotate-[3deg]" : "-rotate-[3deg]")
                               }
                             />
-                            <span className="absolute left-[3px] right-[3px] top-1/2 h-[2px] bg-[#9a7559]/60" />
+                            <span className="absolute left-[2px] right-[2px] top-1/2 h-px bg-[#9a7559]/60" />
                           </span>
                         );
                       })}
