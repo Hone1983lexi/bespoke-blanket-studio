@@ -17,9 +17,20 @@ const StitchSchema = z.enum([
   "Double Crochet",
 ]);
 
+const PatternStyleSchema = z.enum([
+  "Plain",
+  "Moss Stitch",
+  "Striped",
+  "Granny Stripe",
+  "Chevron / Ripple",
+  "Floral Granny",
+  "Stitch Sampler",
+]);
+
 const PatternSchema = z.object({
   title: z.string(),
   stitch: StitchSchema,
+  style: PatternStyleSchema,
   startingChain: z.number().int().positive(),
   totalRows: z.number().int().positive(),
   rows: z.array(
@@ -70,7 +81,8 @@ async function verifyPaidCheckoutGrant(
   userId: string | null,
   startingChain: number,
   totalRows: number,
-  selectedStitch: string
+  selectedStitch: string,
+  patternStyle: string
 ) {
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   const metadata = session.metadata ?? {};
@@ -134,6 +146,7 @@ async function verifyPaidCheckoutGrant(
     metadata.startingChain !== String(startingChain) ||
     metadata.totalRows !== String(totalRows) ||
     metadata.selectedStitch !== selectedStitch ||
+    metadata.patternStyle !== patternStyle ||
     metadata.blueprintType !== "crochet-pattern"
   ) {
     return false;
@@ -160,6 +173,7 @@ export async function POST(request: Request) {
     let startingChain = Number(body.startingChain);
     let totalRows = Number(body.totalRows);
     let selectedStitch = body.selectedStitch;
+    let patternStyle = body.patternStyle;
 
     // After Stripe redirects back to the app, the form inputs are no longer
     // available in the request. Recover the original blueprint from the
@@ -178,6 +192,7 @@ export async function POST(request: Request) {
       startingChain = Number(metadata.startingChain);
       totalRows = Number(metadata.totalRows);
       selectedStitch = metadata.selectedStitch;
+      patternStyle = metadata.patternStyle;
     }
 
     if (!Number.isInteger(startingChain) || startingChain <= 0) {
@@ -190,6 +205,10 @@ export async function POST(request: Request) {
 
     if (!StitchSchema.safeParse(selectedStitch).success) {
       return NextResponse.json({ error: "Invalid stitch selection." }, { status: 400 });
+    }
+
+    if (!PatternStyleSchema.safeParse(patternStyle).success) {
+      patternStyle = "Plain";
     }
 
     if (startingChain > 1000 || totalRows > 1000) {
@@ -210,7 +229,8 @@ export async function POST(request: Request) {
         userId,
         startingChain,
         totalRows,
-        selectedStitch
+        selectedStitch,
+        patternStyle
       );
     }
 
