@@ -895,31 +895,120 @@ function PatternPreviewWall({
 
 function PatternStylePreview({ style, colors, large = false }: { style: PatternStyle; colors: readonly string[]; large?: boolean }) {
   const recipe = STITCH_OPTIONS.find((item) => item.name === style);
-  const rows = large ? 8 : 4;
-  const columns = large ? 28 : 14;
-  const width = large ? 700 : 420;
-  const height = large ? 210 : 120;
   const kind = recipe?.preview ?? "plain";
+  const width = large ? 700 : 420;
+  const height = large ? 230 : 125;
+  const rows = large ? 7 : 4;
+  const cols = large ? 10 : 6;
+  const rowGap = (height - 18) / rows;
+  const stroke = large ? 3.2 : 2.4;
+  const motifW = (width - 24) / cols;
+
+  const colour = (row: number, col = 0) => colors[(row + col + 1) % colors.length] ?? colors[0];
+
+  const motif = (row: number, col: number) => {
+    const x = 12 + col * motifW;
+    const y = 9 + row * rowGap;
+    const w = motifW - 3;
+    const h = rowGap - 4;
+    const c = colour(row, col);
+    const c2 = colour(row, col + 1);
+
+    if (kind === "v") {
+      return (
+        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
+          <path d={`M ${x + 5} ${y + 5} L ${x + w / 2} ${y + h - 4} L ${x + w - 5} ${y + 5}`} />
+        </g>
+      );
+    }
+
+    if (kind === "shell") {
+      return (
+        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
+          <path d={`M ${x + 3} ${y + h - 5} Q ${x + w * .2} ${y + 3} ${x + w * .5} ${y + h - 5} Q ${x + w * .8} ${y + 3} ${x + w - 3} ${y + h - 5}`} />
+          <path d={`M ${x + w * .2} ${y + h - 5} Q ${x + w * .5} ${y + 8} ${x + w * .8} ${y + h - 5}`} opacity=".72" />
+        </g>
+      );
+    }
+
+    if (kind === "granny") {
+      return (
+        <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
+          <path d={`M ${x + 4} ${y + h - 5} Q ${x + w * .18} ${y + 3} ${x + w * .32} ${y + h - 5}`} />
+          <path d={`M ${x + w * .38} ${y + h - 5} Q ${x + w * .5} ${y + 3} ${x + w * .62} ${y + h - 5}`} />
+          <path d={`M ${x + w * .68} ${y + h - 5} Q ${x + w * .82} ${y + 3} ${x + w - 4} ${y + h - 5}`} />
+        </g>
+      );
+    }
+
+    if (kind === "block") {
+      return (
+        <g key={col}>
+          <rect x={x + 4} y={y + 3} width={w - 8} height={h - 6} rx="3" fill={c} opacity=".82" />
+          <path d={`M ${x + 7} ${y + h - 5} h ${w - 14}`} stroke={c2} strokeWidth={stroke} strokeLinecap="round" opacity=".75" />
+          <path d={`M ${x + w / 2} ${y + 5} v ${h - 10}`} stroke={c2} strokeWidth={stroke} strokeLinecap="round" opacity=".48" />
+        </g>
+      );
+    }
+
+    if (kind === "waffle") {
+      return (
+        <g key={col} fill="none" strokeLinecap="round">
+          <rect x={x + 4} y={y + 3} width={w - 8} height={h - 6} rx="3" fill={c} opacity=".34" />
+          <path d={`M ${x + 5} ${y + h * .28} H ${x + w - 5}`} stroke={c} strokeWidth={stroke + 1.2} />
+          <path d={`M ${x + 5} ${y + h * .72} H ${x + w - 5}`} stroke={c} strokeWidth={stroke + 1.2} />
+          <path d={`M ${x + w * .3} ${y + 5} V ${y + h - 5}`} stroke={c2} strokeWidth={stroke + 1.2} />
+          <path d={`M ${x + w * .7} ${y + 5} V ${y + h - 5}`} stroke={c2} strokeWidth={stroke + 1.2} />
+        </g>
+      );
+    }
+
+    if (kind === "moss") {
+      return (
+        <g key={col} fill="none" strokeLinecap="round">
+          <path d={`M ${x + 7} ${y + h * .32} h ${w * .28}`} stroke={c} strokeWidth={stroke + .6} />
+          <path d={`M ${x + w * .52} ${y + h * .68} h ${w * .28}`} stroke={c2} strokeWidth={stroke + .6} />
+          <path d={`M ${x + w * .43} ${y + 4} q ${w * .08} ${h * .35} 0 ${h * .7}`} stroke={c} strokeWidth={stroke} opacity=".65" />
+        </g>
+      );
+    }
+
+    if (style === "Lemon Peel") {
+      return (
+        <g key={col} fill="none" strokeLinecap="round">
+          <path d={`M ${x + 5} ${y + h - 5} L ${x + w * .5} ${y + 5} L ${x + w - 5} ${y + h - 5}`} stroke={c} strokeWidth={stroke} />
+          <path d={`M ${x + w * .25} ${y + 5} L ${x + w * .75} ${y + h - 5}`} stroke={c2} strokeWidth={stroke} opacity=".7" />
+        </g>
+      );
+    }
+
+    return (
+      <g key={col} fill="none" stroke={c} strokeWidth={stroke} strokeLinecap="round">
+        <path d={`M ${x + 5} ${y + h - 5} Q ${x + w * .5} ${y + 4} ${x + w - 5} ${y + h - 5}`} />
+        <path d={`M ${x + w * .2} ${y + h - 5} V ${y + 7}`} opacity=".5" />
+        <path d={`M ${x + w * .8} ${y + h - 5} V ${y + 7}`} opacity=".5" />
+      </g>
+    );
+  };
+
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="h-full min-h-[96px] w-full" role="img" aria-label={style + " crochet swatch preview"}>
-      <rect width={width} height={height} rx="16" fill={colors[0]} />
-      {Array.from({length:rows},(_,row)=>{
-        const y=8+row*((height-16)/rows); const rowH=(height-16)/rows-2;
-        return <g key={row}><rect x="8" y={y} width={width-16} height={rowH} rx="3" fill={colors[row%colors.length]} opacity=".82"/>
-          {Array.from({length:columns},(_,col)=>{
-            const x=10+col*((width-20)/columns); const cellW=(width-24)/columns; const alt=(row+col)%2===0;
-            if(kind==="waffle") return <rect key={col} x={x+2} y={y+3} width={cellW-4} height={rowH-6} rx="2" fill={colors[(col+row+1)%colors.length]} opacity={alt?.9:.55}/>;
-            if(kind==="granny"||kind==="shell") return <path key={col} d={`M ${x} ${y+rowH-3} Q ${x+cellW/2} ${y+3} ${x+cellW} ${y+rowH-3}`} fill="none" stroke={colors[(col+row+1)%colors.length]} strokeWidth={large?6:4} strokeLinecap="round"/>;
-            if(kind==="v") return <path key={col} d={`M ${x} ${y+4} L ${x+cellW/2} ${y+rowH-4} L ${x+cellW} ${y+4}`} fill="none" stroke={colors[(col+row+1)%colors.length]} strokeWidth={large?5:3}/>;
-            if(kind==="moss") return <rect key={col} x={x+1} y={y+(alt?2:5)} width={Math.max(3,cellW-3)} height={large?7:4} rx="2" fill={colors[(col+row+1)%colors.length]}/>;
-            return <circle key={col} cx={x+cellW/2} cy={y+rowH/2} r={large?5:3} fill={colors[(col+row+1)%colors.length]} opacity=".8"/>;
-          })}
-        </g>;
-      })}
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-full min-h-[96px] w-full" role="img" aria-label={style + " crochet fabric swatch preview"}>
+      <defs>
+        <filter id={`soft-${kind}`} x="-10%" y="-10%" width="120%" height="120%">
+          <feGaussianBlur stdDeviation="0.25" />
+        </filter>
+      </defs>
+      <rect width={width} height={height} rx="16" fill={colors[0] ?? "#eee"} />
+      {Array.from({ length: rows }, (_, row) => (
+        <g key={row} filter={`url(#soft-${kind})`}>
+          <rect x="7" y={8 + row * rowGap} width={width - 14} height={rowGap - 4} rx="4" fill={colors[row % colors.length]} opacity=".28" />
+          {Array.from({ length: cols }, (_, col) => motif(row, col))}
+        </g>
+      ))}
+      <path d={`M 8 ${height - 6} Q ${width * .5} ${height + 1} ${width - 8} ${height - 6}`} fill="none" stroke={colors[colors.length - 1] ?? "#555"} strokeWidth="2" opacity=".35" />
     </svg>
   );
 }
-
 function PreviewRowCard({
   title,
   meta,
