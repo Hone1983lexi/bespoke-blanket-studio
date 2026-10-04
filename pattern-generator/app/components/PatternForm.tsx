@@ -658,7 +658,13 @@ function PatternPreviewWall({
               className="relative overflow-hidden rounded-xl border border-[#c7a98a] bg-[#e7ceb2] p-3 shadow-[inset_0_2px_8px_rgba(114,81,61,0.12)]"
               aria-label={"Visual crochet fabric preview of your " + selectedStitch.toLowerCase() + " blanket pattern"}
             >
-              <div className="space-y-[2px]">
+              <div
+                className="space-y-[1px] rounded-lg p-1"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(0deg, rgba(114,81,61,0.045) 0px, rgba(114,81,61,0.045) 1px, transparent 1px, transparent 5px), repeating-linear-gradient(90deg, rgba(114,81,61,0.035) 0px, rgba(114,81,61,0.035) 1px, transparent 1px, transparent 5px)",
+                }}
+              >
                 {Array.from({ length: 12 }, (_, rowIndex) => {
                   const previewRow = rowIndex + 1;
                   const locked = previewRow > 3;
@@ -667,42 +673,40 @@ function PatternPreviewWall({
                     <div
                       key={previewRow}
                       className={
-                        "relative grid grid-cols-[repeat(18,minmax(0,1fr))] h-4 items-center gap-x-[2px] overflow-hidden rounded-sm px-1 transition-all duration-500 " +
+                        "relative grid grid-cols-[repeat(18,minmax(0,1fr))] h-[18px] items-center gap-x-0 overflow-hidden rounded-sm transition-all duration-500 " +
                         (locked ? "blur-[3px] opacity-35" : "opacity-100")
                       }
                     >
                       {Array.from({ length: 18 }, (_, stitchIndex) => {
-                        const offset =
-                          selectedStitch === "Double Crochet"
-                            ? (rowIndex % 2 === 0 ? stitchIndex % 2 : (stitchIndex + 1) % 2)
-                            : rowIndex % 2;
+                        const offset = (rowIndex + stitchIndex) % 2 === 0;
 
                         if (selectedStitch === "Double Crochet") {
                           return (
-                            <span key={stitchIndex} className="relative h-4 w-full">
-                              <span className="absolute left-1/2 top-0 h-4 w-[2px] -translate-x-1/2 rounded-full bg-[#8a644c]" />
-                              <span className="absolute left-1/2 top-1/2 h-[2px] w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9a7559]" />
+                            <span key={stitchIndex} className="relative h-[18px] w-full">
+                              <span className="absolute left-1/2 top-0 h-[17px] w-[2px] -translate-x-1/2 rounded-full bg-[#805c45]" />
+                              <span className="absolute left-[18%] right-[18%] top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-[#966f53]" />
                             </span>
                           );
                         }
 
                         if (selectedStitch === "Half Double Crochet") {
                           return (
-                            <span key={stitchIndex} className="relative h-4 w-full">
-                              <span className="absolute inset-x-[5%] top-1/2 h-3 -translate-y-1/2 rounded-[45%] border border-[#8f6b51] bg-[#e1c29f]" />
+                            <span key={stitchIndex} className="relative h-[18px] w-full">
+                              <span
+                                className="absolute left-[4%] right-[4%] top-1/2 h-[13px] -translate-y-1/2 rounded-[48%] border-2 border-[#8d674e] bg-[#dfc09d]/55 shadow-[inset_0_1px_2px_rgba(114,81,61,0.12)]"
+                                style={{ transform: `translateY(-50%) rotate(${offset ? 2 : -2}deg)` }}
+                              />
                             </span>
                           );
                         }
 
                         return (
-                          <span key={stitchIndex} className="relative h-4 w-full">
+                          <span key={stitchIndex} className="relative h-[18px] w-full">
                             <span
-                              className={
-                                "absolute left-[5%] right-[5%] top-1/2 h-3 -translate-y-1/2 rounded-[45%] border border-[#936d51] bg-[#e4c7a8] " +
-                                (offset ? "rotate-[3deg]" : "-rotate-[3deg]")
-                              }
+                              className="absolute left-[3%] right-[3%] top-1/2 h-[13px] -translate-y-1/2 rounded-[48%] border-2 border-[#8f684e] bg-[#e0c19f]/55 shadow-[inset_0_1px_2px_rgba(114,81,61,0.12)]"
+                              style={{ transform: `translateY(-50%) rotate(${offset ? 3 : -3}deg)` }}
                             />
-                            <span className="absolute left-[8%] right-[8%] top-1/2 h-px bg-[#9a7559]/60" />
+                            <span className="absolute left-[10%] right-[10%] top-1/2 h-px bg-[#9b7458]/55" />
                           </span>
                         );
                       })}
