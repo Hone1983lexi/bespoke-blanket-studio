@@ -140,6 +140,7 @@ export async function POST(request: Request) {
       metadata: {
         ...metadata,
         plan: mode === "subscription" ? "pro" : "one-off",
+        ...(mode === "payment" ? { paymentGrant: "paid" } : {}),
       },
       success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancelled`,
