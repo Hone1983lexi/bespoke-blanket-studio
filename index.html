@@ -568,6 +568,111 @@ body{background:#ead3c2}
   .visual-lightbox-info h3{font-size:24px}
 }
 </style>
+
+<style id="bobble-inspired-home">
+/* Visual product-led homepage refresh */
+:root{
+  --bb-bg:#f5eee6;
+  --bb-paper:#fffaf5;
+  --bb-card:#fbf5ee;
+  --bb-ink:#302723;
+  --bb-muted:#756860;
+  --bb-accent:#b45c43;
+  --bb-accent-dark:#8e4936;
+  --bb-line:#e5d7cb;
+  --bb-shadow:0 16px 45px rgba(67,42,31,.08);
+}
+body{background:var(--bb-bg)!important;color:var(--bb-ink)!important}
+.header{background:rgba(255,250,245,.96)!important;border-bottom:1px solid var(--bb-line)!important}
+.brand strong{color:var(--bb-accent)!important;letter-spacing:.02em}
+.brand span{color:#9b8175!important}
+.design-menu-trigger,.nav-simple{color:var(--bb-ink)!important}
+.design-menu-trigger span{color:var(--bb-accent)!important}
+.nav>.btn,.hero .btn,.examples-cta .btn,.bespoke-inner>.btn{background:var(--bb-accent)!important;border-color:var(--bb-accent)!important}
+.nav>.btn:hover,.hero .btn:hover{background:var(--bb-accent-dark)!important}
+.hero{min-height:650px;background:var(--bb-paper)}
+.hero-photo{background-image:linear-gradient(90deg,rgba(45,32,25,.76),rgba(45,32,25,.28) 65%,rgba(45,32,25,.08)),url('/crochet_assets/neutral.jpg')!important}
+.hero-inner{padding-top:105px;padding-bottom:92px}
+.hero h1{font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:-.045em;max-width:760px}
+.hero p{max-width:610px;font-size:20px}
+.hero .btn.secondary{border-color:#fff!important;color:#fff!important;background:rgba(255,255,255,.08)!important}
+.trust{background:#eee2d7!important;border-bottom-color:var(--bb-line)!important}
+.trust-item{border-right-color:var(--bb-line)!important}
+.trust-item b{font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.trust-item span{color:var(--bb-muted)}
+.product-intro{background:var(--bb-bg)}
+.product-intro .heading{max-width:760px}
+.product-intro h2,.pattern-wall h2,.make-mode h2,.stitch-showcase h2{font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:-.035em}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feature-card{background:var(--bb-card);border:1px solid var(--bb-line);border-radius:22px;overflow:hidden;box-shadow:var(--bb-shadow)}
+.feature-visual{height:250px;background:#eadbd0;display:flex;align-items:center;justify-content:center;padding:24px}
+.feature-visual img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.feature-visual.chart{background:#e8d5c8}
+.mini-chart{width:220px;height:180px;display:grid;grid-template-columns:repeat(10,1fr);gap:3px;transform:rotate(-2deg)}
+.mini-chart i{display:block;border-radius:3px;background:#d49a82}
+.mini-chart i:nth-child(3n){background:#a85f49}.mini-chart i:nth-child(5n){background:#e8c7ae}.mini-chart i:nth-child(7n){background:#795247}
+.feature-body{padding:26px 25px 28px}
+.feature-body h3{font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:750;margin:0 0 9px}
+.feature-body p{color:var(--bb-muted);line-height:1.65;margin:0}
+.pattern-wall{background:#fffaf5;border-top:1px solid var(--bb-line);border-bottom:1px solid var(--bb-line)}
+.pattern-wall-inner{max-width:1180px;margin:auto;padding:92px 24px}
+.pattern-wall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pattern-tile{position:relative;background:#f1e3d8;border:1px solid var(--bb-line);border-radius:18px;overflow:hidden;min-height:280px}
+.pattern-tile img{width:100%;height:220px;display:block;object-fit:cover}
+.pattern-tile .tile-caption{padding:16px 18px;background:var(--bb-paper)}
+.pattern-tile strong{display:block;font-size:17px;margin-bottom:4px}
+.pattern-tile span{font-size:13px;color:var(--bb-muted)}
+.stitch-showcase{background:#f0e3d8}
+.stitch-showcase-inner{max-width:1180px;margin:auto;padding:92px 24px}
+.stitch-showcase-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stitch-showcase-card{background:var(--bb-paper);border:1px solid var(--bb-line);border-radius:18px;padding:12px;box-shadow:0 8px 25px rgba(67,42,31,.05)}
+.stitch-showcase-card img{width:100%;height:145px;object-fit:cover;border-radius:11px;background:#e7d7cc}
+.stitch-showcase-card h3{font-size:16px;margin:13px 4px 3px}
+.stitch-showcase-card p{font-size:12px;color:var(--bb-muted);margin:0 4px 5px;line-height:1.45}
+.make-mode{background:#fffaf5}
+.make-mode-inner{max-width:1180px;margin:auto;padding:92px 24px}
+.make-mode-panel{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;background:#f0e1d6;border:1px solid var(--bb-line);border-radius:28px;padding:28px}
+.make-copy{padding:20px}
+.make-copy h3{font-size:30px;margin:0 0 12px}
+.make-copy p{color:var(--bb-muted);line-height:1.7}
+.make-points{display:grid;gap:10px;margin-top:22px}
+.make-points div{background:rgba(255,250,245,.72);border:1px solid var(--bb-line);border-radius:12px;padding:13px 15px;font-size:14px}
+.make-preview{background:#3e3029;border-radius:20px;padding:22px;color:#fff}
+.pattern-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:13px}
+.pattern-header b{font-size:17px}
+.pattern-row{background:#f7eee7;color:#46362f;border-radius:10px;padding:12px 13px;margin:8px 0;font-size:13px}
+.pattern-row strong{display:inline-block;min-width:55px}
+.pattern-row.blur{filter:blur(3px);opacity:.78}
+.studio-cta{background:var(--bb-accent);color:#fff}
+.studio-cta-inner{max-width:900px;margin:auto;text-align:center;padding:85px 24px}
+.studio-cta h2{font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:clamp(34px,5vw,54px);letter-spacing:-.035em;margin:0 0 14px}
+.studio-cta p{max-width:620px;margin:0 auto 25px;line-height:1.7;color:#f9e9e1}
+.studio-cta .btn{background:#fff!important;color:var(--bb-accent-dark)!important;border-color:#fff!important}
+.examples-section{background:#f5eee6!important;border-color:var(--bb-line)!important}
+.example-card,.card{background:var(--bb-card)!important;border-color:var(--bb-line)!important;border-radius:18px;box-shadow:var(--bb-shadow)}
+.process{background:#eee1d6!important}
+.bespoke{background:#ead7ca!important}
+.footer{background:#302723!important}
+@media(max-width:900px){
+  .feature-grid{grid-template-columns:1fr}
+  .pattern-wall-grid{grid-template-columns:repeat(2,1fr)}
+  .stitch-showcase-grid{grid-template-columns:repeat(2,1fr)}
+  .make-mode-panel{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .hero{min-height:570px!important}
+  .hero-inner{padding:70px 18px 45px}
+  .hero h1{font-size:39px!important}
+  .hero p{font-size:17px!important}
+  .section{padding:68px 18px}
+  .pattern-wall-inner,.stitch-showcase-inner,.make-mode-inner{padding:68px 18px}
+  .pattern-wall-grid{grid-template-columns:1fr}
+  .stitch-showcase-grid{grid-template-columns:1fr 1fr}
+  .pattern-tile img{height:230px}
+  .make-mode-panel{padding:12px;border-radius:20px}
+  .make-copy{padding:14px}
+}
+</style>
 </head>
 <body>
 
@@ -634,21 +739,21 @@ body{background:#ead3c2}
   <div class="hero-photo"></div>
   <div class="hero-inner">
     <div class="kicker">Handmade · Bespoke · One of a Kind</div>
-    <h1>Crochet made just for you.</h1>
-    <p>Choose your style, colours and size. We'll turn your idea into a beautiful handmade blanket designed around you.</p>
+    <h1>Turn your ideas into crochet patterns.</h1>
+    <p>Choose your stitch style, colours and size, then see your design visually and follow it row by row when you're ready to make it.</p>
     <div class="hero-actions">
-      <a class="btn" href="#bespoke">Design Your Blanket →</a>
-      <a class="btn secondary" href="#bespoke">Choose Your Design</a>
+      <a class="btn" href="#bespoke">Start Creating →</a>
+      <a class="btn secondary" href="#bespoke">See Pattern Examples</a>
     </div>
   </div>
 </section>
 
 <section class="trust">
   <div class="trust-grid">
-    <div class="trust-item"><b>Bespoke Designs</b><span>Made around your idea</span></div>
-    <div class="trust-item"><b>Premium Yarns</b><span>Soft, durable &amp; beautiful</span></div>
-    <div class="trust-item"><b>Made by Hand</b><span>Not mass-produced</span></div>
-    <div class="trust-item"><b>Made to Last</b><span>Pieces to treasure</span></div>
+    <div class="trust-item"><b>Visual Patterns</b><span>See the design before you make it</span></div>
+    <div class="trust-item"><b>Smart Colours</b><span>Build a usable yarn palette</span></div>
+    <div class="trust-item"><b>Row-by-Row</b><span>Clear instructions as you crochet</span></div>
+    <div class="trust-item"><b>Progress Saved</b><span>Pick up where you left off</span></div>
   </div>
 </section>
 
@@ -716,6 +821,96 @@ body{background:#ead3c2}
       <p>Send us your ideas, a colour palette, a photograph or simply tell us who the blanket is for. We'll help turn it into a design.</p>
       <a class="btn" href="#bespoke">Talk to Us About Your Design →</a>
     </div>
+  </div>
+</section>
+
+
+<section class="section product-intro" id="studio">
+  <div class="heading">
+    <div class="eyebrow">Your Crochet Pattern Studio</div>
+    <h2>More than a pattern generator.</h2>
+    <p>Turn an idea, photograph or colour palette into a crochet design you can actually follow. See the pattern visually, choose your stitch style and work through every row with confidence.</p>
+  </div>
+  <div class="feature-grid">
+    <article class="feature-card">
+      <div class="feature-visual"><img src="/crochet_assets/rainbow.jpg" alt="Crochet pattern design preview"></div>
+      <div class="feature-body"><h3>Visual pattern generation</h3><p>See your design take shape before you start crocheting, with a clear visual pattern and stitch structure.</p></div>
+    </article>
+    <article class="feature-card">
+      <div class="feature-visual"><img src="/crochet_assets/pastel.jpg" alt="Crochet colour palette preview"></div>
+      <div class="feature-body"><h3>Smart colour matching</h3><p>Build a usable palette and match colours to yarn shades so your finished blanket stays true to the design.</p></div>
+    </article>
+    <article class="feature-card">
+      <div class="feature-visual chart"><div class="mini-chart" aria-label="Crochet chart preview"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="feature-body"><h3>Make Mode</h3><p>Work row by row with clear instructions, stitch counts and progress so you can stop and pick up exactly where you left off.</p></div>
+    </article>
+  </div>
+</section>
+
+<section class="pattern-wall">
+  <div class="pattern-wall-inner">
+    <div class="heading">
+      <div class="eyebrow">See The Possibilities</div>
+      <h2>A pattern preview wall.</h2>
+      <p>Don't just read about the stitch styles. See them. Each option below gives the maker a visual starting point before they commit to a design.</p>
+    </div>
+    <div class="pattern-wall-grid">
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/moss.svg" alt="Moss stitch pattern preview"><div class="tile-caption"><strong>Moss Stitch</strong><span>Neat texture · reversible feel</span></div></article>
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/striped.svg" alt="Striped crochet pattern preview"><div class="tile-caption"><strong>Striped</strong><span>Clean colour bands</span></div></article>
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/granny-stripe.svg" alt="Granny stripe pattern preview"><div class="tile-caption"><strong>Granny Stripe</strong><span>Classic clustered rows</span></div></article>
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/chevron.svg" alt="Chevron ripple crochet pattern preview"><div class="tile-caption"><strong>Chevron / Ripple</strong><span>Peaks and valleys</span></div></article>
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/floral-granny.svg" alt="Floral granny square pattern preview"><div class="tile-caption"><strong>Floral Granny</strong><span>Flower-centred motifs</span></div></article>
+      <article class="pattern-tile"><img src="/crochet_assets/stitches/sampler.svg" alt="Crochet stitch sampler preview"><div class="tile-caption"><strong>Stitch Sampler</strong><span>Multiple textures</span></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="stitch-showcase">
+  <div class="stitch-showcase-inner">
+    <div class="heading">
+      <div class="eyebrow">Choose Your Style</div>
+      <h2>Different stitches. One simple workflow.</h2>
+      <p>Pick the stitch style that suits your project, then customise the colours and size. The design preview changes with your choice.</p>
+    </div>
+    <div class="stitch-showcase-grid">
+      <article class="stitch-showcase-card"><img src="/crochet_assets/stitches/moss.svg" alt="Moss stitch"><h3>Moss Stitch</h3><p>Subtle texture with a clean, modern finish.</p></article>
+      <article class="stitch-showcase-card"><img src="/crochet_assets/stitches/striped.svg" alt="Striped stitch"><h3>Striped</h3><p>Simple colour changes with a bold visual rhythm.</p></article>
+      <article class="stitch-showcase-card"><img src="/crochet_assets/stitches/granny-stripe.svg" alt="Granny stripe"><h3>Granny Stripe</h3><p>Classic crochet character in repeating rows.</p></article>
+      <article class="stitch-showcase-card"><img src="/crochet_assets/stitches/chevron.svg" alt="Chevron ripple"><h3>Chevron / Ripple</h3><p>A graphic zigzag that works beautifully with colour.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="make-mode">
+  <div class="make-mode-inner">
+    <div class="make-mode-panel">
+      <div class="make-copy">
+        <div class="eyebrow">When You're Ready To Crochet</div>
+        <h2>Make Mode walks you through it.</h2>
+        <p>Once your pattern is generated, Bobble-style guidance turns a complicated chart into a calm, step-by-step making experience.</p>
+        <div class="make-points">
+          <div><strong>01 · It reads the chart</strong><br>Colour, stitch count and direction for each stretch.</div>
+          <div><strong>02 · It counts for you</strong><br>Keep your place without manually recounting every row.</div>
+          <div><strong>03 · It keeps your place</strong><br>Stop mid-row and return later without losing progress.</div>
+        </div>
+      </div>
+      <div class="make-preview">
+        <div class="pattern-header"><b>Your pattern</b><span>Row 4 of 28</span></div>
+        <div class="pattern-row"><strong>Row 1</strong> SC × 42 · Change colour</div>
+        <div class="pattern-row"><strong>Row 2</strong> SC × 42 · Turn</div>
+        <div class="pattern-row"><strong>Row 3</strong> SC 8 · Change colour · SC 12</div>
+        <div class="pattern-row blur"><strong>Row 4</strong> SC 6 · 2 colours · SC 14</div>
+        <div class="pattern-row blur"><strong>Row 5</strong> Repeat pattern across row</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="studio-cta">
+  <div class="studio-cta-inner">
+    <h2>See your idea become a crochet pattern.</h2>
+    <p>Choose a stitch, explore the visual previews and start creating your own design.</p>
+    <a class="btn" href="#bespoke">Start creating →</a>
   </div>
 </section>
 
