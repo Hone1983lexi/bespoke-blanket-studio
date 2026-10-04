@@ -88,10 +88,30 @@ async function verifyPaidCheckoutGrant(
     if (!subscriptionId) return false;
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    return (
+    const active =
       (subscription.status === "active" || subscription.status === "trialing") &&
-      metadata.plan === "pro"
-    );
+      metadata.plan === "pro";
+
+    if (active && userId) {
+      try {
+        const client = await clerkClient();
+        await client.users.updateUserMetadata(userId, {
+          publicMetadata: {
+            subscriptionStatus: "active",
+            subscriptionUpdatedAt: new Date().toISOString(),
+          },
+          privateMetadata: {
+            stripeSubscriptionId: subscriptionId,
+          },
+        });
+      } catch (error) {
+        // The Stripe subscription itself remains the source of truth for this
+        // immediate unlock; metadata sync can be retried on the next request.
+        console.error("Unable to sync Pro membership to Clerk:", error);
+      }
+    }
+
+    return active;
   }
 
   if (session.mode !== "payment" || session.payment_status !== "paid") {
