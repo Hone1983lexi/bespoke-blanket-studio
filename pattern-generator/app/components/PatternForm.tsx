@@ -1019,7 +1019,7 @@ function PatternStylePreview({ style, colors, large = false, widthUnits, rowUnit
           <line x1="2" y1={height - 18} x2="8" y2={height - 18} stroke="#78695d" strokeWidth="1" opacity=".45" />
           <text x="13" y={height / 2} textAnchor="middle" transform={`rotate(-90 13 ${height / 2})`}>{rowUnits} rows</text>
         </g>
-      )
+      )}
     </svg>
   );
 }
