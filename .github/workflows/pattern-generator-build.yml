@@ -1,0 +1,32 @@
+name: Pattern Generator Build
+
+on:
+  pull_request:
+    paths:
+      - "pattern-generator/**"
+  push:
+    branches:
+      - "feature/hybrid-stripe-monetization"
+    paths:
+      - "pattern-generator/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pattern-generator
+    env:
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
+      CLERK_SECRET_KEY: sk_test_placeholder
+      STRIPE_SECRET_KEY: sk_test_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_placeholder
+      OPENAI_API_KEY: sk_test_placeholder
+      OPENAI_MODEL: gpt-6-luna
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
