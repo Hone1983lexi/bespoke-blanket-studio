@@ -233,9 +233,9 @@ export async function POST(request: Request) {
       "2. Row numbers must be sequential from 1 through totalRows.",
       "3. The starting chain must equal startingChain exactly.",
       "4. Every completed row must contain exactly startingChain working stitches.",
-      "5. Never invent, omit, increase, or decrease stitches.",
-      "6. Do not use clusters, shells, bobbles, increases, decreases, or decorative combinations.",
-      "7. Use only the selected stitch.",
+      "5. Keep the construction rectangular and repeatable from row to row.",
+      "6. Use the selected base stitch as the working stitch unless the selected pattern style explicitly calls for a colour change or simple texture variation.",
+      "7. Do not use complex shaping that changes the final stitch count.",
       "8. Use standard US abbreviations: ch, sc, hdc, dc, st.",
       "9. Turning chains are not counted as working stitches.",
       "10. Every row must explicitly state its stitch count.",
@@ -244,7 +244,15 @@ export async function POST(request: Request) {
       "For Half Double Crochet use ch 2 as the turning chain.",
       "For Double Crochet use ch 3 as the turning chain.",
       "",
-      "Use the simplest valid back-and-forth construction. Row 1 works the selected stitch across the foundation chain. Later rows use the selected stitch across the previous row.",
+      "STYLE GUIDANCE:",
+      "Plain = simple even rows.",
+      "Moss Stitch = use a simple sc/ch-1 moss texture while keeping the stated working stitch count consistent.",
+      "Striped = alternate colour bands by row; describe the colour change without altering stitch count.",
+      "Granny Stripe = use simple repeated granny-style clustered texture while maintaining the exact stated working stitch count.",
+      "Chevron / Ripple = use a repeatable shallow ripple rhythm while maintaining the exact stated working stitch count.",
+      "Floral Granny = use restrained flower-inspired motif language without changing the rectangular stitch count.",
+      "Stitch Sampler = vary simple texture treatment between sections while maintaining the exact stitch count.",
+      "",
       "Return only data matching the supplied schema.",
     ].join("\n");
 
@@ -255,6 +263,7 @@ export async function POST(request: Request) {
         `Starting Chain: ${startingChain}`,
         `Total Rows: ${totalRows}`,
         `Selected Stitch: ${selectedStitch}`,
+        `Pattern Style: ${patternStyle}`,
       ].join("\n"),
       text: {
         format: zodTextFormat(PatternSchema, "crochet_pattern"),
@@ -271,6 +280,7 @@ export async function POST(request: Request) {
       pattern.startingChain !== startingChain ||
       pattern.totalRows !== totalRows ||
       pattern.stitch !== selectedStitch ||
+      pattern.style !== patternStyle ||
       pattern.rows.length !== totalRows
     ) {
       return NextResponse.json(
