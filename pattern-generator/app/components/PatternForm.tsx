@@ -10,7 +10,6 @@ type PatternStyle =
   | "Striped"
   | "Granny Stripe"
   | "Chevron / Ripple"
-  | "Floral Granny"
   | "Stitch Sampler";
 type CheckoutMode = "payment" | "subscription";
 
@@ -31,12 +30,11 @@ const STITCH_OPTIONS: Array<{ name: Stitch; description: string }> = [
 
 const STYLE_OPTIONS: Array<{ name: PatternStyle; description: string }> = [
   { name: "Plain", description: "Clean, even rows that let your colours lead." },
-  { name: "Moss Stitch", description: "A small textured rhythm with a woven feel." },
+  { name: "Moss Stitch", description: "Classic linen/moss texture using single crochet and chain-1 spaces." },
   { name: "Striped", description: "Bold horizontal colour bands across the blanket." },
-  { name: "Granny Stripe", description: "Classic clustered rows with a traditional crochet look." },
-  { name: "Chevron / Ripple", description: "A flowing zigzag rhythm with peaks and valleys." },
-  { name: "Floral Granny", description: "Soft flower-inspired motif styling." },
-  { name: "Stitch Sampler", description: "A playful mix of textures and visual sections." },
+  { name: "Granny Stripe", description: "Traditional 3-double-crochet clusters worked into spaces." },
+  { name: "Chevron / Ripple", description: "A true repeating ripple with matched increases and decreases." },
+  { name: "Stitch Sampler", description: "Alternating rows of single, half-double and double crochet." },
 ];
 
 const PALETTES = [
@@ -74,6 +72,7 @@ export default function PatternForm() {
   const [width, setWidth] = useState("");
   const [length, setLength] = useState("");
   const [selectedStitch, setSelectedStitch] = useState<Stitch>("Single Crochet");
+  const [terminology, setTerminology] = useState<"UK" | "US">("UK");
   const [selectedStyle, setSelectedStyle] = useState<PatternStyle>("Plain");
   const [selectedPalette, setSelectedPalette] = useState("Warm Neutral");
   const [pattern, setPattern] = useState<GeneratedPattern | null>(null);
@@ -89,6 +88,10 @@ export default function PatternForm() {
       pattern.title +
       ":" +
       pattern.stitch +
+      ":" +
+      (pattern.style || "Plain") +
+      ":" +
+      (pattern.terminology || "UK") +
       ":" +
       pattern.startingChain +
       ":" +
@@ -140,7 +143,7 @@ export default function PatternForm() {
 
   useEffect(() => {
     setError("");
-  }, [stitchGauge, rowGauge, width, length, selectedStitch]);
+  }, [stitchGauge, rowGauge, width, length, selectedStitch, selectedStyle, terminology]);
 
   const previewRows = useMemo(
     () =>
@@ -234,6 +237,7 @@ export default function PatternForm() {
           totalRows: blueprint.totalRows,
           selectedStitch,
           patternStyle: selectedStyle,
+          terminology,
           palette: selectedPalette,
           stitchGauge: Number(stitchGauge),
           rowGauge: Number(rowGauge),
@@ -276,6 +280,7 @@ export default function PatternForm() {
           totalRows: blueprint.totalRows,
           selectedStitch,
           patternStyle: selectedStyle,
+          terminology,
           palette: selectedPalette,
         }),
       });
@@ -381,6 +386,33 @@ export default function PatternForm() {
                   ))}
                 </select>
               </div>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-[#d2c0ad] bg-[#eee2d6] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-[#302b27]">Pattern terminology</p>
+                  <p className="mt-1 text-xs text-[#78695d]">Choose the terminology you normally crochet from.</p>
+                </div>
+                <span className="rounded-full border border-[#cdbca9] bg-[#f7eee4] px-3 py-1 text-xs font-semibold text-[#72513d]">
+                  {terminology === "UK" ? "UK terms" : "US terms"}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {(["UK", "US"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setTerminology(option)}
+                    className={"rounded-xl border px-4 py-3 text-sm font-semibold transition " + (terminology === option ? "border-[#9b6d52] bg-[#f2e2d5] text-[#302b27] shadow-sm" : "border-[#d2c0ad] bg-[#f7eee4] text-[#66594f]")}
+                  >
+                    {option === "UK" ? "UK crochet terms" : "US crochet terms"}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-5 text-[#78695d]">
+                UK: double crochet (dc), half treble (htr), treble (tr). US: single crochet (sc), half double crochet (hdc), double crochet (dc).
+              </p>
             </div>
 
             <div className="mt-6">
@@ -491,7 +523,7 @@ export default function PatternForm() {
           ) : (
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
               <BlueprintCard
-                label="Starting Chain"
+                label="Foundation Chain"
                 value={blueprint.startingChain}
                 suffix="chains"
               />
@@ -595,7 +627,7 @@ export default function PatternForm() {
                 {pattern.title}
               </h2>
               <p className="mt-2 text-sm text-[#66594f]">
-                {pattern.stitch} · {pattern.startingChain} sts · {pattern.totalRows} rows
+                {pattern.style} · {pattern.terminology} terms · {pattern.startingChain} foundation chains · {pattern.totalRows} rows
               </p>
             </div>
 
@@ -708,7 +740,7 @@ export default function PatternForm() {
                             Row {row.rowNumber}
                           </span>
                           <span className="mt-1 block text-xs text-[#78695d]">
-                            {row.stitchCount} stitches · tap to{" "}
+                            {row.countLabel || row.stitchCount + " stitches"} · tap to{" "}
                             {complete ? "uncheck" : "mark complete"}
                           </span>
                         </span>
@@ -1065,30 +1097,41 @@ function PreviewRowCard({
   );
 }
 
-function buildPreviewRows(startingChain: number, stitch: Stitch): PreviewRow[] {
-  const stitchName =
-    stitch === "Single Crochet"
-      ? "single crochet"
-      : stitch === "Half Double Crochet"
-        ? "half double crochet"
-        : "double crochet";
+function buildPreviewRows(startingChain: number, workingStitches: number, stitch: Stitch, style: PatternStyle, terminology: "UK" | "US"): PreviewRow[] {
+  const abbr = terminology === "UK"
+    ? stitch === "Single Crochet" ? "dc" : stitch === "Half Double Crochet" ? "htr" : "tr"
+    : stitch === "Single Crochet" ? "sc" : stitch === "Half Double Crochet" ? "hdc" : "dc";
 
-  return [1, 2, 3].map((rowNumber) => ({
+  if (style === "Moss Stitch") {
+    return [
+      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". " + abbr + " in 2nd ch, *ch 1, skip 1, " + abbr + " in next; repeat across. Turn." },
+      { rowNumber: 2, label: "Row 2", text: "Ch 1. " + abbr + " in each chain-1 space across. Turn." },
+      { rowNumber: 3, label: "Row 3", text: "Repeat Row 2. Keep the chain-1 spaces loose and count your edge stitches." },
+    ];
+  }
+  if (style === "Granny Stripe") {
+    return [
+      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". Work " + (terminology === "UK" ? "dc" : "sc") + " across. Turn." },
+      { rowNumber: 2, label: "Row 2", text: "Ch 3. Work the first edge stitch, then 3-stitch clusters across the row. Turn." },
+      { rowNumber: 3, label: "Row 3", text: "Ch 3. Work 3-stitch clusters into the spaces between clusters. Finish at the turning chain." },
+    ];
+  }
+  if (style === "Chevron / Ripple") {
+    const repeats = Math.max(1, Math.round(workingStitches / 16));
+    return [
+      { rowNumber: 1, label: "Row 1", text: "Ch " + startingChain + ". " + abbr + " across. Turn. (" + workingStitches + " stitches)" },
+      { rowNumber: 2, label: "Row 2", text: "Repeat the ripple sequence " + repeats + " times: 2 in next, 5 across, 2 decreases, 5 across, 2 in next." },
+      { rowNumber: 3, label: "Row 3", text: "Repeat the same ripple sequence, keeping every peak and valley aligned." },
+    ];
+  }
+  return [1,2,3].map((rowNumber) => ({
     rowNumber,
     label: "Row " + rowNumber,
-    text:
-      rowNumber === 1
-        ? "Work " +
-          stitchName +
-          " stitches across the foundation chain. Turn to begin the next row."
-        : "Continue " +
-          stitchName +
-          " evenly across, maintaining " +
-          startingChain +
-          " stitches. Turn to begin the next row.",
+    text: rowNumber === 1
+      ? "Ch " + startingChain + ". Work " + abbr + " across. Turn. (" + workingStitches + " stitches)"
+      : "Ch " + (stitch === "Single Crochet" ? 1 : stitch === "Half Double Crochet" ? 2 : 3) + ", turn. Work " + abbr + " in every stitch across. Turn. (" + workingStitches + " stitches)",
   }));
 }
-
 function lockedRowText(stitch: Stitch, stitchCount: number) {
   const abbreviation =
     stitch === "Single Crochet"
