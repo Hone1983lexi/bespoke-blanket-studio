@@ -409,11 +409,11 @@ body{background:#ead3c2}
 
 <style id="stitch-example-styles">
 .stitch-example-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 8px}
-.stitch-example{display:flex;align-items:center;gap:9px;padding:7px;border-radius:6px;text-decoration:none;background:#604638!important;color:#fff1e8!important;border:1px solid transparent}
+.stitch-example{display:flex;align-items:center;gap:11px;padding:7px;border-radius:7px;text-decoration:none;background:#604638!important;color:#fff1e8!important;border:1px solid transparent}
 .stitch-example:hover{background:#8f654f!important;border-color:#b98f77}
 .stitch-example strong{display:block;font-size:12px;line-height:1.15;color:#fff7f0}
 .stitch-example small{display:block;margin-top:3px;font-size:9px;line-height:1.2;color:#e7c5b0}
-.stitch-swatch{display:block;flex:0 0 54px;width:54px;height:42px;border-radius:5px;border:1px solid #b98f77;overflow:hidden;background-color:#d3a98f}
+.stitch-swatch-photo{display:block;flex:0 0 68px;width:68px;height:52px;border-radius:7px;border:1px solid #b98f77;overflow:hidden;object-fit:cover;box-shadow:0 2px 8px rgba(35,24,18,.22)}
 .stitch-swatch.moss{background-color:#c58d72;background-image:radial-gradient(circle at 25% 25%,#f1d3bf 0 2px,transparent 2.5px),radial-gradient(circle at 75% 75%,#f1d3bf 0 2px,transparent 2.5px);background-size:12px 12px}
 .stitch-swatch.striped{background:repeating-linear-gradient(0deg,#c98f72 0 7px,#ead0bd 7px 14px,#9e6955 14px 21px)}
 .stitch-swatch.granny-stripe{background:repeating-linear-gradient(0deg,#b97d64 0 5px,#e5c2ad 5px 10px,#c58f73 10px 15px,#f0d6c3 15px 20px)}
@@ -422,7 +422,7 @@ body{background:#ead3c2}
 .stitch-swatch.sampler{background:repeating-linear-gradient(0deg,#b97d64 0 5px,#e4c1ac 5px 10px,#9c6754 10px 15px,#d5a38a 15px 20px)}
 .stitch-swatch.filet{background-color:#e0c0aa;background-image:linear-gradient(45deg,transparent 42%,#a66e59 43% 49%,transparent 50%),linear-gradient(-45deg,transparent 42%,#a66e59 43% 49%,transparent 50%);background-size:16px 16px}
 .stitch-swatch.seasonal{background:linear-gradient(135deg,#9b6654 0 25%,#d6a184 25% 50%,#ead0bc 50% 75%,#b47a61 75%)}
-@media(max-width:600px){.stitch-example-grid{grid-template-columns:1fr}.stitch-example{padding:8px}.stitch-swatch{flex-basis:58px;width:58px;height:44px}}
+@media(max-width:600px){.stitch-example-grid{grid-template-columns:1fr}.stitch-example{padding:8px}.stitch-swatch-photo{flex-basis:64px;width:64px;height:50px}}
 </style>
 <style>
 /* DESIGN-VISUALS-V2 */
@@ -608,16 +608,16 @@ body{background:#ead3c2}
         <a href="#bespoke" data-design="Spring Meadow">Spring Meadow</a>
         <a href="#bespoke" data-design="Christmas Cheer">Christmas Cheer</a>
       </div>
-      <div class="design-dropdown-section-title">Stitch Patterns</div>
+      <div class="design-dropdown-section-title">Pattern Styles</div>
       <div class="stitch-example-grid">
-        <a class="stitch-example" href="#bespoke" data-design="Moss Stitch" data-stitch="true"><span class="stitch-swatch moss"></span><span><strong>Moss Stitch</strong><small>Textured, neat and reversible</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Striped" data-stitch="true"><span class="stitch-swatch striped"></span><span><strong>Striped</strong><small>Clean horizontal colour bands</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Granny Stripe" data-stitch="true"><span class="stitch-swatch granny-stripe"></span><span><strong>Granny Stripe</strong><small>Classic clustered crochet rows</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Chevron / Ripple" data-stitch="true"><span class="stitch-swatch chevron"></span><span><strong>Chevron / Ripple</strong><small>Repeating peaks and valleys</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Floral Granny Squares" data-stitch="true"><span class="stitch-swatch floral"></span><span><strong>Floral Granny Squares</strong><small>Flower centres in square motifs</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Stitch Sampler" data-stitch="true"><span class="stitch-swatch sampler"></span><span><strong>Stitch Sampler</strong><small>A mix of textures and patterns</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Filet / Motif Style" data-stitch="true"><span class="stitch-swatch filet"></span><span><strong>Filet / Motif Style</strong><small>Openwork and decorative motifs</small></span></a>
-        <a class="stitch-example" href="#bespoke" data-design="Seasonal" data-stitch="true"><span class="stitch-swatch seasonal"></span><span><strong>Seasonal</strong><small>Patterns inspired by the time of year</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Moss Stitch" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/neutral.jpg" alt="Moss stitch blanket inspiration"><span><strong>Moss Stitch</strong><small>Textured, neat and beautifully understated</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Striped" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/ocean.jpg" alt="Striped crochet blanket inspiration"><span><strong>Striped</strong><small>Clean colour bands with a relaxed rhythm</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Granny Stripe" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/rainbow.jpg" alt="Granny stripe blanket inspiration"><span><strong>Granny Stripe</strong><small>Classic clustered rows with plenty of colour</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Chevron / Ripple" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/pastel.jpg" alt="Chevron ripple blanket inspiration"><span><strong>Chevron / Ripple</strong><small>Flowing peaks and valleys across the blanket</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Floral Granny Squares" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/memory.jpg" alt="Floral granny square blanket inspiration"><span><strong>Floral Granny Squares</strong><small>Decorative flower motifs joined into a blanket</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Stitch Sampler" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/baby-classic.jpg" alt="Crochet stitch sampler blanket inspiration"><span><strong>Stitch Sampler</strong><small>A collection of textures and patterns</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Filet / Motif Style" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/star.jpg" alt="Decorative crochet motif blanket inspiration"><span><strong>Filet / Motif Style</strong><small>Openwork or decorative motifs</small></span></a>
+        <a class="stitch-example" href="#bespoke" data-design="Seasonal" data-stitch="true"><img class="stitch-swatch-photo" src="/crochet_assets/baby-star.jpg" alt="Seasonal crochet blanket inspiration"><span><strong>Seasonal</strong><small>Designs inspired by celebrations and the seasons</small></span></a>
       </div>
       <a class="design-dropdown-custom" href="#bespoke" data-design="Custom design">Don't see your style? Create something completely custom →</a>
     </div>
